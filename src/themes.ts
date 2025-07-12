@@ -21,7 +21,7 @@ const themes = {
                 contrastText: "#fff"
             },
             secondary: {
-                main: grey[800],
+                main: "#363636",
                 contrastText: "#fff"
             },
         }
