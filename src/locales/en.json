@@ -1,0 +1,23 @@
+{
+  "title": "Rescue Notebook",
+  "nav": {
+    "root": "Root",
+    "new_folder": "New Folder",
+    "new_calendar": "New Calendar",
+    "new_file": "New File",
+    "about": "About"
+  },
+  "edit": {
+
+  },
+  "view": {
+
+  },
+  "settings": {
+    "language": "Language",
+    "theme": "Theme",
+    "dark_mode": "Dark Mode",
+    "light_mode": "Light Mode",
+    "path": "Root path"
+  }
+}

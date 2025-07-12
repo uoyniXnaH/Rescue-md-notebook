@@ -1,0 +1,23 @@
+{
+  "title": "Rescue Notebook",
+  "nav": {
+    "root": "ルーツ",
+    "new_folder": "新しいフォルダー",
+    "new_calendar": "新しいカレンダー",
+    "new_file": "新しいファイル",
+    "about": "このアプリについて"
+  },
+  "edit": {
+
+  },
+  "view": {
+
+  },
+  "settings": {
+    "language": "言語",
+    "theme": "テーマ",
+    "dark_mode": "ダークモード",
+    "light_mode": "ライトモード",
+    "path": "ルーツパス"
+  }
+}

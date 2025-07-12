@@ -1,0 +1,23 @@
+{
+  "title": "Rescue Notebook",
+  "nav": {
+    "root": "根文件夹",
+    "new_folder": "新建文件夹",
+    "new_calendar": "新建日历",
+    "new_file": "新建文件",
+    "about": "关于"
+  },
+  "edit": {
+
+},
+  "view": {
+
+  },
+  "settings": {
+    "language": "语言",
+    "theme": "主题",
+    "dark_mode": "暗模式",
+    "light_mode": "亮模式",
+    "path": "根文件夹路径"
+  }
+}
