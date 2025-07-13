@@ -1,7 +1,7 @@
 {
   "title": "Rescue Notebook",
   "nav": {
-    "version": "Version: ",
+    "version": "version: ",
     "root": "Root",
     "new_folder": "New Folder",
     "new_calendar": "New Calendar",
