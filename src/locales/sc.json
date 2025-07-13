@@ -1,10 +1,12 @@
 {
   "title": "Rescue Notebook",
   "nav": {
+    "version": "版本：",
     "root": "根文件夹",
     "new_folder": "新建文件夹",
     "new_calendar": "新建日历",
     "new_file": "新建文件",
+    "settings": "设置",
     "about": "关于"
   },
   "edit": {

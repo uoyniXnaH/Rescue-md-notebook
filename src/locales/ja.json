@@ -1,10 +1,12 @@
 {
   "title": "Rescue Notebook",
   "nav": {
+    "version": "バージョン：",
     "root": "ルーツ",
     "new_folder": "新しいフォルダー",
     "new_calendar": "新しいカレンダー",
     "new_file": "新しいファイル",
+    "settings": "設定",
     "about": "このアプリについて"
   },
   "edit": {
