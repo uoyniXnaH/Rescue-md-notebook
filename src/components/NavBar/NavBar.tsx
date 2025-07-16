@@ -2,7 +2,7 @@ import { Box, Stack, Typography, Button } from "@mui/material";
 import HomeIcon from '@mui/icons-material/Home';
 import SettingsIcon from '@mui/icons-material/Settings';
 
-import FileTree from "./FileTree";
+import FileTree from "./FileTree/FileTree";
 import { useTranslation } from "react-i18next";
 import { VERSION } from "../../Defines";
 
