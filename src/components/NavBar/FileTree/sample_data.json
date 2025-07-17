@@ -25,7 +25,7 @@
     "droppable": false,
     "text": "File 1-2",
     "data": {
-      "fileType": "text",
+      "fileType": "file",
       "filePath": "~/dummy/folder1/file1-2.txt"
     }
   },
@@ -55,7 +55,7 @@
     "droppable": false,
     "text": "File 2-1-1",
     "data": {
-      "fileType": "image",
+      "fileType": "calendar",
       "filePath": "~/dummy/folder2/folder2-1/file2-1-1.png"
     }
   },
@@ -65,7 +65,7 @@
     "droppable": false,
     "text": "File 3",
     "data": {
-      "fileType": "image",
+      "fileType": "file",
       "filePath": "~/dummy/folder2/folder2-1/file2-1-1.png"
     }
   }
