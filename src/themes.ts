@@ -15,7 +15,7 @@ const themes = {
                 contrastText: "#000"
             },
             info: {
-                main: grey[300],
+                main: grey[500],
                 contrastText: "#666"
             },
         }
