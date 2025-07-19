@@ -46,8 +46,17 @@ const themes = {
                             active: grey[500]
                         }),
                     },
+                    ul: {
+                        // listStyle: "none",
+                        paddingInlineStart: 0,
+                    }
                 },
             },
+            MuiSvgIcon: {
+                styleOverrides: {
+                    root: { verticalAlign: "middle" }
+                }
+            }
         },
     })
 }
