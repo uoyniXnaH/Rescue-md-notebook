@@ -2,6 +2,29 @@ import { createTheme } from "@mui/material/styles";
 import { grey } from "@mui/material/colors";
 import { darkScrollbar } from "@mui/material";
 
+const overrides = {
+    MuiCssBaseline: {
+        styleOverrides: {
+            body: {
+                ...darkScrollbar({
+                    track: grey[900],
+                    thumb: grey[600],
+                    active: grey[500]
+                }),
+            },
+            ul: {
+                // listStyle: "none",
+                paddingInlineStart: 0,
+            }
+        },
+    },
+    MuiSvgIcon: {
+        styleOverrides: {
+            root: { verticalAlign: "middle" }
+        }
+    }
+}
+
 const themes = {
     light: createTheme({
         palette: {
@@ -18,6 +41,9 @@ const themes = {
                 main: grey[500],
                 contrastText: "#666"
             },
+        },
+        components: {
+            ...overrides,
         }
     }),
     dark: createTheme({
@@ -37,27 +63,8 @@ const themes = {
             },
         },
         components: {
-            MuiCssBaseline: {
-                styleOverrides: {
-                    body: {
-                        ...darkScrollbar({
-                            track: grey[900],
-                            thumb: grey[600],
-                            active: grey[500]
-                        }),
-                    },
-                    ul: {
-                        // listStyle: "none",
-                        paddingInlineStart: 0,
-                    }
-                },
-            },
-            MuiSvgIcon: {
-                styleOverrides: {
-                    root: { verticalAlign: "middle" }
-                }
-            }
-        },
+            ...overrides,
+        }
     })
 }
 
