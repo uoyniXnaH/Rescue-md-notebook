@@ -1,0 +1,40 @@
+.treeRoot {
+  height: 100%;
+}
+
+.draggingSource {
+  opacity: 0.3;
+}
+
+.placeholderContainer {
+  position: relative;
+  height: 0 !important;
+}
+
+.dropTarget {
+  background-color: #e8f0fe;
+}
+
+.nodeRoot {
+  align-items: center;
+  display: grid;
+  grid-template-columns: auto auto 1fr auto;
+  height: 32px;
+  padding-inline-end: 8px;
+  border-bottom: solid 1px #eee;
+}
+
+.dragPreviewRoot {
+  align-items: "center";
+  background-color: #1967d2;
+  border-radius: 4px;
+  box-shadow: 0 12px 24px -6px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(0, 0, 0, 0.08);
+  color: #fff;
+  display: inline-grid;
+  font-size: 14px;
+  gap: 8px;
+  grid-template-columns: auto auto;
+  padding: 4px 8px;
+  pointer-events: none;
+}
