@@ -1,6 +1,11 @@
-export type NodeType = "file" | "folder" | "calendar";
+export type NodeEnum = "file" | "folder" | "calendar";
 export type NodeData = {
-  fileType: NodeType;
+  fileType: NodeEnum;
   isOpen?: boolean;
   filePath: string;
 };
+
+export type settingStoreType = {
+  theme: "light" | "dark";
+  language: "en" | "sc" | "ja";
+}

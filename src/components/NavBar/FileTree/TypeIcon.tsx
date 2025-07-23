@@ -4,10 +4,10 @@ import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import ArticleIcon from '@mui/icons-material/Article';
 
-import { NodeType } from "../../../types";
+import { NodeEnum } from "../../../types";
 
 type Props = {
-    fileType: NodeType;
+    fileType: NodeEnum;
     isOpen?: boolean;
     onClick?: (e: React.MouseEvent) => void;
 };
