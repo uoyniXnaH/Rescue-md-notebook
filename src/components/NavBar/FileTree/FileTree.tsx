@@ -36,7 +36,7 @@ export default function FileTree() {
   const [treeData, setTreeData] = React.useState<NodeModel<NodeData>[]>(SampleData as NodeModel<NodeData>[]);
   const handleDrop = (newTreeData: NodeModel<NodeData>[]) => setTreeData(newTreeData);
   return (
-    <Box overflow="auto" height="100%">
+    <Box overflow="auto" height="95%">
       <DndProvider backend={MultiBackend} options={getBackendOptions()}>
         <Box height="95%">
           <Tree
