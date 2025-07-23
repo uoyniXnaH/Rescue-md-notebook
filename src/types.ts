@@ -5,7 +5,9 @@ export type NodeData = {
   filePath: string;
 };
 
+export type themeEnum = "light" | "dark";
+export type languageEnum = "en" | "sc" | "ja";
 export type settingStoreType = {
-  theme: "light" | "dark";
-  language: "en" | "sc" | "ja";
+  theme: themeEnum;
+  language: languageEnum;
 }
