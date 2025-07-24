@@ -2,7 +2,7 @@ import { createTheme } from "@mui/material/styles";
 import { grey } from "@mui/material/colors";
 import { darkScrollbar } from "@mui/material";
 
-const getOverrides = (theme: "light" | "dark") => {
+const selectTheme = (theme: "light" | "dark") => {
     const overrides = {
         MuiCssBaseline: {
             styleOverrides: {
@@ -25,10 +25,7 @@ const getOverrides = (theme: "light" | "dark") => {
             }
         }
     };
-    return overrides;
-}
 
-const selectTheme = (theme: "light" | "dark") => {
     const themes = {
         light: createTheme({
             palette: {
@@ -47,7 +44,7 @@ const selectTheme = (theme: "light" | "dark") => {
                 },
             },
             components: {
-                ...getOverrides(theme)
+                ...overrides
             }
         }),
         dark: createTheme({
@@ -67,7 +64,7 @@ const selectTheme = (theme: "light" | "dark") => {
                 }
             },
             components: {
-                ...getOverrides(theme)
+                ...overrides
             }
         })
     };
