@@ -12,7 +12,6 @@ function BlankPage() {
       display="flex"
       justifyContent="center"
       alignItems="center"
-      bgcolor={"secondary.main"}
     >
       <Typography variant="h4" color="info.contrastText" sx={{userSelect: "none"}}>{t("blank_prompt")}</Typography>
     </Box>
