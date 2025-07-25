@@ -1,5 +1,6 @@
 {
   "title": "Rescue Notebook",
+  "blank_prompt": "Select a file",
   "nav": {
     "version": "version: ",
     "root": "Root",

@@ -1,5 +1,6 @@
 {
   "title": "Rescue Notebook",
+  "blank_prompt": "选择一个文档",
   "nav": {
     "version": "版本：",
     "root": "根文件夹",

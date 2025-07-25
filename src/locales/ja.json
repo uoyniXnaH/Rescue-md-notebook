@@ -1,5 +1,6 @@
 {
   "title": "Rescue Notebook",
+  "blank_prompt": "ファイルを選んでください",
   "nav": {
     "version": "バージョン：",
     "root": "ルーツ",

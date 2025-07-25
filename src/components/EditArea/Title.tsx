@@ -2,10 +2,11 @@ import { Box, Stack, IconButton, Typography } from "@mui/material";
 import SaveIcon from '@mui/icons-material/Save';
 import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
 
-import { useDisplayStore } from "../../store";
-
-function Title() {
-  const currentFilePath = useDisplayStore((state) => state.currentFilePath);
+type TitleProps = {
+  currentFilePath: string;
+};
+function Title(props: TitleProps) {
+  const { currentFilePath } = props;
   const filename = currentFilePath.split('/').pop() || "Untitled";
 
   const handleSave = () => {
