@@ -1,6 +1,6 @@
-import { Box, Stack, Typography, Button } from "@mui/material";
+import { Box, Stack, Typography, IconButton } from "@mui/material";
 import HomeIcon from '@mui/icons-material/Home';
-import SettingsIcon from '@mui/icons-material/Settings';
+import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
 
 import FileTree from "./FileTree/FileTree";
 import SettingArea from "./SettingArea";
@@ -13,10 +13,15 @@ function NavBar() {
     <Box width="18%" maxWidth={360} sx={{ bgcolor: "primary.main", color: "primary.contrastText" }}>
       <Stack py={1.5} px={2} spacing={2} height="100%">
         {/* Title */}
-        <Box>
-          <Typography variant="h6">{t("title")}</Typography>
-          <Typography color="info.contrastText" variant="body2">{t("nav.version")}{VERSION}</Typography>
-        </Box>
+        <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
+          <Box>
+            <Typography variant="h6">{t("title")}</Typography>
+            <Typography color="info.contrastText" variant="body2">{t("nav.version")}{VERSION}</Typography>
+          </Box>
+          <Box>
+            <IconButton size="small"><CloseFullscreenIcon /></IconButton>
+          </Box>
+        </Stack>
         {/* Root file tree */}
         <Box flexGrow={1}>
           <Stack direction="row" spacing={1} alignItems="center">

@@ -1,7 +1,7 @@
 export const VERSION = "0.1.0";
 
 export const LANGUAGE = {
-    en: "English",
+    sc: "简体中文",
     ja: "日本語",
-    sc: "简体中文"
+    en: "English",
 };
