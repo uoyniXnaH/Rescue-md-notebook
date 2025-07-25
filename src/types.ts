@@ -18,8 +18,8 @@ export type displayStoreType = {
   isNavBarShown: boolean;
   isEditAreaShown: boolean;
   isSettingShown: boolean;
-  currentFilePath: string;
-  currentFileContents: string;
+  currentFilePath: string | undefined;
+  currentFileContents: string | undefined;
   setIsNavBarShown: (isShown: boolean) => void;
   setIsEditAreaShown: (isShown: boolean) => void;
   setIsSettingShown: (isShown: boolean) => void;
