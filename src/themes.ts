@@ -14,7 +14,7 @@ const selectTheme = (theme: "light" | "dark") => {
                     }),
                 } : {},
                 ul: {
-                    // listStyle: "none",
+                    listStyle: "none",
                     paddingInlineStart: 0,
                 }
             },
