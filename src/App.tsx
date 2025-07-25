@@ -4,7 +4,7 @@ import {ThemeProvider} from "@mui/material/styles";
 
 import selectTheme from "./themes";
 import NavBar from "./components/NavBar/NavBar";
-import EditArea from "./components/EditArea";
+import EditArea from "./components/EditArea/EditArea";
 import ViewArea from "./components/ViewArea";
 import { useTranslation } from "react-i18next";
 import { useSettingStore } from "./store";

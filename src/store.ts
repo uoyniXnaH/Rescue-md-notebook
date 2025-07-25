@@ -13,9 +13,11 @@ export const useDisplayStore = create<displayStoreType>()((set) => ({
     isNavBarShown: true,
     isEditAreaShown: true,
     isSettingShown: false,
-    currentFile: "",
+    currentFilePath: "",
+    currentFileContents: "",
     setIsNavBarShown: (isShown) => set({ isNavBarShown: isShown }),
     setIsEditAreaShown: (isShown) => set({ isEditAreaShown: isShown }),
     setIsSettingShown: (isShown) => set({ isSettingShown: isShown }),
-    setCurrentFile: (filePath) => set({ currentFile: filePath }),
+    setCurrentFilePath: (filePath) => set({ currentFilePath: filePath }),
+    setCurrentFileContents: (contents) => set({ currentFileContents: contents }),
 }));
