@@ -10,4 +10,17 @@ export type languageEnum = "en" | "sc" | "ja";
 export type settingStoreType = {
   theme: themeEnum;
   language: languageEnum;
+  setTheme: (theme: themeEnum) => void;
+  setLanguage: (language: languageEnum) => void;
+}
+
+export type displayStoreType = {
+  isNavBarShown: boolean;
+  isEditAreaShown: boolean;
+  isSettingShown: boolean;
+  currentFile: string;
+  setIsNavBarShown: (isShown: boolean) => void;
+  setIsEditAreaShown: (isShown: boolean) => void;
+  setIsSettingShown: (isShown: boolean) => void;
+  setCurrentFile: (filePath: string) => void;
 }
