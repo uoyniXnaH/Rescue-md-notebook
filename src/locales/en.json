@@ -17,12 +17,6 @@
   },
   "settings": {
     "language": "Language",
-    "en": "English",
-    "sc": "简体中文",
-    "ja": "日本語",
-    "theme": "Theme",
-    "dark_mode": "Dark Mode",
-    "light_mode": "Light Mode",
     "path": "Root path"
   }
 }

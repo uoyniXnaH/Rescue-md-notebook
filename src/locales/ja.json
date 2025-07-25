@@ -17,12 +17,6 @@
   },
   "settings": {
     "language": "言語",
-    "en": "English",
-    "sc": "简体中文",
-    "ja": "日本語",
-    "theme": "テーマ",
-    "dark_mode": "ダークモード",
-    "light_mode": "ライトモード",
     "path": "ルーツパス"
   }
 }
