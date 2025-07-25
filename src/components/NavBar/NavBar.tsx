@@ -3,6 +3,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import SettingsIcon from '@mui/icons-material/Settings';
 
 import FileTree from "./FileTree/FileTree";
+import SettingArea from "./SettingArea";
 import { useTranslation } from "react-i18next";
 import { VERSION } from "../../Defines";
 
@@ -27,11 +28,7 @@ function NavBar() {
           <FileTree />
         </Box>
         {/* Settings */}
-        <Box maxHeight={300}>
-          <Button startIcon={<SettingsIcon />} color="info" size="large">
-            {t("nav.settings")}
-          </Button>
-        </Box>
+        <SettingArea />
       </Stack>
     </Box>
   );
