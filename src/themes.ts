@@ -2,7 +2,7 @@ import { createTheme } from "@mui/material/styles";
 import { grey } from "@mui/material/colors";
 import { darkScrollbar } from "@mui/material";
 
-const selectTheme = (theme: "light" | "dark") => {
+export const selectTheme = (theme: "light" | "dark") => {
     const overrides = {
         MuiCssBaseline: {
             styleOverrides: {
@@ -12,11 +12,7 @@ const selectTheme = (theme: "light" | "dark") => {
                         thumb: grey[600],
                         active: grey[500]
                     }),
-                } : {},
-                ul: {
-                    listStyle: "none",
-                    paddingInlineStart: 0,
-                }
+                } : {}
             },
         },
         MuiSvgIcon: {
@@ -70,5 +66,3 @@ const selectTheme = (theme: "light" | "dark") => {
     };
     return themes[theme];
 }
-
-export default selectTheme;

@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { Stack, Box, CssBaseline } from "@mui/material";
-import {ThemeProvider} from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 
-import selectTheme from "./themes";
+import { selectTheme } from "./themes";
 import NavBar from "./components/NavBar/NavBar";
 import EditArea from "./components/EditArea/EditArea";
 import ViewArea from "./components/ViewArea";
