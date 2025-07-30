@@ -1,6 +1,7 @@
 import { create } from "zustand";
 
 import { settingStoreType, themeEnum, languageEnum, displayStoreType } from "./types";
+import { dummyContents } from "./dummy";
 
 export const useSettingStore = create<settingStoreType>()((set) => ({
     theme: "dark",
@@ -13,8 +14,8 @@ export const useDisplayStore = create<displayStoreType>()((set) => ({
     isNavBarShown: true,
     isEditAreaShown: true,
     isSettingShown: false,
-    currentFilePath: undefined,
-    currentFileContents: undefined,
+    currentFilePath: "undefined",
+    currentFileContents: dummyContents,
     setIsNavBarShown: (isShown) => set({ isNavBarShown: isShown }),
     setIsEditAreaShown: (isShown) => set({ isEditAreaShown: isShown }),
     setIsSettingShown: (isShown) => set({ isSettingShown: isShown }),
