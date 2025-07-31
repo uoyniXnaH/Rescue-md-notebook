@@ -20,7 +20,7 @@ function EditArea() {
             placeholder="Start writing your notes..."
             rows={35}
             value={currentFileContents}
-            sx={{ borderRadius: 1 }}
+            sx={{ borderRadius: 1, bgcolor: "primary.main" }}
           />
         </>
       ) : (
