@@ -16,6 +16,7 @@ Test \`code inline\`.
 The following is a code block:
 \`\`\`js
 import ja from "./locales/ja.json";
+// here comes a very long line that should be wrapped in the markdown viewer to test the wrapping functionality of the code block in the markdown viewer. This is a very long line that should be wrapped in the markdown viewer to test the wrapping functionality of the code block in the markdown viewer.
 
 const resources = {
     sc: {

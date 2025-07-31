@@ -44,6 +44,9 @@ export const selectTheme = (theme: "light" | "dark") => {
                         active: grey[500]
                     }),
                 } : {},
+                ".markdown-container": {
+                    overflowY: "auto",
+                },
                 ".markdown-body": {
                     backgroundColor: palettes[theme].primary.main,
                     h1: {
