@@ -15,7 +15,7 @@ const palettes = {
         info: {
             main: grey[500],
             contrastText: "#666"
-        },
+        }
     },
     dark: {
         primary: {
@@ -80,18 +80,13 @@ export const selectTheme = (theme: "light" | "dark") => {
                         borderColor: palettes[theme].secondary.main
                     },
                     pre: {
-                        padding: "16px 12px",
+                        padding: 0,
                         backgroundColor: palettes[theme].secondary.main,
                         borderRadius: 4,
                         overflowX: "auto",
                         fontSize: "0.9rem",
-                        code: {
-                            padding: 0,
-                            border: "none",
-                            backgroundColor: "transparent",
-                            fontSize: "inherit",
-                            whiteSpace: "pre-wrap",
-                            wordBreak: "break-all",
+                        code:{
+                            fontSize: "1em"
                         }
                     },
                     code: {
