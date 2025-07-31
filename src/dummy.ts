@@ -15,7 +15,40 @@ Some checkbox
 Test \`code inline\`.
 The following is a code block:
 \`\`\`js
-console.log("Hello, world!");
+import ja from "./locales/ja.json";
+
+const resources = {
+    sc: {
+      translation: sc
+    },
+    ja: {
+      translation: ja
+    },
+    en: {
+      translation: en
+    }
+  };
+
+  i18n
+  .use(initReactI18next) // passes i18n down to react-i18next
+  .init({
+    resources,
+    fallbackLng: "en",
+    lng: "en", 
+    interpolation: {
+      escapeValue: false // react already safes from xss
+    }
+  });
+
+  export default i18n;
+\`\`\`
+
+\`\`\`python
+class Solution:
+    def isPalindrome(self, x: int) -> bool:
+        x_str = f"{x}"
+        rts_x = x_str[::-1]
+        return x_str == rts_x
 \`\`\`
 
 This is a [link](https://example.com).
