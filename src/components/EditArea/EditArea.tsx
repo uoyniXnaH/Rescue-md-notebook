@@ -2,7 +2,7 @@ import { Box, TextField } from "@mui/material";
 
 import Title from "./Title";
 import BlankPage from "../BlankPage";
-import { useDisplayStore } from "../../store";
+import { useDisplayStore } from "@store/store";
 
 function EditArea() {
   const currentFilePath = useDisplayStore((state) => state.currentFilePath);

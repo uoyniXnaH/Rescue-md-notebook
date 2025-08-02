@@ -5,7 +5,7 @@ import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
 import FileTree from "./FileTree/FileTree";
 import SettingArea from "./SettingArea";
 import { useTranslation } from "react-i18next";
-import { VERSION } from "../../Defines";
+import { VERSION } from "@src/Defines";
 
 function NavBar() {
   const { t } = useTranslation();

@@ -3,7 +3,7 @@ import { Box, Stack, Typography } from "@mui/material";
 import { NodeModel } from "@minoru/react-dnd-treeview";
 
 import TypeIcon from "./TypeIcon";
-import { NodeData } from "../../../types";
+import { NodeData } from "@type/types";
 
 type Props = {
   node: NodeModel<NodeData>;

@@ -11,7 +11,7 @@ import { DndProvider } from "react-dnd";
 import CustomNode from "./CustomNode";
 import CustomDragPreview from "./CustomDragPreview";
 import SampleData from "./sample_data.json";
-import { NodeData } from "../../../types";
+import { NodeData } from "@type/types";
 import styles from "./FileTree.module.css";
 
 type Props = {

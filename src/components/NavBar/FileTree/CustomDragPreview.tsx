@@ -3,7 +3,7 @@ import { DragLayerMonitorProps } from "@minoru/react-dnd-treeview";
 import { Box, Stack, Typography } from "@mui/material";
 
 import TypeIcon from "./TypeIcon";
-import { NodeData } from "../../../types";
+import { NodeData } from "@type/types";
 
 type Props = {
   monitorProps: DragLayerMonitorProps<NodeData>;

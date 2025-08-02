@@ -4,7 +4,7 @@ import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import ArticleIcon from '@mui/icons-material/Article';
 
-import { NodeEnum } from "../../../types";
+import { NodeEnum } from "@type/types";
 
 type Props = {
     fileType: NodeEnum;

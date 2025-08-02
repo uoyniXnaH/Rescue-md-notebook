@@ -5,8 +5,8 @@ import { Prism } from 'react-syntax-highlighter';
 import { atomDark, prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 import BlankPage from "./BlankPage";
-import { useDisplayStore } from "../store";
-import { useSettingStore } from "../store";
+import { useDisplayStore } from "@store/store";
+import { useSettingStore } from "@store/store";
 
 function ViewArea() {
   const currentFilePath = useDisplayStore((state) => state.currentFilePath);

@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
-import { settingStoreType, themeEnum, languageEnum, displayStoreType } from "./types";
-import { dummyContents } from "./dummy";
+import { settingStoreType, themeEnum, languageEnum, displayStoreType } from "@type/types";
+import { dummyContents } from "../dummy";
 
 export const useSettingStore = create<settingStoreType>()((set) => ({
     theme: "dark",

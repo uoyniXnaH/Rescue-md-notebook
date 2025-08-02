@@ -3,8 +3,8 @@ import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LanguageIcon from '@mui/icons-material/Language';
 
-import { useSettingStore } from "../../store";
-import { LANGUAGE } from "../../Defines";
+import { useSettingStore } from "@store/store";
+import { LANGUAGE } from "@src/Defines";
 
 function SettingArea() {
   const theme = useSettingStore((state) => state.theme);
