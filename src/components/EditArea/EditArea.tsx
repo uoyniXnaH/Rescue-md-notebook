@@ -13,15 +13,18 @@ function EditArea() {
       {currentFilePath ? (
         <>
           <Title currentFilePath={currentFilePath} />
-          <TextField
-            multiline
-            fullWidth
-            variant="outlined"
-            placeholder="Start writing your notes..."
-            rows={35}
-            value={currentFileContents}
-            sx={{ borderRadius: 1, bgcolor: "primary.main" }}
-          />
+          <Box height="93%" overflow="auto" bgcolor="primary.main" pb={40} borderRadius={1}>
+            <TextField
+              multiline
+              fullWidth
+              focused
+              variant="outlined"
+              placeholder="Start writing your notes..."
+              // rows={35}
+              value={currentFileContents}
+              // sx={{ borderRadius: 1, bgcolor: "primary.main" }}
+            />
+          </Box>
         </>
       ) : (
         <BlankPage />

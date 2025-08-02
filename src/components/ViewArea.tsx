@@ -14,7 +14,7 @@ function ViewArea() {
   const theme = useSettingStore((state) => state.theme);
  
   return (
-    <Box width="41%" height="100%" maxWidth={788} px={1.5} className="markdown-body markdown-container">
+    <Box width="41%" height="100%" maxWidth={788} px={1.5} pb={40} className="markdown-body markdown-container">
       {currentFilePath ? (
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
