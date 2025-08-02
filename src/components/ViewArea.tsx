@@ -19,6 +19,9 @@ function ViewArea() {
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
           components={{
+            input({ node, type, disabled, ...props }) {
+              return <input type={type} disabled={type === 'checkbox' ? false : disabled} {...props} />;
+            },
             code({ node, inline, className, children, ...props }) {
               const match = /language-(\w+)/.exec(className || '');
               return !inline && match ? (
