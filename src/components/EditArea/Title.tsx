@@ -2,12 +2,15 @@ import { Box, Stack, IconButton, Typography } from "@mui/material";
 import SaveIcon from '@mui/icons-material/Save';
 import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
 
+import { useDisplayStore } from "@store/store";
+
 type TitleProps = {
   currentFilePath: string;
 };
 function Title(props: TitleProps) {
   const { currentFilePath } = props;
   const filename = currentFilePath.split('/').pop() || "Untitled";
+  const setIsEditAreaShown = useDisplayStore((state) => state.setIsEditAreaShown);
 
   const handleSave = () => {
     console.log("save")
@@ -22,7 +25,7 @@ function Title(props: TitleProps) {
             <SaveIcon />
           </IconButton>
         </Stack>
-        <IconButton size="small">
+        <IconButton size="small" onClick={() => setIsEditAreaShown(false)}>
           <CloseFullscreenIcon />
         </IconButton>
       </Stack>

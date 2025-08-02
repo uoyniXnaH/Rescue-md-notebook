@@ -5,12 +5,14 @@ import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
 import FileTree from "./FileTree/FileTree";
 import SettingArea from "./SettingArea";
 import { useTranslation } from "react-i18next";
+import { useDisplayStore } from "@store/store";
 import { VERSION } from "@src/Defines";
 
 function NavBar() {
   const { t } = useTranslation();
+  const setIsNavBarShown = useDisplayStore((state) => state.setIsNavBarShown);
   return (
-    <Box width="18%" maxWidth={360} sx={{ bgcolor: "primary.main", color: "primary.contrastText" }}>
+    <Box width="18%" maxWidth={360} borderRight="1px solid" borderColor="secondary.main" sx={{ bgcolor: "primary.main", color: "primary.contrastText" }}>
       <Stack py={1.5} px={2} spacing={2} height="100%">
         {/* Title */}
         <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
@@ -19,7 +21,7 @@ function NavBar() {
             <Typography color="info.contrastText" variant="body2">{t("nav.version")}{VERSION}</Typography>
           </Box>
           <Box>
-            <IconButton size="small"><CloseFullscreenIcon /></IconButton>
+            <IconButton size="small" onClick={() => setIsNavBarShown(false)}><CloseFullscreenIcon /></IconButton>
           </Box>
         </Stack>
         {/* Root file tree */}

@@ -9,7 +9,7 @@ function EditArea() {
   const currentFileContents = useDisplayStore((state) => state.currentFileContents);
 
   return (
-    <Box width="41%" maxWidth={788} px={2} sx={{ bgcolor: "secondary.main", color: "secondary.contrastText" }}>
+    <Box width="41%" flexBasis={788} maxWidth={788} px={2} sx={{ bgcolor: "secondary.main", color: "secondary.contrastText" }}>
       {currentFilePath ? (
         <>
           <Title currentFilePath={currentFilePath} />

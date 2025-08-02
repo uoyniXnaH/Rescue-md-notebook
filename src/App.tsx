@@ -3,6 +3,7 @@ import { Stack, Box, CssBaseline } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 
 import { selectTheme } from "./themes";
+import SideBar from "./components/SideBar";
 import NavBar from "./components/NavBar/NavBar";
 import EditArea from "./components/EditArea/EditArea";
 import ViewArea from "./components/ViewArea";
@@ -26,8 +27,9 @@ function App() {
       <CssBaseline enableColorScheme />
       <Box width="100%" height="100vh">
         <Stack direction="row" height="100%">
-          <NavBar />
-          <EditArea />
+          {(!isNavBarShown || !isEditAreaShown) && <SideBar />}
+          {isNavBarShown && <NavBar />}
+          {isEditAreaShown && <EditArea />}
           <ViewArea />
         </Stack>
       </Box>
