@@ -4,9 +4,10 @@
   "nav": {
     "version": "version: ",
     "root": "Root",
-    "new_folder": "New Folder",
-    "new_calendar": "New Calendar",
-    "new_file": "New File",
+    "new": "New ",
+    "folder": "Folder",
+    "calendar": "Calendar",
+    "file": "File",
     "settings": "Settings",
     "about": "About"
   },

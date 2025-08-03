@@ -4,9 +4,10 @@
   "nav": {
     "version": "版本：",
     "root": "根文件夹",
-    "new_folder": "新建文件夹",
-    "new_calendar": "新建日历",
-    "new_file": "新建文件",
+    "new": "新建",
+    "folder": "文件夹",
+    "calendar": "日历",
+    "file": "文档",
     "settings": "设置",
     "about": "关于"
   },

@@ -5,3 +5,8 @@ export const LANGUAGE = {
     ja: "日本語",
     en: "English",
 };
+
+export const NODE_TYPE = [
+    "folder",
+    "file"
+]

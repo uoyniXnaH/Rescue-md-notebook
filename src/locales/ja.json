@@ -4,9 +4,10 @@
   "nav": {
     "version": "バージョン：",
     "root": "ルーツ",
-    "new_folder": "新しいフォルダー",
-    "new_calendar": "新しいカレンダー",
-    "new_file": "新しいファイル",
+    "new": "新規",
+    "folder": "フォルダー",
+    "calendar": "カレンダー",
+    "file": "ファイル",
     "settings": "設定",
     "about": "このアプリについて"
   },
