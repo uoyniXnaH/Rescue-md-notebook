@@ -26,3 +26,8 @@ export type displayStoreType = {
     setCurrentFilePath: (filePath: string) => void;
     setCurrentFileContents: (contents: string) => void;
 }
+
+export type FileTreeStoreType = {
+    selectedNodeId: string | number | null;
+    setSelectedNodeId: (id: string | number | null) => void;
+}

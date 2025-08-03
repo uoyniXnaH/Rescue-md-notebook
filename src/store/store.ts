@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-import { settingStoreType, themeEnum, languageEnum, displayStoreType } from "@type/types";
+import { settingStoreType, themeEnum, languageEnum, displayStoreType, FileTreeStoreType } from "@type/types";
 import { dummyContents } from "../dummy";
 
 export const useSettingStore = create<settingStoreType>()((set) => ({
@@ -21,4 +21,9 @@ export const useDisplayStore = create<displayStoreType>()((set) => ({
     setIsSettingShown: (isShown) => set({ isSettingShown: isShown }),
     setCurrentFilePath: (filePath) => set({ currentFilePath: filePath }),
     setCurrentFileContents: (contents) => set({ currentFileContents: contents }),
+}));
+
+export const useFileTreeStore = create<FileTreeStoreType>()((set) => ({
+    selectedNodeId: null,
+    setSelectedNodeId: (id) => set({ selectedNodeId: id }),
 }));
