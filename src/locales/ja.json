@@ -4,6 +4,8 @@
   "nav": {
     "version": "バージョン：",
     "root": "ルーツ",
+    "change_root": "ルーツパスを変更",
+    "open_root": "ルーツパスを開く",
     "new": "新規",
     "folder": "フォルダー",
     "calendar": "カレンダー",

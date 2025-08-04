@@ -4,6 +4,8 @@
   "nav": {
     "version": "版本：",
     "root": "根文件夹",
+    "change_root": "更改根文件夹路径",
+    "open_root": "打开根文件夹",
     "new": "新建",
     "folder": "文件夹",
     "calendar": "日历",

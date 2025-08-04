@@ -4,6 +4,8 @@
   "nav": {
     "version": "version: ",
     "root": "Root",
+    "change_root": "Change root path",
+    "open_root": "Open root path",
     "new": "New ",
     "folder": "Folder",
     "calendar": "Calendar",
