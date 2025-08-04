@@ -22,15 +22,6 @@
   background-color: #e8f0fe;
 }
 
-.nodeRoot {
-  align-items: center;
-  display: grid;
-  grid-template-columns: auto auto 1fr auto;
-  height: 32px;
-  padding-inline-end: 8px;
-  border-bottom: solid 1px #eee;
-}
-
 .dragPreviewRoot {
   align-items: "center";
   background-color: #1967d2;
