@@ -8,7 +8,7 @@ import FileTree from "./FileTree/FileTree";
 import SettingArea from "./SettingArea";
 import { useTranslation } from "react-i18next";
 import { useDisplayStore } from "@store/store";
-import { VERSION } from "@src/Defines";
+import { VERSION, NODE_TYPE } from "@src/Defines";
 
 type RootMenuProps = {
   isOpen: boolean;
@@ -32,6 +32,11 @@ const RootMenu: React.FC<RootMenuProps> = (props: RootMenuProps) => {
       <MenuItem onClick={handleClose}>
         <Typography variant="body2">{t("nav.open_root")}</Typography>
       </MenuItem>
+      {NODE_TYPE.map((type) => (
+        <MenuItem key={type} onClick={handleClose}>
+          <Typography variant="body2">{t("nav.new")}{t(`nav.${type}`)}</Typography>
+        </MenuItem>
+      ))}
     </Menu>
   );
 }
