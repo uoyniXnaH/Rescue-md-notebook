@@ -5,6 +5,7 @@ import {
   getBackendOptions,
   MultiBackend,
   NodeModel,
+  DropOptions,
 } from "@minoru/react-dnd-treeview";
 import { DndProvider } from "react-dnd";
 
@@ -34,7 +35,10 @@ const Placeholder: React.FC<Props> = (props) => {
 
 export default function FileTree() {
   const [treeData, setTreeData] = React.useState<NodeModel<NodeData>[]>(SampleData as NodeModel<NodeData>[]);
-  const handleDrop = (newTreeData: NodeModel<NodeData>[]) => setTreeData(newTreeData);
+  const handleDrop = (newTreeData: NodeModel<NodeData>[], options: DropOptions<NodeData>) => {
+    console.log(`current parent:${options.dragSource?.parent}, new parent: ${options.dropTargetId}`);
+    setTreeData(newTreeData);
+  };
   return (
     <Box overflow="auto" height="95%" pl={1.5}>
       <DndProvider backend={MultiBackend} options={getBackendOptions()}>
