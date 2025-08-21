@@ -20,18 +20,36 @@ WIP
 ### Startup
 ```mermaid
 sequenceDiagram
+    actor user
     participant front
     participant back
     participant filesystem
     front->>back: get all gconfig
     back->>filesystem: open gconfig
-    filesystem->>back: current gconfig
-    back->>front: current gconfig
-    front->>back: get rconfig
-    back->>filesystem: open rconfig
-    filesystem->>back: current rconfig
-    back->>front: current rconfig
-    front->>front: create treeview
+    alt is gconfig exists
+        filesystem->>back: current gconfig
+        back->>front: current gconfig
+        front->>back: get rconfig
+        back->>filesystem: open rconfig
+        alt is rconfig exists
+            filesystem->>back: current rconfig
+        else
+            back->>filesystem: read directory structure
+            alt is read succeeded
+                back->>back: create rconfig
+                back->>filesystem: write rconfig
+                back->>front: current rconfig
+                front->>front: create treeview
+            else
+                back->>front: read root failed
+                front->>user: permission failed
+            end
+        end
+    else
+        back->>filesystem: create default gconfig
+        back->>front: no gconfig
+        front->>user: request root path
+    end
 ```
 
 ### Update root path
