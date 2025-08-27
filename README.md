@@ -29,10 +29,12 @@ sequenceDiagram
     alt is gconfig exists
         filesystem->>back: current gconfig
         back->>front: current gconfig
-        front->>back: get rconfig
+        back->>filesystem: switch to root path
         back->>filesystem: open rconfig
         alt is rconfig exists
             filesystem->>back: current rconfig
+            back->>front: current rconfig
+            front->>front: create treeview
         else
             back->>filesystem: read directory structure
             alt is read succeeded
@@ -47,7 +49,7 @@ sequenceDiagram
         end
     else
         back->>filesystem: create default gconfig
-        back->>front: no gconfig
+        back->>front: no root path
         front->>user: request root path
     end
 ```
@@ -60,13 +62,35 @@ sequenceDiagram
     participant back
     participant filesystem
     user->>front: update root path
-    front->>back: [cmd]set gconfig by key
+    front->>back: set gconfig by key
     back->>filesystem: open gconfig
-    filesystem->>back: current gconfig
+    alt is gconfig exists
+        filesystem->>back: current gconfig
+    else
+        back->>filesystem: create default gconfig
+    end
     back->>back: replace gconfig by key
     back->>filesystem: write new gconfig
-    back->>front: set result
-    front->>user: update result
+    back->>filesystem: switch to new root
+    back->>filesystem: open rconfig
+    alt is rconfig exists
+        filesystem->>back: current rconfig
+        back->>front: current rconfig
+        front->>front: create treeview
+        front->>user: update result
+    else
+        back->>filesystem: read directory structure
+        alt is read succeeded
+            back->>back: create rconfig
+            back->>filesystem: write rconfig
+            back->>front: current rconfig
+            front->>front: create treeview
+            front->>user: update result
+        else
+            back->>front: read root failed
+            front->>user: permission failed
+        end
+    end
 ```
 
 ### Filetree changed
