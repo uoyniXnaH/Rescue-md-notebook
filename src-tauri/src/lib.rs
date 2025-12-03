@@ -2,6 +2,9 @@ use std::fs::{File};
 use std::io::{BufReader, BufWriter};
 use serde_json::{Value, json, from_reader, to_writer};
 
+mod exceptions;
+mod gconfig;
+
 fn init_config() {
     // Define the config file path (in the same directory as the executable)
     let mut config_path = std::env::current_exe().expect("Failed to get current exe path");
@@ -78,6 +81,7 @@ pub fn run() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![get_config_by_key, set_config_by_key])
+        .invoke_handler(tauri::generate_handler![gconfig::get_gconfig])
         .plugin(tauri_plugin_opener::init())
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
