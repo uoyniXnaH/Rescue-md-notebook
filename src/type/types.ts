@@ -1,3 +1,7 @@
+/**
+ * Used in frontend
+ */
+
 export type NodeEnum = "file" | "folder" | "calendar";
 export type NodeData = {
     fileType: NodeEnum;
@@ -30,4 +34,18 @@ export type displayStoreType = {
 export type FileTreeStoreType = {
     selectedNodeId: string | number | null;
     setSelectedNodeId: (id: string | number | null) => void;
+}
+
+/**
+ * Used in commands
+ */
+export type BaseException = {
+    code: number;
+    message: String;
+}
+
+export type GlobalConfig = {
+    current_root: String;
+    color_mode: themeEnum;
+    language: languageEnum;
 }
