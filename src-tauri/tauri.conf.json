@@ -12,9 +12,10 @@
   "app": {
     "windows": [
       {
-        "title": "rescue-md-notebook",
+        "title": "Rescue Notebook",
         "width": 800,
-        "height": 600
+        "height": 600,
+        "dragDropEnabled": false
       }
     ],
     "security": {
