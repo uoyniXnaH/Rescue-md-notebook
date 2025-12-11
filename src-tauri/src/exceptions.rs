@@ -1,7 +1,6 @@
 use serde::{Serialize, Deserialize};
 
 // pub const FILE_NOT_FOUND: u16 = 404;
-pub const CANNOT_OPEN_FILE: u16 = 403;
 pub const CANNOT_CREATE_FILE: u16 = 406;
 pub const CANNOT_DELETE_FILE: u16 = 405;
 pub const READ_ERROR: u16 = 500;
