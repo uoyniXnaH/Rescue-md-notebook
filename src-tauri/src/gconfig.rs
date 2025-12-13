@@ -83,6 +83,9 @@ pub fn get_gconfig() -> Result<GlobalConfig, BaseException> {
         if let Some(v) = map.get("language").and_then(|v| v.as_str()) {
             gconfig.language = v.to_string();
         }
+    } else {
+        write_gconfig(&gconfig)?;
+        return Ok(gconfig);
     }
 
     write_gconfig(&gconfig)?;
