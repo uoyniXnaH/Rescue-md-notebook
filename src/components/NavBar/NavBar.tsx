@@ -3,11 +3,13 @@ import { Box, Stack, Typography, IconButton, Menu, MenuItem } from "@mui/materia
 import HomeIcon from '@mui/icons-material/Home';
 import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { open } from '@tauri-apps/plugin-dialog';
+import { invoke } from "@tauri-apps/api/core";
 
 import FileTree from "./FileTree/FileTree";
 import SettingArea from "./SettingArea";
 import { useTranslation } from "react-i18next";
-import { useDisplayStore } from "@store/store";
+import { useDisplayStore, useSettingStore } from "@store/store";
 import { VERSION, NODE_TYPE } from "@src/Defines";
 
 type RootMenuProps = {
@@ -17,6 +19,8 @@ type RootMenuProps = {
 };
 const RootMenu: React.FC<RootMenuProps> = (props: RootMenuProps) => {
   const { isOpen, anchorEl, handleClose } = props;
+  const setCurrentRoot = useSettingStore((state) => state.setCurrentRoot);
+  const getSettings = useSettingStore((state) => state.getSettings);
   const { t } = useTranslation();
 
   return (
@@ -26,7 +30,17 @@ const RootMenu: React.FC<RootMenuProps> = (props: RootMenuProps) => {
       onClose={handleClose}
       anchorEl={anchorEl}
     >
-      <MenuItem onClick={handleClose}>
+      <MenuItem component="label" onClick={async () => {
+        const selected = await open({
+          directory: true,
+          multiple: false,
+        });
+        if (selected && typeof selected === "string") {
+          setCurrentRoot(selected);
+          await invoke("set_gconfig", { config: getSettings() });
+        }
+        handleClose();
+      }}>
         <Typography variant="body2">{t("nav.change_root")}</Typography>
       </MenuItem>
       <MenuItem onClick={handleClose}>

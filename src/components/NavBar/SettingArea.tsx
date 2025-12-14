@@ -5,6 +5,7 @@ import LanguageIcon from '@mui/icons-material/Language';
 
 import { useSettingStore } from "@store/store";
 import { LANGUAGE } from "@src/Defines";
+import { invoke } from "@tauri-apps/api/core";
 
 function SettingArea() {
   const settings = useSettingStore((state) => state.settings);
@@ -18,9 +19,10 @@ function SettingArea() {
         <ToggleButtonGroup
           value={settings.color_mode}
           exclusive
-          onChange={(_, newTheme) => {
+          onChange={async (_, newTheme) => {
             if (newTheme) {
-              useSettingStore.setState({ theme: newTheme });
+              setTheme(newTheme);
+              await invoke("set_gconfig", { config: getSettings() });
             }
           }}
           aria-label="color-mode"
@@ -38,8 +40,11 @@ function SettingArea() {
         <Stack direction="row" alignItems="center" spacing={1}>
           <LanguageIcon />
           <Select
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
+            value={settings.language}
+            onChange={async (e) => {
+              setLanguage(e.target.value)
+              await invoke("set_gconfig", { config: getSettings() });
+            }}
             size="small"
           >
             {Object.keys(LANGUAGE).map((lang) => (
