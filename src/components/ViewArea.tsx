@@ -11,7 +11,7 @@ import { useSettingStore } from "@store/store";
 function ViewArea() {
   const currentFilePath = useDisplayStore((state) => state.currentFilePath);
   const currentFileContents = useDisplayStore((state) => state.currentFileContents);
-  const theme = useSettingStore((state) => state.theme);
+  const settings = useSettingStore((state) => state.settings);
  
   return (
     <Box height="100%" flexBasis={600} flexGrow={1} px={1.5} pb={40} className="markdown-body markdown-container">
@@ -26,7 +26,7 @@ function ViewArea() {
               const match = /language-(\w+)/.exec(className || '');
               return match ? (
                 <Prism
-                  style={ (theme === 'dark' ? atomDark : prism) as any }
+                  style={ (settings.color_mode === 'dark' ? atomDark : prism) as any }
                   className={'syntax-highlighter'}
                   customStyle={{  margin: 0, background: 'transparent' }}
                   showLineNumbers={true}

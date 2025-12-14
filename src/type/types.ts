@@ -12,8 +12,9 @@ export type NodeData = {
 export type themeEnum = "light" | "dark";
 export type languageEnum = "en" | "sc" | "ja";
 export type settingStoreType = {
-    theme: themeEnum;
-    language: languageEnum;
+    settings: GlobalConfig;
+    getSettings: () => GlobalConfig;
+    setCurrentRoot: (root: String) => void;
     setTheme: (theme: themeEnum) => void;
     setLanguage: (language: languageEnum) => void;
 }

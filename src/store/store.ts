@@ -1,16 +1,21 @@
 import { create } from "zustand";
 
-import { settingStoreType, themeEnum, languageEnum, displayStoreType, FileTreeStoreType } from "@type/types";
+import * as types from "@type/types";
 import { dummyContents } from "../dummy";
 
-export const useSettingStore = create<settingStoreType>()((set) => ({
-    theme: "dark",
-    language: "en",
-    setTheme: (theme: themeEnum) => set({ theme }),
-    setLanguage: (language: languageEnum) => set({ language }),
+export const useSettingStore = create<types.settingStoreType>()((set, get) => ({
+    settings: {
+        current_root: "",
+        color_mode: "dark",
+        language: "en"
+    },
+    getSettings: () => get().settings,
+    setCurrentRoot: (path: String) => set((state) => ({ settings: { ...state.settings, current_root: path } })),
+    setTheme: (theme: types.themeEnum) => set((state) => ({ settings: { ...state.settings, color_mode: theme } })),
+    setLanguage: (language: types.languageEnum) => set((state) => ({ settings: { ...state.settings, language: language } })),
 }));
 
-export const useDisplayStore = create<displayStoreType>()((set) => ({
+export const useDisplayStore = create<types.displayStoreType>()((set) => ({
     isNavBarShown: true,
     isEditAreaShown: true,
     isSettingShown: false,
@@ -23,7 +28,7 @@ export const useDisplayStore = create<displayStoreType>()((set) => ({
     setCurrentFileContents: (contents) => set({ currentFileContents: contents }),
 }));
 
-export const useFileTreeStore = create<FileTreeStoreType>()((set) => ({
+export const useFileTreeStore = create<types.FileTreeStoreType>()((set) => ({
     selectedNodeId: null,
     setSelectedNodeId: (id) => set({ selectedNodeId: id }),
 }));

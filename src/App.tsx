@@ -14,8 +14,7 @@ import { useDisplayStore } from "@store/store";
 import { GlobalConfig, BaseException } from "@type/types";
 
 function App() {
-  const theme = useSettingStore((state) => state.theme);
-  const language = useSettingStore((state) => state.language);
+  const settings = useSettingStore((state) => state.settings);
   const setTheme = useSettingStore((state) => state.setTheme);
   const setLanguage = useSettingStore((state) => state.setLanguage);
   const { i18n } = useTranslation();
@@ -23,17 +22,8 @@ function App() {
   const isEditAreaShown = useDisplayStore((state) => state.isEditAreaShown);
 
   useEffect(() => {
-    invoke<String>("test_command")
-    .then((msg: String) => {
-      console.log(msg)
-    })
-    .catch((err: unknown) => {
-      console.error(err)
-    })
-
     invoke<GlobalConfig>("get_gconfig")
     .then((gconfig: GlobalConfig) => {
-      console.log(gconfig)
       setTheme(gconfig.color_mode)
       setLanguage(gconfig.language)
     })
@@ -42,11 +32,11 @@ function App() {
     })
   }, []);
   useEffect(() => {
-    i18n.changeLanguage(language);
-  }, [language]);
+    i18n.changeLanguage(settings.language);
+  }, [settings.language]);
 
   return (
-    <ThemeProvider theme={selectTheme(theme)}>
+    <ThemeProvider theme={selectTheme(settings.color_mode)}>
       <CssBaseline enableColorScheme />
       <Box width="100%" height="100vh">
         <Stack direction="row" height="100%">

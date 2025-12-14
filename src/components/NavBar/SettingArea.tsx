@@ -7,15 +7,16 @@ import { useSettingStore } from "@store/store";
 import { LANGUAGE } from "@src/Defines";
 
 function SettingArea() {
-  const theme = useSettingStore((state) => state.theme);
-  const language = useSettingStore((state) => state.language);
+  const settings = useSettingStore((state) => state.settings);
+  const getSettings = useSettingStore((state) => state.getSettings);
+  const setTheme = useSettingStore((state) => state.setTheme);
   const setLanguage = useSettingStore((state) => state.setLanguage);
   return (
     <Box width="100%" height={60} alignSelf="center">
       <Stack height="100%" direction="row" spacing={4} alignItems="center" px={2}>
         {/* Theme Selector */}
         <ToggleButtonGroup
-          value={theme}
+          value={settings.color_mode}
           exclusive
           onChange={(_, newTheme) => {
             if (newTheme) {
