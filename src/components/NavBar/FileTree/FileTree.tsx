@@ -11,7 +11,7 @@ import { DndProvider } from "react-dnd";
 
 import CustomNode from "./CustomNode";
 import CustomDragPreview from "./CustomDragPreview";
-import SampleData from "./sample_data.json";
+import { useFileTreeStore } from '@store/store';
 import { NodeData } from "@type/types";
 import styles from "./FileTree.module.css";
 
@@ -34,17 +34,20 @@ const Placeholder: React.FC<Props> = (props) => {
 };
 
 export default function FileTree() {
-  const [treeData, setTreeData] = React.useState<NodeModel<NodeData>[]>(SampleData as NodeModel<NodeData>[]);
+  // const getFileTreeData = useFileTreeStore((state) => state.getFileTreeData);
+  const fileTreeData = useFileTreeStore((state) => state.fileTreeData);
+  const setFileTreeData = useFileTreeStore((state) => state.setFileTreeData);
   const handleDrop = (newTreeData: NodeModel<NodeData>[], options: DropOptions<NodeData>) => {
     console.log(`current parent:${options.dragSource?.parent}, new parent: ${options.dropTargetId}`);
-    setTreeData(newTreeData);
+    setFileTreeData(newTreeData);
   };
   return (
     <Box overflow="auto" height="95%" pl={1.5}>
+      {/* <Button variant="contained" onClick={()=>console.log(fileTreeData)}>Touch!</Button> */}
       <DndProvider backend={MultiBackend} options={getBackendOptions()}>
         <Box height="95%">
           <Tree
-            tree={treeData}
+            tree={fileTreeData}
             rootId={0}
             render={(node, { depth, isOpen, onToggle }) => (
               <CustomNode

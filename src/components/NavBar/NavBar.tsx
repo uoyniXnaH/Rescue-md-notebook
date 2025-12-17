@@ -9,7 +9,7 @@ import { invoke } from "@tauri-apps/api/core";
 import FileTree from "./FileTree/FileTree";
 import SettingArea from "./SettingArea";
 import { useTranslation } from "react-i18next";
-import { useDisplayStore, useSettingStore } from "@store/store";
+import { useDisplayStore, useSettingStore, useFileTreeStore } from "@store/store";
 import { VERSION, NODE_TYPE } from "@src/Defines";
 
 type RootMenuProps = {
@@ -21,6 +21,7 @@ const RootMenu: React.FC<RootMenuProps> = (props: RootMenuProps) => {
   const { isOpen, anchorEl, handleClose } = props;
   const setCurrentRoot = useSettingStore((state) => state.setCurrentRoot);
   const getSettings = useSettingStore((state) => state.getSettings);
+  const setFileTreeData = useFileTreeStore((state) => state.setFileTreeData);
   const { t } = useTranslation();
 
   return (
@@ -38,6 +39,13 @@ const RootMenu: React.FC<RootMenuProps> = (props: RootMenuProps) => {
         if (selected && typeof selected === "string") {
           setCurrentRoot(selected);
           await invoke("set_gconfig", { config: getSettings() });
+          await invoke("create_file_tree", { path: selected })
+          .then(async (d) => {
+            setFileTreeData(d as any[]);
+          })
+          .catch((err) => {
+            console.error("Error creating file tree:", err);
+          });
         }
         handleClose();
       }}>

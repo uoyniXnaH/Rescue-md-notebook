@@ -1,6 +1,7 @@
 /**
  * Used in frontend
  */
+import { NodeModel } from "@minoru/react-dnd-treeview";
 
 export type NodeEnum = "file" | "folder" | "calendar";
 export type NodeData = {
@@ -33,6 +34,9 @@ export type displayStoreType = {
 }
 
 export type FileTreeStoreType = {
+    fileTreeData: NodeModel<NodeData>[];
+    getFileTreeData: () => NodeModel<NodeData>[];
+    setFileTreeData: (data: NodeModel<NodeData>[]) => void;
     selectedNodeId: string | number | null;
     setSelectedNodeId: (id: string | number | null) => void;
 }

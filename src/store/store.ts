@@ -28,7 +28,10 @@ export const useDisplayStore = create<types.displayStoreType>()((set) => ({
     setCurrentFileContents: (contents) => set({ currentFileContents: contents }),
 }));
 
-export const useFileTreeStore = create<types.FileTreeStoreType>()((set) => ({
+export const useFileTreeStore = create<types.FileTreeStoreType>()((set, get) => ({
+    fileTreeData: [],
+    getFileTreeData: () => get().fileTreeData,
+    setFileTreeData: (data) => set({ fileTreeData: data }),
     selectedNodeId: null,
     setSelectedNodeId: (id) => set({ selectedNodeId: id }),
 }));
