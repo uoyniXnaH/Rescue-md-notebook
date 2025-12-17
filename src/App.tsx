@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Stack, Box, CssBaseline } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
+import { getCurrentWindow } from '@tauri-apps/api/window';
 import { invoke } from "@tauri-apps/api/core";
 
 import { selectTheme } from "./themes";
@@ -17,7 +18,7 @@ function App() {
   const settings = useSettingStore((state) => state.settings);
   const setTheme = useSettingStore((state) => state.setTheme);
   const setLanguage = useSettingStore((state) => state.setLanguage);
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const isNavBarShown = useDisplayStore((state) => state.isNavBarShown);
   const isEditAreaShown = useDisplayStore((state) => state.isEditAreaShown);
 
@@ -34,6 +35,17 @@ function App() {
   useEffect(() => {
     i18n.changeLanguage(settings.language);
   }, [settings.language]);
+  useEffect(() => {
+    invoke<GlobalConfig>("get_gconfig")
+    .then((gconfig: GlobalConfig) => {
+      if (gconfig.current_root && gconfig.current_root.length > 0) {
+        getCurrentWindow().setTitle(`${t("title")} - ${gconfig.current_root}`)
+        .catch((err) => {
+          console.error("Error setting window title:", err);
+        });
+      }
+    })
+  }, [settings.current_root]);
 
   return (
     <ThemeProvider theme={selectTheme(settings.color_mode)}>
