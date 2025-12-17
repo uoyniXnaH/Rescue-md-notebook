@@ -1,6 +1,9 @@
 mod exceptions;
 mod gconfig;
+mod rconfig;
+mod utils;
 use gconfig::*;
+use rconfig::*;
 
 #[tauri::command]
 fn test_command() -> String {
@@ -15,7 +18,8 @@ pub fn run() {
             test_command,
             get_gconfig_path,
             get_gconfig,
-            set_gconfig
+            set_gconfig,
+            create_file_tree,
         ])
         .plugin(tauri_plugin_opener::init())
         .run(tauri::generate_context!())
