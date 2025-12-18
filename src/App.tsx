@@ -10,7 +10,7 @@ import NavBar from "./components/NavBar/NavBar";
 import EditArea from "./components/EditArea/EditArea";
 import ViewArea from "./components/ViewArea";
 import { useTranslation } from "react-i18next";
-import { useSettingStore } from "@store/store";
+import { useSettingStore, useFileTreeStore } from "@store/store";
 import { useDisplayStore } from "@store/store";
 import { GlobalConfig, BaseException } from "@type/types";
 
@@ -18,6 +18,7 @@ function App() {
   const settings = useSettingStore((state) => state.settings);
   const setTheme = useSettingStore((state) => state.setTheme);
   const setLanguage = useSettingStore((state) => state.setLanguage);
+  const setFileTreeData = useFileTreeStore((state) => state.setFileTreeData);
   const { i18n, t } = useTranslation();
   const isNavBarShown = useDisplayStore((state) => state.isNavBarShown);
   const isEditAreaShown = useDisplayStore((state) => state.isEditAreaShown);
@@ -42,6 +43,13 @@ function App() {
         getCurrentWindow().setTitle(`${t("title")} - ${gconfig.current_root}`)
         .catch((err) => {
           console.error("Error setting window title:", err);
+        });
+        invoke("get_rconfig", { path: gconfig.current_root })
+        .then((rconfig) => {
+          setFileTreeData(rconfig as any[]);
+        })
+        .catch((err) => {
+          console.error("Error getting root config:", err);
         });
       }
     })

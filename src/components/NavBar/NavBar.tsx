@@ -39,7 +39,7 @@ const RootMenu: React.FC<RootMenuProps> = (props: RootMenuProps) => {
         if (selected && typeof selected === "string") {
           setCurrentRoot(selected);
           await invoke("set_gconfig", { config: getSettings() });
-          await invoke("create_file_tree", { path: selected })
+          await invoke("create_rconfig", { path: selected })
           .then(async (d) => {
             setFileTreeData(d as any[]);
           })
