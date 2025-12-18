@@ -5,7 +5,7 @@ use serde::{Serialize, Deserialize};
 use crate::exceptions::{*};
 
 #[derive(Serialize, Deserialize)]
-#[serde(rename_all(serialize = "camelCase"))]
+#[serde(rename_all(serialize = "camelCase", deserialize = "camelCase"))]
 struct TreeNodeData {
     file_type: String,
     file_path: String,

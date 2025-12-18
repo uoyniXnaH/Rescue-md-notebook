@@ -19,7 +19,8 @@ pub fn run() {
             get_gconfig_path,
             get_gconfig,
             set_gconfig,
-            create_file_tree,
+            create_rconfig,
+            get_rconfig
         ])
         .plugin(tauri_plugin_opener::init())
         .run(tauri::generate_context!())
