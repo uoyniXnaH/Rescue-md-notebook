@@ -32,14 +32,27 @@ struct TreeNode {
 #[derive(Serialize, Deserialize)]
 pub struct TreeData(Vec<TreeNode>);
 
+fn get_file_type(path: &Path) -> String {
+    if path.is_dir() {
+        return "folder".to_string();
+    } else {
+        return "file".to_string();
+    }
+}
+
 pub fn create_tree_by_path(path: &str) -> Result<TreeData, BaseException> {
     let mut nodes: Vec<TreeNode> = Vec::new();
-
+    const ACCEPTED_EXTENSIONS: [&str; 2] = ["md", "txt"];
     fn visit(path: &Path, parent: ParentId, nodes: &mut Vec<TreeNode>) -> Result<(), BaseException> {
         let rd = read_dir(path).map_err(|e| BaseException::new(&format!("read_dir error: {}", e), READ_ERROR))?;
         for entry_result in rd {
             let entry = entry_result.map_err(|e| BaseException::new(&format!("read_dir entry error: {}", e), READ_ERROR))?;
             let p = entry.path();
+            let is_dir = p.is_dir();
+            if !is_dir && !ACCEPTED_EXTENSIONS.contains(&p.extension().and_then(|s| s.to_str()).unwrap_or("")) {
+                continue;
+            }
+
             let name = p.file_name()
                 .and_then(|s| s.to_str())
                 .unwrap_or("")
@@ -58,7 +71,7 @@ pub fn create_tree_by_path(path: &str) -> Result<TreeData, BaseException> {
                 droppable: is_dir,
                 text: name,
                 data: TreeNodeData {
-                    file_type: if is_dir { "folder".to_string() } else { "file".to_string() },
+                    file_type: get_file_type(&p),
                     file_path: p.to_string_lossy().into_owned(),
                     is_open: Some(false)
                 }
