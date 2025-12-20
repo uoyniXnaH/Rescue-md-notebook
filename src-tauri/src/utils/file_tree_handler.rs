@@ -1,6 +1,7 @@
 use std::fs::{read_dir};
 use std::path::Path;
 use serde::{Serialize, Deserialize};
+use uuid::Uuid;
 
 use crate::exceptions::{*};
 
@@ -12,10 +13,17 @@ struct TreeNodeData {
     is_open: Option<bool>
 }
 
+#[derive(Serialize, Deserialize, Clone)]
+#[serde(untagged)]
+enum ParentId {
+    Root(u8),
+    Id(Uuid)
+}
+
 #[derive(Serialize, Deserialize)]
 struct TreeNode {
-    id: u16,
-    parent: u16,
+    id: Uuid,
+    parent: ParentId,
     droppable: bool,
     text: String,
     data: TreeNodeData
@@ -27,7 +35,7 @@ pub struct TreeData(Vec<TreeNode>);
 pub fn create_tree_by_path(path: &str) -> Result<TreeData, BaseException> {
     let mut nodes: Vec<TreeNode> = Vec::new();
 
-    fn visit(path: &Path, parent: u16, nodes: &mut Vec<TreeNode>) -> Result<(), BaseException> {
+    fn visit(path: &Path, parent: ParentId, nodes: &mut Vec<TreeNode>) -> Result<(), BaseException> {
         let rd = read_dir(path).map_err(|e| BaseException::new(&format!("read_dir error: {}", e), READ_ERROR))?;
         for entry_result in rd {
             let entry = entry_result.map_err(|e| BaseException::new(&format!("read_dir entry error: {}", e), READ_ERROR))?;
@@ -39,15 +47,14 @@ pub fn create_tree_by_path(path: &str) -> Result<TreeData, BaseException> {
 
             let is_dir = p.is_dir();
 
-            let id = nodes.len() + 1;
-            if id > (u16::MAX as usize) {
+            if nodes.len() > (u16::MAX as usize) {
                 return Err(BaseException::new("too many nodes", TOO_MANY_NODES));
             }
-            let id_u16 = id as u16;
+            let id = Uuid::new_v4();
 
             let node = TreeNode {
-                id: id_u16,
-                parent: parent,
+                id: id,
+                parent: parent.clone(),
                 droppable: is_dir,
                 text: name,
                 data: TreeNodeData {
@@ -60,7 +67,7 @@ pub fn create_tree_by_path(path: &str) -> Result<TreeData, BaseException> {
             nodes.push(node);
 
             if is_dir {
-                visit(&p, id_u16, nodes)?;
+                visit(&p, ParentId::Id(id), nodes)?;
             }
         }
         Ok(())
@@ -72,7 +79,7 @@ pub fn create_tree_by_path(path: &str) -> Result<TreeData, BaseException> {
     }
 
     if root_path.is_dir() {
-        visit(root_path, 0, &mut nodes)?;
+        visit(root_path, ParentId::Root(0), &mut nodes)?;
     }
 
     return Ok(TreeData(nodes));
