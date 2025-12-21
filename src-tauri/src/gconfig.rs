@@ -38,8 +38,7 @@ fn write_gconfig(config: &GlobalConfig) -> Result<(), BaseException> {
     return Ok(());
 }
 
-#[tauri::command]
-pub fn get_gconfig_path() -> Result<std::path::PathBuf, BaseException> {
+fn get_gconfig_path() -> Result<std::path::PathBuf, BaseException> {
     let mut config_path = current_exe().map_err(|_| {
         return BaseException::new("Failed to get current exe path", EXE_PATH_NOT_FOUND);
     })?;
