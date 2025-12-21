@@ -13,7 +13,8 @@ pub fn run() {
             get_gconfig,
             set_gconfig,
             create_rconfig,
-            get_rconfig
+            get_rconfig,
+            set_rconfig
         ])
         .plugin(tauri_plugin_opener::init())
         .run(tauri::generate_context!())

@@ -56,3 +56,8 @@ pub fn get_rconfig(path: String) -> Result<TreeData, BaseException> {
     })?;
     return Ok(rconfig);
 }
+
+#[tauri::command]
+pub fn set_rconfig(path: String, rconfig: TreeData) -> Result<(), BaseException> {
+    return write_rconfig(path, &rconfig);
+}
