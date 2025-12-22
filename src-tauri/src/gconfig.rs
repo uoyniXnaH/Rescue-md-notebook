@@ -47,6 +47,16 @@ fn get_gconfig_path() -> Result<std::path::PathBuf, BaseException> {
     return Ok(config_path);
 }
 
+pub fn get_gconfig_item(key: &str) -> Result<String, BaseException> {
+    let gconfig = get_gconfig()?;
+    match key {
+        "current_root" => Ok(gconfig.current_root),
+        "color_mode" => Ok(gconfig.color_mode),
+        "language" => Ok(gconfig.language),
+        _ => Err(BaseException::new("Invalid config key", INVALID_PARAMETER))
+    }
+}
+
 #[tauri::command]
 pub fn get_gconfig() -> Result<GlobalConfig, BaseException> {
     let config_path = get_gconfig_path()?;
