@@ -1,9 +1,11 @@
 mod exceptions;
 mod gconfig;
 mod rconfig;
+mod nodes;
 mod utils;
 use gconfig::*;
 use rconfig::*;
+use nodes::*;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -13,7 +15,9 @@ pub fn run() {
             get_gconfig,
             set_gconfig,
             get_rconfig,
-            set_rconfig
+            set_rconfig,
+            move_to_trash,
+            move_node
         ])
         .plugin(tauri_plugin_opener::init())
         .run(tauri::generate_context!())
