@@ -6,24 +6,26 @@ use serde::{Serialize, Deserialize};
 
 use crate::exceptions::{*};
 
-// #[derive(Serialize, Deserialize)]
-// enum ColorMode {
-//     Light,
-//     Dark,
-// }
+#[derive(Serialize, Deserialize)]
+#[serde(rename_all(serialize = "lowercase", deserialize = "lowercase"))]
+enum ColorMode {
+    Light,
+    Dark,
+}
 
-// #[derive(Serialize, Deserialize)]
-// enum Language {
-//     En,
-//     Ja,
-//     Sc,
-// }
+#[derive(Serialize, Deserialize)]
+#[serde(rename_all(serialize = "lowercase", deserialize = "lowercase"))]
+enum Language {
+    En,
+    Ja,
+    Sc,
+}
 
 #[derive(Serialize, Deserialize)]
 pub struct GlobalConfig {
     current_root: String,
-    color_mode: String,
-    language: String
+    color_mode: ColorMode,
+    language: Language
 }
 
 fn write_gconfig(config: &GlobalConfig) -> Result<(), BaseException> {
@@ -51,8 +53,15 @@ pub fn get_gconfig_item(key: &str) -> Result<String, BaseException> {
     let gconfig = get_gconfig()?;
     match key {
         "current_root" => Ok(gconfig.current_root),
-        "color_mode" => Ok(gconfig.color_mode),
-        "language" => Ok(gconfig.language),
+        "color_mode" => Ok(match gconfig.color_mode {
+            ColorMode::Light => String::from("light"),
+            ColorMode::Dark => String::from("dark"),
+        }),
+        "language" => Ok(match gconfig.language {
+            Language::En => String::from("en"),
+            Language::Ja => String::from("ja"),
+            Language::Sc => String::from("sc"),
+        }),
         _ => Err(BaseException::new("Invalid config key", INVALID_PARAMETER))
     }
 }
@@ -62,8 +71,8 @@ pub fn get_gconfig() -> Result<GlobalConfig, BaseException> {
     let config_path = get_gconfig_path()?;
     let mut gconfig = GlobalConfig {
         current_root: String::from(""),
-        color_mode: String::from("dark"),
-        language: String::from("en")
+        color_mode: ColorMode::Dark,
+        language: Language::En
     };
     if !config_path.exists() {
         write_gconfig(&gconfig)?;
@@ -87,10 +96,19 @@ pub fn get_gconfig() -> Result<GlobalConfig, BaseException> {
             gconfig.current_root = v.to_string();
         }
         if let Some(v) = map.get("color_mode").and_then(|v| v.as_str()) {
-            gconfig.color_mode = v.to_string();
+            gconfig.color_mode = match v {
+                "light" => ColorMode::Light,
+                "dark" => ColorMode::Dark,
+                _ => ColorMode::Dark
+            };
         }
         if let Some(v) = map.get("language").and_then(|v| v.as_str()) {
-            gconfig.language = v.to_string();
+            gconfig.language = match v {
+                "en" => Language::En,
+                "ja" => Language::Ja,
+                "sc" => Language::Sc,
+                _ => Language::En
+            };
         }
     } else {
         write_gconfig(&gconfig)?;
