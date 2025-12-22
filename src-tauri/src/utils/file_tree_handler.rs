@@ -5,32 +5,62 @@ use uuid::Uuid;
 
 use crate::exceptions::{*};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 #[serde(rename_all(serialize = "camelCase", deserialize = "camelCase"))]
-struct TreeNodeData {
-    file_type: String,
-    file_path: String,
-    is_open: Option<bool>
+pub struct TreeNodeData {
+    pub file_type: String,
+    pub file_path: String,
+    pub is_open: Option<bool>
 }
 
 #[derive(Serialize, Deserialize, Clone)]
 #[serde(untagged)]
-enum ParentId {
+pub enum ParentId {
     Root(u8),
     Id(Uuid)
 }
 
-#[derive(Serialize, Deserialize)]
-struct TreeNode {
-    id: Uuid,
-    parent: ParentId,
-    droppable: bool,
-    text: String,
-    data: TreeNodeData
+#[derive(Serialize, Deserialize, Clone)]
+pub struct TreeNode {
+    pub id: Uuid,
+    pub parent: ParentId,
+    pub droppable: bool,
+    pub text: String,
+    pub data: TreeNodeData
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct TreeData(Vec<TreeNode>);
+
+impl TreeData {
+    pub fn get_node_by_id(&self, id: &Uuid) -> Option<&TreeNode> {
+        for node in &self.0 {
+            if &node.id == id {
+                return Some(node);
+            }
+        }
+        return None;
+    }
+
+    pub fn get_node_by_path(&self, path: &str) -> Option<&TreeNode> {
+        for node in &self.0 {
+            if node.data.file_path == path {
+                return Some(node);
+            }
+        }
+        return None;
+    }
+
+    pub fn update_node(&mut self, node: TreeNode) -> Result<(), BaseException> {
+        for i in 0..self.0.len() {
+            if &self.0[i].id == &node.id {
+                self.0[i] = node;
+                return Ok(());
+            }
+        }
+        return Err(BaseException::new("Node ID not found", INVALID_PARAMETER));
+    }
+}
 
 fn get_file_type(path: &Path) -> String {
     if path.is_dir() {
