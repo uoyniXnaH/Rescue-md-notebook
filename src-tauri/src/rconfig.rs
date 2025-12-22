@@ -3,16 +3,17 @@ use std::io::{BufWriter};
 use std::path::PathBuf;
 use serde_json::{to_writer, from_str};
 
+use crate::gconfig::{get_gconfig_item};
 use crate::utils::file_tree_handler::*;
 use crate::exceptions::{*};
 
-fn get_rconfig_path(base_path: String) -> PathBuf {
+fn get_rconfig_path(base_path: &String) -> PathBuf {
     let mut config_path = PathBuf::from(base_path);
     config_path.push("rconfig.json");
     return config_path;
 }
 
-fn write_rconfig(path: String, rconfig: &TreeData) -> Result<(), BaseException> {
+fn write_rconfig(path: &String, rconfig: &TreeData) -> Result<(), BaseException> {
     let config_path = get_rconfig_path(path);
     if config_path.exists() {
         remove_file(&config_path).map_err(|_| {
@@ -30,23 +31,19 @@ fn write_rconfig(path: String, rconfig: &TreeData) -> Result<(), BaseException> 
 }
 
 #[tauri::command]
-pub fn create_rconfig(path: String) -> Result<TreeData, BaseException> {
-    match create_tree_by_path(&path) {
-        Ok(file_tree) => {
-            write_rconfig(path, &file_tree)?;
-            return Ok(file_tree);
-        },
-        Err(e) => {
-            return Err(e);
-        }
-    }
-}
-
-#[tauri::command]
-pub fn get_rconfig(path: String) -> Result<TreeData, BaseException> {
-    let config_path = get_rconfig_path(path);
+pub fn get_rconfig() -> Result<TreeData, BaseException> {
+    let path = get_gconfig_item("current_root")?;
+    let config_path = get_rconfig_path(&path);
     if !config_path.exists() {
-        return Err(BaseException::new("Root config file does not exist", FILE_NOT_FOUND));
+        match create_tree_by_path(&path) {
+            Ok(file_tree) => {
+                write_rconfig(&path, &file_tree)?;
+                return Ok(file_tree);
+            },
+            Err(e) => {
+                return Err(e);
+            }
+        }
     }
     let file_content = read_to_string(&config_path).map_err(|_| {
         return BaseException::new("Failed to read root config file", READ_ERROR);
@@ -58,6 +55,7 @@ pub fn get_rconfig(path: String) -> Result<TreeData, BaseException> {
 }
 
 #[tauri::command]
-pub fn set_rconfig(path: String, rconfig: TreeData) -> Result<(), BaseException> {
-    return write_rconfig(path, &rconfig);
+pub fn set_rconfig(rconfig: TreeData) -> Result<(), BaseException> {
+    let path = get_gconfig_item("current_root")?;
+    return write_rconfig(&path, &rconfig);
 }

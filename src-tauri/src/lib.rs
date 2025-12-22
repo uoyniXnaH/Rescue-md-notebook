@@ -12,7 +12,6 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             get_gconfig,
             set_gconfig,
-            create_rconfig,
             get_rconfig,
             set_rconfig
         ])
