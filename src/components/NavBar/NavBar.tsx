@@ -38,13 +38,18 @@ const RootMenu: React.FC<RootMenuProps> = (props: RootMenuProps) => {
         });
         if (selected && typeof selected === "string") {
           setCurrentRoot(selected);
-          await invoke("set_gconfig", { config: getSettings() });
-          await invoke("create_rconfig", { path: selected })
-          .then(async (d) => {
-            setFileTreeData(d as any[]);
+          await invoke("set_gconfig", { config: getSettings() })
+          .then(async () => {
+            await invoke("get_rconfig")
+            .then(async (d) => {
+              setFileTreeData(d as any[]);
+            })
+            .catch((err) => {
+              console.error("Error getting file tree:", err);
+            });
           })
           .catch((err) => {
-            console.error("Error creating file tree:", err);
+            console.error("Error setting global config:", err);
           });
         }
         handleClose();

@@ -44,7 +44,7 @@ function App() {
         .catch((err) => {
           console.error("Error setting window title:", err);
         });
-        invoke("get_rconfig", { path: gconfig.current_root })
+        invoke("get_rconfig")
         .then((rconfig) => {
           setFileTreeData(rconfig as any[]);
         })
