@@ -4,6 +4,7 @@ use serde::{Serialize, Deserialize};
 use uuid::Uuid;
 use regex::Regex;
 
+use crate::nodes::{init_folder};
 use crate::exceptions::{*};
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -95,12 +96,9 @@ pub fn create_tree_by_path(path: &str) -> Result<TreeData, BaseException> {
         for entry_result in rd {
             let entry = entry_result.map_err(|e| BaseException::new(&format!("read_dir entry error: {}", e), READ_ERROR))?;
             let p = entry.path();
-            let is_dir = p.is_dir();
-            if !is_dir && !ACCEPTED_EXTENSIONS.contains(&p.extension().and_then(|s| s.to_str()).unwrap_or("")) {
+            if !p.is_dir() && !ACCEPTED_EXTENSIONS.contains(&p.extension().and_then(|s| s.to_str()).unwrap_or("")) {
                 continue;
             }
-
-            let is_dir = p.is_dir();
 
             if nodes.len() > (u32::MAX as usize) {
                 return Err(BaseException::new("too many nodes", TOO_MANY_NODES));
@@ -118,7 +116,7 @@ pub fn create_tree_by_path(path: &str) -> Result<TreeData, BaseException> {
             let node = TreeNode {
                 id: id,
                 parent: parent.clone(),
-                droppable: is_dir,
+                droppable: file_type == "folder",
                 text: name.to_string(),
                 data: TreeNodeData {
                     file_type: file_type.to_string(),
@@ -129,7 +127,8 @@ pub fn create_tree_by_path(path: &str) -> Result<TreeData, BaseException> {
 
             nodes.push(node);
 
-            if is_dir {
+            if file_type == "folder" {
+                init_folder(&p);
                 visit(&p, ParentId::Id(id), nodes)?;
             }
         }

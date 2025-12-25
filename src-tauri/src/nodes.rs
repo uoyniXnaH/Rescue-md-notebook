@@ -64,3 +64,15 @@ pub fn move_node(node_id: Uuid, new_parent_id: ParentId, mut new_file_tree: Tree
     set_rconfig(new_file_tree.clone())?;
     return Ok(new_file_tree);
 }
+
+pub fn init_folder(path: &PathBuf) -> () {
+    let mut config_path = path.clone();
+    let name = path.file_name().and_then(|s| s.to_str()).unwrap_or("");
+    config_path.push(format!("__rsn-folder.{}.md", name));
+    if config_path.exists() {
+        return;
+    }
+    std::fs::File::create(&config_path).map_err(|_| {
+        return;
+    }).unwrap();
+}
