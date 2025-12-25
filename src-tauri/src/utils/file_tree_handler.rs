@@ -102,7 +102,7 @@ pub fn create_tree_by_path(path: &str) -> Result<TreeData, BaseException> {
 
             let is_dir = p.is_dir();
 
-            if nodes.len() > (u16::MAX as usize) {
+            if nodes.len() > (u32::MAX as usize) {
                 return Err(BaseException::new("too many nodes", TOO_MANY_NODES));
             }
             let id = Uuid::new_v4();
