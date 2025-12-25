@@ -2,6 +2,7 @@ use std::fs::{read_dir};
 use std::path::Path;
 use serde::{Serialize, Deserialize};
 use uuid::Uuid;
+use regex::Regex;
 
 use crate::exceptions::{*};
 
@@ -62,11 +63,27 @@ impl TreeData {
     }
 }
 
-fn get_file_type(path: &Path) -> String {
+fn get_type_and_name(path: &Path) -> (Option<&str>, &str) {
+    let re = Regex::new(r"^__rsn-(\w+)\.(.+)$").unwrap();
+    let filename = path.file_name()
+    .and_then(|s| s.to_str())
+    .unwrap_or("");
+    let mut node_type = "";
+    let mut node_name = "";
+    re.captures(filename).map(|caps| {
+        node_type = caps.get(1).map(|m| m.as_str()).unwrap_or("");
+        node_name = caps.get(2).map(|m| m.as_str()).unwrap_or("");
+    });
     if path.is_dir() {
-        return "folder".to_string();
+        match node_type {
+            "calendar" => (Some("calendar"), node_name),
+            _ => (Some("folder"), filename),
+        }
     } else {
-        return "file".to_string();
+        match node_type {
+            "folder" => (None, node_name),
+            _ => (Some("file"), filename),
+        }
     }
 }
 
@@ -83,11 +100,6 @@ pub fn create_tree_by_path(path: &str) -> Result<TreeData, BaseException> {
                 continue;
             }
 
-            let name = p.file_name()
-                .and_then(|s| s.to_str())
-                .unwrap_or("")
-                .to_string();
-
             let is_dir = p.is_dir();
 
             if nodes.len() > (u16::MAX as usize) {
@@ -95,13 +107,21 @@ pub fn create_tree_by_path(path: &str) -> Result<TreeData, BaseException> {
             }
             let id = Uuid::new_v4();
 
+            let (file_type_opt, name) = get_type_and_name(&p);
+            let file_type = match file_type_opt {
+                Some(t) => t,
+                None => {
+                    continue;
+                }
+            };
+
             let node = TreeNode {
                 id: id,
                 parent: parent.clone(),
                 droppable: is_dir,
-                text: name,
+                text: name.to_string(),
                 data: TreeNodeData {
-                    file_type: get_file_type(&p),
+                    file_type: file_type.to_string(),
                     file_path: p.to_string_lossy().into_owned(),
                     is_open: Some(false)
                 }
