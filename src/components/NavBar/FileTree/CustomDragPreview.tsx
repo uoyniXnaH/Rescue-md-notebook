@@ -20,7 +20,7 @@ const CustomDragPreview: React.FC<Props> = (props) => {
       <Stack direction="row" spacing={1} alignItems="center">
         <Box>
           <TypeIcon
-            fileType={item!.data!.fileType}
+            fileType={item!.data!.nodeType}
           />
         </Box>
         <Box>

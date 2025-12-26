@@ -5,9 +5,9 @@ import { NodeModel } from "@minoru/react-dnd-treeview";
 
 export type NodeEnum = "file" | "folder" | "calendar";
 export type NodeData = {
-    fileType: NodeEnum;
+    nodeType: NodeEnum;
     isOpen?: boolean;
-    filePath: string;
+    nodeName: string;
 };
 
 export type themeEnum = "light" | "dark";

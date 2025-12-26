@@ -67,7 +67,7 @@ const CustomNode: React.FC<Props> = (props) => {
       >
         <Stack direction="row" spacing={0.5} alignItems="center" sx={{ paddingInlineStart: indent }}>
           <Box>
-            <TypeIcon fileType={data!.fileType} isOpen={props.isOpen} onClick={handleToggle} />
+            <TypeIcon fileType={data!.nodeType} isOpen={props.isOpen} onClick={handleToggle} />
           </Box>
           <Box onClick={() => setSelectedNodeId(id)} px={0.5} sx={{
             color: selectedNodeId === id ? "primary.main" : "primary.contrastText",
