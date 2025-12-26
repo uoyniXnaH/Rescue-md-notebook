@@ -4,18 +4,19 @@ use serde::{Serialize, Deserialize};
 use uuid::Uuid;
 use regex::Regex;
 
+use crate::gconfig::{get_gconfig_item};
 use crate::nodes::{init_folder};
 use crate::exceptions::{*};
 
 #[derive(Serialize, Deserialize, Clone)]
 #[serde(rename_all(serialize = "camelCase", deserialize = "camelCase"))]
 pub struct TreeNodeData {
-    pub file_type: String,
-    pub file_path: String,
+    pub node_type: String,
+    pub node_name: String,
     pub is_open: Option<bool>
 }
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, PartialEq)]
 #[serde(untagged)]
 pub enum ParentId {
     Root(u8),
@@ -44,23 +45,40 @@ impl TreeData {
         return None;
     }
 
-    pub fn get_node_by_path(&self, path: &str) -> Option<&TreeNode> {
+    pub fn get_nodes_by_parent(&self, parent: &ParentId) -> Vec<&TreeNode> {
+        let mut result: Vec<&TreeNode> = Vec::new();
         for node in &self.0 {
-            if node.data.file_path == path {
-                return Some(node);
+            if &node.parent == parent {
+                result.push(node);
             }
         }
-        return None;
+        return result;
     }
 
-    pub fn update_node(&mut self, node: TreeNode) -> Result<(), BaseException> {
-        for i in 0..self.0.len() {
-            if &self.0[i].id == &node.id {
-                self.0[i] = node;
-                return Ok(());
+    pub fn create_path_by_id(&self, id: &Uuid) -> Result<String, BaseException> {
+        let mut path_components: Vec<String> = Vec::new();
+        let root = get_gconfig_item("current_root")?;
+        let mut current_id = id.clone();
+        loop {
+            let node = self.get_node_by_id(&current_id).ok_or_else(|| {
+                return BaseException::new("Node ID not found", INVALID_PARAMETER);
+            })?;
+            path_components.push(node.data.node_name.clone());
+            match &node.parent {
+                ParentId::Root(0) => {
+                    path_components.push(root);
+                    break;
+                },
+                ParentId::Id(parent_id) => {
+                    current_id = parent_id.clone();
+                },
+                _ => {
+                    return Err(BaseException::new("Invalid parent ID", INVALID_PARAMETER));
+                }
             }
         }
-        return Err(BaseException::new("Node ID not found", INVALID_PARAMETER));
+        path_components.reverse();
+        return Ok(path_components.join(std::path::MAIN_SEPARATOR.to_string().as_str()));
     }
 }
 
@@ -119,8 +137,8 @@ pub fn create_tree_by_path(path: &str) -> Result<TreeData, BaseException> {
                 droppable: file_type == "folder",
                 text: name.to_string(),
                 data: TreeNodeData {
-                    file_type: file_type.to_string(),
-                    file_path: p.to_string_lossy().into_owned(),
+                    node_type: file_type.to_string(),
+                    node_name: p.file_name().and_then(|s| s.to_str()).unwrap_or("").to_string(),
                     is_open: Some(false)
                 }
             };
