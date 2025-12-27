@@ -34,6 +34,16 @@ const Placeholder: React.FC<Props> = (props) => {
   }}></Box>;
 };
 
+function getOpenedNodes(treeData: NodeModel<NodeData>[]): (string | number)[] {
+  let openedNodes: (string | number)[] = [];
+  treeData.forEach((node) => {
+    if (node.droppable && node.data?.isOpen) {
+      openedNodes.push(node.id);
+    }
+  });
+  return openedNodes;
+}
+
 export default function FileTree() {
   const fileTreeData = useFileTreeStore((state) => state.fileTreeData);
   const setFileTreeData = useFileTreeStore((state) => state.setFileTreeData);
@@ -98,6 +108,7 @@ export default function FileTree() {
             placeholderRender={(node, { depth }) => (
               <Placeholder node={node} depth={depth} />
             )}
+            initialOpen={getOpenedNodes(fileTreeData)}
           />
         </Box>
       </DndProvider>

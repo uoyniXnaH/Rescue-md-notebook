@@ -2,6 +2,7 @@ import React from "react";
 import { Box, Stack, Typography, IconButton, Menu, MenuItem } from "@mui/material";
 import { NodeModel } from "@minoru/react-dnd-treeview";
 import AddIcon from '@mui/icons-material/Add';
+import { invoke } from "@tauri-apps/api/core";
 
 import TypeIcon from "./TypeIcon";
 import { NodeData } from "@type/types";
@@ -46,13 +47,18 @@ const CustomNode: React.FC<Props> = (props) => {
   const indent = props.depth * 3;
   const selectedNodeId = useFileTreeStore((state) => state.selectedNodeId);
   const setSelectedNodeId = useFileTreeStore((state) => state.setSelectedNodeId);
+  const setFileTreeData = useFileTreeStore((state) => state.setFileTreeData);
   const [isHovered, setIsHovered] = React.useState(false);
   const [isAddMenuOpen, setIsAddMenuOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
-  const handleToggle = (e: React.MouseEvent) => {
+  const handleToggle = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    props.onToggle(props.node.id);
+    await invoke<NodeModel<NodeData>[]>("update_rconfig_node", { updatedNode: { ...props.node, data: { ...props.node.data, isOpen: !props.isOpen } } })
+    .then((filetree) => {
+      setFileTreeData(filetree);
+      props.onToggle(props.node.id);
+    });
   };
 
   return (
