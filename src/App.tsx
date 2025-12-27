@@ -16,6 +16,7 @@ import { GlobalConfig, BaseException } from "@type/types";
 
 function App() {
   const settings = useSettingStore((state) => state.settings);
+  const setSettings = useSettingStore((state) => state.setSettings);
   const setTheme = useSettingStore((state) => state.setTheme);
   const setLanguage = useSettingStore((state) => state.setLanguage);
   const setFileTreeData = useFileTreeStore((state) => state.setFileTreeData);
@@ -26,6 +27,7 @@ function App() {
   useEffect(() => {
     invoke<GlobalConfig>("get_gconfig")
     .then((gconfig: GlobalConfig) => {
+      setSettings(gconfig)
       setTheme(gconfig.color_mode)
       setLanguage(gconfig.language)
     })

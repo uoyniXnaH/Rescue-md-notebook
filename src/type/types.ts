@@ -15,6 +15,7 @@ export type languageEnum = "en" | "sc" | "ja";
 export type settingStoreType = {
     settings: GlobalConfig;
     getSettings: () => GlobalConfig;
+    setSettings: (settings: GlobalConfig) => void;
     setCurrentRoot: (root: String) => void;
     setTheme: (theme: themeEnum) => void;
     setLanguage: (language: languageEnum) => void;
