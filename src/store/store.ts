@@ -1,7 +1,6 @@
 import { create } from "zustand";
 
 import * as types from "@type/types";
-import { dummyContents } from "../dummy";
 
 export const useSettingStore = create<types.settingStoreType>()((set, get) => ({
     settings: {
@@ -20,13 +19,13 @@ export const useDisplayStore = create<types.displayStoreType>()((set) => ({
     isNavBarShown: true,
     isEditAreaShown: true,
     isSettingShown: false,
-    currentFilePath: "undefined",
-    currentFileContents: dummyContents,
+    currentFileContents: "",
+    isChanged: false,
     setIsNavBarShown: (isShown) => set({ isNavBarShown: isShown }),
     setIsEditAreaShown: (isShown) => set({ isEditAreaShown: isShown }),
     setIsSettingShown: (isShown) => set({ isSettingShown: isShown }),
-    setCurrentFilePath: (filePath) => set({ currentFilePath: filePath }),
     setCurrentFileContents: (contents) => set({ currentFileContents: contents }),
+    setIsChanged: (changed) => set({ isChanged: changed }),
 }));
 
 export const useFileTreeStore = create<types.FileTreeStoreType>()((set, get) => ({

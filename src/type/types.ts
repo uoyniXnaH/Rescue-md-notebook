@@ -25,13 +25,13 @@ export type displayStoreType = {
     isNavBarShown: boolean;
     isEditAreaShown: boolean;
     isSettingShown: boolean;
-    currentFilePath: string | undefined;
+    isChanged: boolean;
     currentFileContents: string | undefined;
     setIsNavBarShown: (isShown: boolean) => void;
     setIsEditAreaShown: (isShown: boolean) => void;
     setIsSettingShown: (isShown: boolean) => void;
-    setCurrentFilePath: (filePath: string) => void;
     setCurrentFileContents: (contents: string) => void;
+    setIsChanged: (changed: boolean) => void;
 }
 
 export type FileTreeStoreType = {

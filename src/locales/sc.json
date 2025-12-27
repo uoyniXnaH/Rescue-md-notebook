@@ -14,7 +14,7 @@
     "about": "关于"
   },
   "edit": {
-
+    "empty_file_prompt": "开始编写你的文档..."
 },
   "view": {
 

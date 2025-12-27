@@ -14,7 +14,7 @@
     "about": "About"
   },
   "edit": {
-
+    "empty_file_prompt": "Start writing your notes..."
   },
   "view": {
 

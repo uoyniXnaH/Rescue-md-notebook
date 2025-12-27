@@ -5,17 +5,17 @@ import { Prism } from 'react-syntax-highlighter';
 import { atomDark, prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 import BlankPage from "./BlankPage";
-import { useDisplayStore } from "@store/store";
+import { useDisplayStore, useFileTreeStore } from "@store/store";
 import { useSettingStore } from "@store/store";
 
 function ViewArea() {
-  const currentFilePath = useDisplayStore((state) => state.currentFilePath);
+  const selectedNodeId = useFileTreeStore((state) => state.selectedNodeId);
   const currentFileContents = useDisplayStore((state) => state.currentFileContents);
   const settings = useSettingStore((state) => state.settings);
  
   return (
     <Box height="100%" flexBasis={600} flexGrow={1} px={1.5} pb={40} className="markdown-body markdown-container">
-      {currentFilePath ? (
+      {selectedNodeId ? (
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
           components={{

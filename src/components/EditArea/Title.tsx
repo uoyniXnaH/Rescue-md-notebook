@@ -11,9 +11,11 @@ function Title(props: TitleProps) {
   const { currentFilePath } = props;
   const filename = currentFilePath.split('/').pop() || "Untitled";
   const setIsEditAreaShown = useDisplayStore((state) => state.setIsEditAreaShown);
+  const isChanged = useDisplayStore((state) => state.isChanged);
+  const setIsChanged = useDisplayStore((state) => state.setIsChanged);
 
   const handleSave = () => {
-    console.log("save")
+    setIsChanged(false);
   }
 
   return (
@@ -21,7 +23,7 @@ function Title(props: TitleProps) {
       <Stack direction="row" spacing={1} justifyContent="space-between" alignItems="center" width="100%">
         <Stack direction="row" spacing={1} alignItems="center">
           <Typography variant="body1">{filename}</Typography>
-          <IconButton color="inherit" onClick={handleSave}>
+          <IconButton color="inherit" onClick={handleSave} disabled={!isChanged}>
             <SaveIcon />
           </IconButton>
         </Stack>
