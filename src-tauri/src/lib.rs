@@ -20,6 +20,7 @@ pub fn run() {
             move_to_trash,
             move_node,
             get_node_contents,
+            update_node_contents,
             get_node_by_id,
         ])
         .plugin(tauri_plugin_opener::init())

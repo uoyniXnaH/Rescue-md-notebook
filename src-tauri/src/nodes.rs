@@ -83,6 +83,39 @@ pub fn get_node_contents(node: TreeNode) -> Result<String, BaseException> {
 }
 
 #[tauri::command]
+pub fn update_node_contents(id: Uuid, new_contents: String) -> Result<(), BaseException> {
+    let rconfig: TreeData = get_rconfig()?;
+    let node_path = match rconfig.get_node_by_id(&id) {
+        Some(node) => {
+            match node.data.node_type.as_str() {
+                "folder" => {
+                    let mut path = PathBuf::from(rconfig.create_path_by_id(&node.id)?);
+                    let name = &node.data.node_name;
+                    path.push(format!("__rsn-folder.{}.md", name));
+                    path
+                },
+                "calendar" => {
+                    return Err(BaseException::new("Calendar feature coming soon :)", COMMING_SOON));
+                }
+                _ => {
+                    PathBuf::from(rconfig.create_path_by_id(&node.id)?)
+                }
+            }
+        },
+        None => {
+            return Err(BaseException::new("Invalid node id", INVALID_PARAMETER));
+        }
+    };
+    if !node_path.exists() {
+        return Err(BaseException::new("File does not exist", FILE_NOT_FOUND));
+    }
+    std::fs::write(&node_path, new_contents).map_err(|_| {
+        return BaseException::new("Failed to write file contents", WRITE_ERROR);
+    })?;
+    return Ok(());
+}
+
+#[tauri::command]
 pub fn get_node_by_id(node_id: Uuid) -> Result<TreeNode, BaseException> {
     let rconfig: TreeData = get_rconfig()?;
     let node = rconfig.get_node_by_id(&node_id).ok_or_else(|| {
