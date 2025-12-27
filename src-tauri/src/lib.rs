@@ -18,7 +18,8 @@ pub fn run() {
             set_rconfig,
             update_rconfig_node,
             move_to_trash,
-            move_node
+            move_node,
+            get_node_contents
         ])
         .plugin(tauri_plugin_opener::init())
         .run(tauri::generate_context!())

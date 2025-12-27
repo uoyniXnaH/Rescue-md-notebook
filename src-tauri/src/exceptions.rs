@@ -9,6 +9,7 @@ pub const WRITE_ERROR: u16 = 501;
 pub const EXE_PATH_NOT_FOUND: u16 = 402;
 pub const TOO_MANY_NODES: u16 = 503;
 pub const INVALID_OPERATION: u16 = 504;
+pub const COMMING_SOON: u16 = 999;
 
 #[derive(Serialize, Deserialize)]
 pub struct BaseException {

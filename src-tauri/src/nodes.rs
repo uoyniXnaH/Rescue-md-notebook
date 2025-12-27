@@ -5,7 +5,7 @@ use trash::delete;
 
 use crate::gconfig::{get_gconfig_item};
 use crate::rconfig::{get_rconfig, set_rconfig};
-use crate::utils::file_tree_handler::{TreeData, ParentId};
+use crate::utils::file_tree_handler::{TreeData, TreeNode, ParentId};
 use crate::exceptions::{*};
 
 #[tauri::command]
@@ -57,6 +57,29 @@ pub fn move_node(node_id: Uuid, new_parent_id: ParentId, new_file_tree: TreeData
 
     set_rconfig(new_file_tree.clone())?;
     return Ok(new_file_tree);
+}
+
+#[tauri::command]
+pub fn get_node_contents(node: TreeNode) -> Result<String, BaseException> {
+    let rconfig: TreeData = get_rconfig()?;
+    let node_path = match node.data.node_type.as_str() {
+        "folder" => {
+            let mut path = PathBuf::from(rconfig.create_path_by_id(&node.id)?);
+            let name = node.data.node_name;
+            path.push(format!("__rsn-folder.{}.md", &name));
+            path
+        },
+        "calendar" => {
+            return Err(BaseException::new("Calendar feature coming soon :)", COMMING_SOON));
+        }
+        _ => {
+            PathBuf::from(rconfig.create_path_by_id(&node.id)?)
+        }
+    };
+    let contents = std::fs::read_to_string(&node_path).map_err(|_| {
+        return BaseException::new("Failed to read file contents", READ_ERROR);
+    })?;
+    return Ok(contents);
 }
 
 pub fn init_folder(path: &PathBuf) -> () {

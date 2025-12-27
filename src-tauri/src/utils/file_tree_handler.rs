@@ -78,7 +78,7 @@ impl TreeData {
             }
         }
         path_components.reverse();
-        return Ok(path_components.join(std::path::MAIN_SEPARATOR.to_string().as_str()));
+        return Ok(path_components.join(&std::path::MAIN_SEPARATOR.to_string()));
     }
 
     pub fn update_node(&mut self, updated_node: &TreeNode) -> Result<(), BaseException> {
