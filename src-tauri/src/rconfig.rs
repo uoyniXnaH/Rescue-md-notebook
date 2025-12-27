@@ -59,3 +59,12 @@ pub fn set_rconfig(rconfig: TreeData) -> Result<(), BaseException> {
     let path = get_gconfig_item("current_root")?;
     return write_rconfig(&path, &rconfig);
 }
+
+#[tauri::command]
+pub fn update_rconfig_node(updated_node: TreeNode) -> Result<TreeData, BaseException> {
+    let path = get_gconfig_item("current_root")?;
+    let mut rconfig = get_rconfig()?;
+    rconfig.update_node(&updated_node)?;
+    write_rconfig(&path, &rconfig)?;
+    return Ok(rconfig);
+}

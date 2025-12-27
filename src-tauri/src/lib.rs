@@ -16,6 +16,7 @@ pub fn run() {
             set_gconfig,
             get_rconfig,
             set_rconfig,
+            update_rconfig_node,
             move_to_trash,
             move_node
         ])

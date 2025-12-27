@@ -80,6 +80,16 @@ impl TreeData {
         path_components.reverse();
         return Ok(path_components.join(std::path::MAIN_SEPARATOR.to_string().as_str()));
     }
+
+    pub fn update_node(&mut self, updated_node: &TreeNode) -> Result<(), BaseException> {
+        for node in &mut self.0 {
+            if node.id == updated_node.id {
+                *node = updated_node.clone();
+                return Ok(());
+            }
+        }
+        return Err(BaseException::new("Node ID not found", INVALID_PARAMETER));
+    }
 }
 
 fn get_type_and_name(path: &Path) -> (Option<&str>, &str) {
