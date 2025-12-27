@@ -6,7 +6,7 @@ import { invoke } from "@tauri-apps/api/core";
 
 import TypeIcon from "./TypeIcon";
 import { NodeData } from "@type/types";
-import { useFileTreeStore } from "@store/store";
+import { useFileTreeStore, useDisplayStore } from "@store/store";
 import { useTranslation } from "react-i18next";
 import { NODE_TYPE } from "@src/Defines";
 
@@ -48,6 +48,7 @@ const CustomNode: React.FC<Props> = (props) => {
   const selectedNodeId = useFileTreeStore((state) => state.selectedNodeId);
   const setSelectedNodeId = useFileTreeStore((state) => state.setSelectedNodeId);
   const setFileTreeData = useFileTreeStore((state) => state.setFileTreeData);
+  const setCurrentFileContents = useDisplayStore((state) => state.setCurrentFileContents);
   const [isHovered, setIsHovered] = React.useState(false);
   const [isAddMenuOpen, setIsAddMenuOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -60,6 +61,14 @@ const CustomNode: React.FC<Props> = (props) => {
       props.onToggle(props.node.id);
     });
   };
+
+  const handleSelectNode = async (node: NodeModel<NodeData>) => {
+    setSelectedNodeId(node.id);
+    await invoke<string>("get_node_contents", { node: node })
+    .then((contents) => {
+      setCurrentFileContents(contents);
+    });
+  }
 
   return (
     <>
@@ -75,7 +84,7 @@ const CustomNode: React.FC<Props> = (props) => {
           <Box>
             <TypeIcon fileType={data!.nodeType} isOpen={props.isOpen} onClick={handleToggle} />
           </Box>
-          <Box onClick={() => setSelectedNodeId(id)} px={0.5} sx={{
+          <Box onClick={() => handleSelectNode(props.node)} px={0.5} sx={{
             color: selectedNodeId === id ? "primary.main" : "primary.contrastText",
             backgroundColor: selectedNodeId === id ? "primary.contrastText" : "transparent"
           }}
