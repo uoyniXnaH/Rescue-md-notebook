@@ -82,6 +82,15 @@ pub fn get_node_contents(node: TreeNode) -> Result<String, BaseException> {
     return Ok(contents);
 }
 
+#[tauri::command]
+pub fn get_node_by_id(node_id: Uuid) -> Result<TreeNode, BaseException> {
+    let rconfig: TreeData = get_rconfig()?;
+    let node = rconfig.get_node_by_id(&node_id).ok_or_else(|| {
+        return BaseException::new("Invalid node id", INVALID_PARAMETER);
+    })?;
+    return Ok(node.clone());
+}
+
 pub fn init_folder(path: &PathBuf) -> () {
     let mut config_path = path.clone();
     let name = path.file_name().and_then(|s| s.to_str()).unwrap_or("");
