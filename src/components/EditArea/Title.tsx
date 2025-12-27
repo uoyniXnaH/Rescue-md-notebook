@@ -1,21 +1,43 @@
+import React from "react";
 import { Box, Stack, IconButton, Typography } from "@mui/material";
 import SaveIcon from '@mui/icons-material/Save';
 import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
+import { invoke } from "@tauri-apps/api/core";
 
-import { useDisplayStore } from "@store/store";
+import { useDisplayStore, useFileTreeStore } from "@store/store";
+import { NodeModel } from "@minoru/react-dnd-treeview";
+import { NodeData } from "@type/types";
 
-type TitleProps = {
-  currentFilePath: string;
-};
-function Title(props: TitleProps) {
-  const { currentFilePath } = props;
-  const filename = currentFilePath.split('/').pop() || "Untitled";
+function Title() {
   const setIsEditAreaShown = useDisplayStore((state) => state.setIsEditAreaShown);
+  const currentFileContents = useDisplayStore((state) => state.currentFileContents);
   const isChanged = useDisplayStore((state) => state.isChanged);
   const setIsChanged = useDisplayStore((state) => state.setIsChanged);
+  const selectedNodeId = useFileTreeStore((state) => state.selectedNodeId);
+  const [filename, setFilename] = React.useState<string>("");
 
-  const handleSave = () => {
-    setIsChanged(false);
+  React.useEffect(() => {
+    if (selectedNodeId) {
+      invoke<NodeModel<NodeData>>("get_node_by_id", { nodeId: selectedNodeId })
+      .then((node) => {
+          setFilename(node.text);
+      })
+      .catch((error) => {
+        console.error("Failed to get node by id:", error);
+      });
+    } else {
+      setFilename("");
+    }
+  }, [selectedNodeId]);
+
+  const handleSave = async () => {
+    await invoke("update_node_contents", { id: selectedNodeId, newContents: currentFileContents })
+    .then(() => {
+      setIsChanged(false);
+    })
+    .catch((error) => {
+      console.error("Failed to save file contents:", error);
+    });
   }
 
   return (
