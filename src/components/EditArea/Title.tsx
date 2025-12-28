@@ -5,15 +5,15 @@ import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
 import { invoke } from "@tauri-apps/api/core";
 
 import { useDisplayStore, useFileTreeStore } from "@store/store";
+import { useFileActions } from "@src/hooks";
 import { NodeModel } from "@minoru/react-dnd-treeview";
 import { NodeData } from "@type/types";
 
 function Title() {
   const setIsEditAreaShown = useDisplayStore((state) => state.setIsEditAreaShown);
-  const currentFileContents = useDisplayStore((state) => state.currentFileContents);
   const isChanged = useDisplayStore((state) => state.isChanged);
-  const setIsChanged = useDisplayStore((state) => state.setIsChanged);
   const selectedNodeId = useFileTreeStore((state) => state.selectedNodeId);
+  const { saveFile } = useFileActions();
   const [filename, setFilename] = React.useState<string>("");
 
   React.useEffect(() => {
@@ -31,13 +31,7 @@ function Title() {
   }, [selectedNodeId]);
 
   const handleSave = async () => {
-    await invoke("update_node_contents", { id: selectedNodeId, newContents: currentFileContents })
-    .then(() => {
-      setIsChanged(false);
-    })
-    .catch((error) => {
-      console.error("Failed to save file contents:", error);
-    });
+    await saveFile();
   }
 
   return (
