@@ -13,8 +13,10 @@ import { useTranslation } from "react-i18next";
 import { useSettingStore, useFileTreeStore } from "@store/store";
 import { useDisplayStore } from "@store/store";
 import { GlobalConfig, BaseException } from "@type/types";
+import * as hooks from "./hooks";
 
 function App() {
+  hooks.useGlobalShortcuts();
   const settings = useSettingStore((state) => state.settings);
   const setSettings = useSettingStore((state) => state.setSettings);
   const setTheme = useSettingStore((state) => state.setTheme);
