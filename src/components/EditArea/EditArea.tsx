@@ -3,7 +3,7 @@ import { Box, TextField } from "@mui/material";
 
 import Title from "./Title";
 import BlankPage from "../BlankPage";
-import { useDisplayStore, useFileTreeStore } from "@store/store";
+import { useDisplayStore, useFileTreeStore, useFocusStore } from "@store/store";
 import { useTranslation } from "react-i18next";
 
 function EditArea() {
@@ -11,6 +11,7 @@ function EditArea() {
   const setCurrentFileContents = useDisplayStore((state) => state.setCurrentFileContents);
   const setIsChanged = useDisplayStore((state) => state.setIsChanged);
   const selectedNodeId = useFileTreeStore((state) => state.selectedNodeId);
+  const setFocusArea = useFocusStore((state) => state.setFocusArea);
   const { t } = useTranslation();
 
   const onChangeText = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -19,7 +20,7 @@ function EditArea() {
   }
 
   return (
-    <Box width="41%" flexBasis={788} maxWidth={788} px={2} sx={{ bgcolor: "secondary.main", color: "secondary.contrastText" }}>
+    <Box onFocus={() => setFocusArea("editArea")} onClick={() => setFocusArea("editArea")} width="41%" flexBasis={788} maxWidth={788} px={2} sx={{ bgcolor: "secondary.main", color: "secondary.contrastText" }}>
       {selectedNodeId ? (
         <>
           <Title />

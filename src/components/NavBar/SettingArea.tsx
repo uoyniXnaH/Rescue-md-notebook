@@ -3,7 +3,7 @@ import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LanguageIcon from '@mui/icons-material/Language';
 
-import { useSettingStore } from "@store/store";
+import { useSettingStore, useFocusStore } from "@store/store";
 import { LANGUAGE } from "@src/Defines";
 import { invoke } from "@tauri-apps/api/core";
 
@@ -12,8 +12,9 @@ function SettingArea() {
   const getSettings = useSettingStore((state) => state.getSettings);
   const setTheme = useSettingStore((state) => state.setTheme);
   const setLanguage = useSettingStore((state) => state.setLanguage);
+  const setFocusArea = useFocusStore((state) => state.setFocusArea);
   return (
-    <Box width="100%" height={60} alignSelf="center">
+    <Box onFocus={() => setFocusArea(null)} onClick={() => setFocusArea(null)} width="100%" height={60} alignSelf="center">
       <Stack height="100%" direction="row" spacing={4} alignItems="center" px={2}>
         {/* Theme Selector */}
         <ToggleButtonGroup

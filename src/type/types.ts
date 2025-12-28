@@ -42,6 +42,12 @@ export type FileTreeStoreType = {
     setSelectedNodeId: (id: string | number | null) => void;
 }
 
+export type FocusAreaEnum = "navBar" | "editArea" | "viewArea" | null;
+export type FocusStoreType = {
+    focusArea: FocusAreaEnum;
+    setFocusArea: (area: FocusAreaEnum) => void;
+}
+
 /**
  * Used in commands
  */

@@ -35,3 +35,8 @@ export const useFileTreeStore = create<types.FileTreeStoreType>()((set, get) => 
     selectedNodeId: null,
     setSelectedNodeId: (id) => set({ selectedNodeId: id }),
 }));
+
+export const useFocusStore = create<types.FocusStoreType>()((set) => ({
+    focusArea: null,
+    setFocusArea: (area: types.FocusAreaEnum) => set({ focusArea: area }),
+}));

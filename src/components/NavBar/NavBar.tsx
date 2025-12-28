@@ -9,7 +9,7 @@ import { invoke } from "@tauri-apps/api/core";
 import FileTree from "./FileTree/FileTree";
 import SettingArea from "./SettingArea";
 import { useTranslation } from "react-i18next";
-import { useDisplayStore, useSettingStore, useFileTreeStore } from "@store/store";
+import { useDisplayStore, useSettingStore, useFileTreeStore, useFocusStore } from "@store/store";
 import { VERSION, NODE_TYPE } from "@src/Defines";
 
 type RootMenuProps = {
@@ -71,6 +71,7 @@ const RootMenu: React.FC<RootMenuProps> = (props: RootMenuProps) => {
 function NavBar() {
   const { t } = useTranslation();
   const setIsNavBarShown = useDisplayStore((state) => state.setIsNavBarShown);
+  const setFocusArea = useFocusStore((state) => state.setFocusArea);
   const [isRootMenuOpen, setIsRootMenuOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   return (
@@ -87,7 +88,7 @@ function NavBar() {
           </Box>
         </Stack>
         {/* Root file tree */}
-        <Box flexGrow={1}>
+        <Box onFocus={() => setFocusArea("navBar")} onClick={() => setFocusArea("navBar")} flexGrow={1}>
           <Stack direction="row" spacing={1} alignItems="center">
             <HomeIcon sx={{ color: "info.contrastText" }} />
             <Typography variant="h6" color="info.contrastText">

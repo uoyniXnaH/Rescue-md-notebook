@@ -2,14 +2,15 @@ import { Box, Stack, IconButton } from "@mui/material";
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import EditDocumentIcon from '@mui/icons-material/EditDocument';
 
-import { useDisplayStore } from "@store/store";
+import { useDisplayStore, useFocusStore } from "@store/store";
 
 function SideBar() {
   const isNavBarShown = useDisplayStore((state) => state.isNavBarShown);
   const isEditAreaShown = useDisplayStore((state) => state.isEditAreaShown);
+  const setFocusArea = useFocusStore((state) => state.setFocusArea);
 
   return (
-    <Box width={48} height="100%">
+    <Box onFocus={() => setFocusArea(null)} onClick={() => setFocusArea(null)} width={48} height="100%">
       <Stack direction="column" spacing={0.5}>
         {!isNavBarShown && <IconButton color="inherit" onClick={() => useDisplayStore.setState({ isNavBarShown: true })}>
           <FormatListBulletedIcon />
