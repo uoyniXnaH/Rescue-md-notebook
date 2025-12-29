@@ -22,6 +22,7 @@ pub fn run() {
             get_node_contents,
             update_node_contents,
             get_node_by_id,
+            rename_node,
         ])
         .plugin(tauri_plugin_opener::init())
         .run(tauri::generate_context!())
