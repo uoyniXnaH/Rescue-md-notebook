@@ -5,7 +5,7 @@ import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
 import { invoke } from "@tauri-apps/api/core";
 
 import { useDisplayStore, useFileTreeStore } from "@store/store";
-import { useFileActions } from "@src/hooks";
+import { useFileActions } from "@src/Hooks";
 import { NodeModel } from "@minoru/react-dnd-treeview";
 import { NodeData } from "@type/types";
 
@@ -13,6 +13,7 @@ function Title() {
   const setIsEditAreaShown = useDisplayStore((state) => state.setIsEditAreaShown);
   const isChanged = useDisplayStore((state) => state.isChanged);
   const selectedNodeId = useFileTreeStore((state) => state.selectedNodeId);
+  const fileTreeData = useFileTreeStore((state) => state.fileTreeData);
   const { saveFile } = useFileActions();
   const [filename, setFilename] = React.useState<string>("");
 
@@ -28,7 +29,7 @@ function Title() {
     } else {
       setFilename("");
     }
-  }, [selectedNodeId]);
+  }, [selectedNodeId, fileTreeData]);
 
   const handleSave = async () => {
     await saveFile();

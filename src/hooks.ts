@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 
 import { useFocusStore, useDisplayStore, useFileTreeStore } from "@store/store";
+import * as Tauri from "./TauriCmd";
 
 export function useGlobalShortcuts() {
   const focusArea = useFocusStore((state) => state.focusArea);
@@ -25,6 +26,7 @@ export function useGlobalShortcuts() {
 
 export function useFileActions() {
   const selectedNodeId = useFileTreeStore((state) => state.selectedNodeId);
+  const setFileTreeData = useFileTreeStore((state) => state.setFileTreeData);
   const currentFileContents = useDisplayStore((state) => state.currentFileContents);
   const setIsChanged = useDisplayStore((state) => state.setIsChanged);
 
@@ -40,5 +42,15 @@ export function useFileActions() {
     }
   };
 
-  return { saveFile };
+  const renameNode = async (id: string | number, newName: string) => {
+    await Tauri.renameNode(id, newName)
+    .then((updatedFileTree) => {
+      setFileTreeData(updatedFileTree);
+    })
+    .catch((error) => {
+      console.error("Failed to rename node:", error);
+    });
+  }
+
+  return { saveFile, renameNode };
 }

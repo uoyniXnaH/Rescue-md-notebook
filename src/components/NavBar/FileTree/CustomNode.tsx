@@ -7,8 +7,10 @@ import { invoke } from "@tauri-apps/api/core";
 import TypeIcon from "./TypeIcon";
 import { NodeData } from "@type/types";
 import { useFileTreeStore, useDisplayStore } from "@store/store";
+import { useFileActions } from "@src/Hooks";
 import { useTranslation } from "react-i18next";
 import { NODE_TYPE } from "@src/Defines";
+import styles from "./FileTree.module.css";
 
 type AddMenuProps = {
   isOpen: boolean;
@@ -46,12 +48,16 @@ const CustomNode: React.FC<Props> = (props) => {
   const { id, droppable, data } = props.node;
   const indent = props.depth * 3;
   const selectedNodeId = useFileTreeStore((state) => state.selectedNodeId);
+  const editNodeId = useFileTreeStore((state) => state.editNodeId);
+  const setEditNodeId = useFileTreeStore((state) => state.setEditNodeId);
   const setSelectedNodeId = useFileTreeStore((state) => state.setSelectedNodeId);
   const setFileTreeData = useFileTreeStore((state) => state.setFileTreeData);
   const setCurrentFileContents = useDisplayStore((state) => state.setCurrentFileContents);
   const [isHovered, setIsHovered] = React.useState(false);
   const [isAddMenuOpen, setIsAddMenuOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [nodename, setNodename] = React.useState(props.node.text);
+  const { renameNode } = useFileActions();
 
   const handleToggle = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -84,12 +90,27 @@ const CustomNode: React.FC<Props> = (props) => {
           <Box>
             <TypeIcon fileType={data!.nodeType} isOpen={props.isOpen} onClick={handleToggle} />
           </Box>
-          <Box onClick={() => handleSelectNode(props.node)} px={0.5} sx={{
-            color: selectedNodeId === id ? "primary.main" : "primary.contrastText",
-            backgroundColor: selectedNodeId === id ? "primary.contrastText" : "transparent"
+          <Box onClick={() => handleSelectNode(props.node)} onContextMenu={() => console.log(props.node)} px={0.5} sx={{
+            color: (selectedNodeId === id && editNodeId !== id) ? "primary.main" : "primary.contrastText",
+            backgroundColor: (selectedNodeId === id && editNodeId !== id) ? "primary.contrastText" : "transparent"
           }}
           >
-            <Typography variant="body2">{props.node.text}</Typography>
+            {editNodeId === id ? (
+              <input
+                className={styles.nodeTitleInput}
+                value={nodename}
+                onChange={(e) => setNodename(e.target.value)}
+                onBlur={async () => {
+                  await renameNode(id, nodename);
+                  setEditNodeId(null);
+                }}
+                autoFocus
+              />
+            ) : (
+              <Typography variant="body2" onDoubleClick={() => setEditNodeId(id)}>
+                {props.node.text}
+              </Typography>
+            )}
           </Box>
         </Stack>
         {droppable && isHovered && <><IconButton

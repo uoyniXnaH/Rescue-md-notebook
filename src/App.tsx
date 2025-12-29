@@ -13,7 +13,7 @@ import { useTranslation } from "react-i18next";
 import { useSettingStore, useFileTreeStore } from "@store/store";
 import { useDisplayStore } from "@store/store";
 import { GlobalConfig, BaseException } from "@type/types";
-import { useGlobalShortcuts } from "./hooks";
+import { useGlobalShortcuts } from "./Hooks";
 
 function App() {
   useGlobalShortcuts();
