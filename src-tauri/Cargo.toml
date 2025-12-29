@@ -26,3 +26,4 @@ tauri-plugin-dialog = "2"
 uuid = { version = "1.19.0", features = ["v4"] }
 trash = "5.2.5"
 regex = "1.12.2"
+log = "0.4.29"
