@@ -3,6 +3,7 @@ import { invoke } from "@tauri-apps/api/core";
 
 import { useFocusStore, useDisplayStore, useFileTreeStore } from "@store/store";
 import * as Tauri from "./TauriCmd";
+import { NodeEnum } from "@type/types";
 
 export function useGlobalShortcuts() {
   const focusArea = useFocusStore((state) => state.focusArea);
@@ -52,5 +53,15 @@ export function useFileActions() {
     });
   }
 
-  return { saveFile, renameNode };
+  const createNode = async (parent: string | number, nodeName: string, nodeType: NodeEnum) => {
+    await Tauri.createNode(parent, nodeName, nodeType)
+    .then((updatedFileTree) => {
+      setFileTreeData(updatedFileTree);
+    })
+    .catch((error) => {
+      console.error("Failed to create node:", error);
+    });
+  }
+
+  return { saveFile, renameNode, createNode };
 }

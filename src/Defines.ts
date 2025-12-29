@@ -1,3 +1,5 @@
+import { NodeEnum } from "@type/types";
+
 export const VERSION = "0.1.0";
 
 export const LANGUAGE = {
@@ -6,7 +8,7 @@ export const LANGUAGE = {
     en: "English",
 };
 
-export const NODE_TYPE = [
+export const NODE_TYPE: NodeEnum[] = [
     "folder",
     "file"
 ]

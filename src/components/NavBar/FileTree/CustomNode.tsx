@@ -5,7 +5,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { invoke } from "@tauri-apps/api/core";
 
 import TypeIcon from "./TypeIcon";
-import { NodeData } from "@type/types";
+import { NodeData, NodeEnum } from "@type/types";
 import { useFileTreeStore, useDisplayStore } from "@store/store";
 import { useFileActions } from "@src/Hooks";
 import { useTranslation } from "react-i18next";
@@ -15,21 +15,22 @@ import styles from "./FileTree.module.css";
 type AddMenuProps = {
   isOpen: boolean;
   anchorEl: null | HTMLElement;
-  handleClose: () => void;
+  handleAdd: (type: NodeEnum | null) => void;
 };
 const AddMenu: React.FC<AddMenuProps> = (props: AddMenuProps) => {
-  const { isOpen, anchorEl, handleClose } = props;
+  const { isOpen, anchorEl, handleAdd: handleAdd } = props;
   const { t } = useTranslation();
 
   return (
     <Menu
       id="add-menu"
       open={isOpen}
-      onClose={handleClose}
+      onAbort={() => handleAdd(null)}
+      onClose={() => handleAdd(null)}
       anchorEl={anchorEl}
     >
       {NODE_TYPE.map((type) => (
-        <MenuItem key={type} onClick={handleClose}>
+        <MenuItem key={type} onClick={() => handleAdd(type)}>
           <Typography variant="body2">{t("nav.new")}{t(`nav.${type}`)}</Typography>
         </MenuItem>
       ))}
@@ -57,7 +58,7 @@ const CustomNode: React.FC<Props> = (props) => {
   const [isAddMenuOpen, setIsAddMenuOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [nodename, setNodename] = React.useState(props.node.text);
-  const { renameNode } = useFileActions();
+  const { renameNode, createNode } = useFileActions();
 
   const handleToggle = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -123,7 +124,17 @@ const CustomNode: React.FC<Props> = (props) => {
         <AddMenu
           isOpen={isAddMenuOpen}
           anchorEl={anchorEl}
-          handleClose={() => {setIsAddMenuOpen(false); setIsHovered(false); setAnchorEl(null);}}
+          handleAdd={(type) => {
+            setIsAddMenuOpen(false);
+            setIsHovered(false);
+            setAnchorEl(null);
+            if (type) {
+              createNode(id, "New Node", type)
+              .catch((err) => {
+                console.error("Failed to create node:", err);
+              });
+            }
+          }}
         /></>}
       </Stack>
     </>
