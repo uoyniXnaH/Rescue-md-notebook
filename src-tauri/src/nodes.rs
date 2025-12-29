@@ -147,13 +147,7 @@ pub fn rename_node(id: Uuid, new_name: String) -> Result<TreeNode, BaseException
     new_path.pop();
     new_path.push(&new_name);
 
-    log::info!(
-        "Renaming node from {:?} to {:?}",
-        &node_path,
-        &new_path
-    );
-    std::fs::rename(&node_path, &new_path).map_err(|e| {
-        log::error!("Rename error: {}", e);
+    std::fs::rename(&node_path, &new_path).map_err(|_| {
         return BaseException::new("Failed to rename file", INVALID_OPERATION);
     })?;
 
@@ -162,8 +156,7 @@ pub fn rename_node(id: Uuid, new_name: String) -> Result<TreeNode, BaseException
         new_path.push(format!("__rsn-folder.{}.md", &node.data.node_name));
         new_attach_path.push(format!("__rsn-folder.{}.md", &new_name));
 
-        std::fs::rename(&new_path, &new_attach_path).map_err(|e| {
-            log::error!("Rename folder metadata error: {}", e);
+        std::fs::rename(&new_path, &new_attach_path).map_err(|_| {
             return BaseException::new("Failed to rename folder metadata file", INVALID_OPERATION);
         })?;
     }
