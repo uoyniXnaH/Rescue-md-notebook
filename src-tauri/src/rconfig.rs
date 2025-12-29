@@ -68,3 +68,15 @@ pub fn update_rconfig_node(updated_node: TreeNode) -> Result<TreeData, BaseExcep
     write_rconfig(&path, &rconfig)?;
     return Ok(rconfig);
 }
+
+#[tauri::command]
+pub fn insert_rconfig_node(
+    parent: ParentId,
+    new_node: TreeNode,
+) -> Result<TreeData, BaseException> {
+    let path = get_gconfig_item("current_root")?;
+    let mut rconfig = get_rconfig()?;
+    rconfig.insert_node(&parent, &new_node)?;
+    write_rconfig(&path, &rconfig)?;
+    return Ok(rconfig);
+}

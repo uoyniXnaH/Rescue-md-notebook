@@ -90,6 +90,29 @@ impl TreeData {
         }
         return Err(BaseException::new("Node ID not found", INVALID_PARAMETER));
     }
+
+    pub fn insert_node(
+        &mut self,
+        parent: &ParentId,
+        new_node: &TreeNode,
+    ) -> Result<(), BaseException> {
+        for node in &self.0 {
+            if &node.parent == parent && node.data.node_name == new_node.data.node_name {
+                return Err(BaseException::new("Node already exists", INVALID_OPERATION));
+            }
+        }
+        let parent_index = match parent {
+            ParentId::Root(0) => None,
+            ParentId::Id(pid) => self.0.iter().position(|n| &n.id == pid),
+            _ => return Err(BaseException::new("Invalid parent ID", INVALID_PARAMETER)),
+        };
+        if let Some(index) = parent_index {
+            self.0.insert(index + 1, new_node.clone());
+        } else {
+            self.0.insert(0, new_node.clone());
+        }
+        return Ok(());
+    }
 }
 
 fn get_type_and_name(path: &Path) -> (Option<&str>, &str) {

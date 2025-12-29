@@ -1,11 +1,10 @@
-// use std::fs::{File};
 use std::path::PathBuf;
 use uuid::Uuid;
 use trash::delete;
 
 use crate::gconfig::{get_gconfig_item};
 use crate::rconfig::{get_rconfig, set_rconfig};
-use crate::utils::file_tree_handler::{TreeData, TreeNode, ParentId};
+use crate::utils::file_tree_handler::{TreeData, TreeNode ,TreeNodeData, ParentId};
 use crate::exceptions::{*};
 
 #[tauri::command]
@@ -167,6 +166,77 @@ pub fn rename_node(id: Uuid, new_name: String) -> Result<TreeNode, BaseException
     return Ok(updated_node);
 }
 
+#[tauri::command]
+pub fn create_node(
+    parent: ParentId,
+    mut node_name: String,
+    node_type: String,
+) -> Result<TreeNode, BaseException> {
+    let rconfig: TreeData = get_rconfig()?;
+    let root_path = get_gconfig_item("current_root")?;
+
+    if node_type == "calendar" {
+        return Err(BaseException::new(
+            "Calendar feature coming soon :)",
+            COMMING_SOON,
+        ));
+    }
+
+    let siblings = rconfig.get_nodes_by_parent(&parent);
+    let mut silbing_names: Vec<String> = vec![];
+    let mut order: u32 = 1;
+    let old_name = node_name.clone();
+    for sibling in siblings {
+        silbing_names.push(sibling.data.node_name.clone());
+    }
+    while silbing_names.contains(&node_name) {
+        node_name = format!("{} ({})", &old_name, order);
+        order += 1;
+    }
+
+    let mut new_path = match &parent {
+        ParentId::Root(0) => {
+            let mut path = PathBuf::from(&root_path);
+            path.push(PathBuf::from(&node_name));
+            path
+        }
+        ParentId::Id(id) => {
+            let parent_path = rconfig.create_path_by_id(&id)?;
+            let mut path = PathBuf::from(&parent_path);
+            path.push(PathBuf::from(&node_name));
+            path
+        }
+        _ => {
+            return Err(BaseException::new("Invalid parent ID", INVALID_PARAMETER));
+        }
+    };
+
+    if node_type == "folder" {
+        std::fs::create_dir(&new_path).map_err(|_| {
+            return BaseException::new("Failed to create folder", INVALID_OPERATION);
+        })?;
+        init_folder(&new_path);
+    } else {
+        new_path.set_extension("md");
+        std::fs::File::create(&new_path).map_err(|_| {
+            return BaseException::new("Failed to create file", INVALID_OPERATION);
+        })?;
+    }
+
+    let new_node = TreeNode {
+        id: Uuid::new_v4(),
+        parent: parent,
+        droppable: node_type == "folder",
+        text: node_name.clone(),
+        data: TreeNodeData {
+            node_name: node_name,
+            node_type: node_type,
+            is_open: Some(false),
+        },
+    };
+    return Ok(new_node);
+}
+
 pub fn init_folder(path: &PathBuf) -> () {
     let mut config_path = path.clone();
     let name = path.file_name().and_then(|s| s.to_str()).unwrap_or("");
@@ -174,7 +244,9 @@ pub fn init_folder(path: &PathBuf) -> () {
     if config_path.exists() {
         return;
     }
-    std::fs::File::create(&config_path).map_err(|_| {
-        return;
-    }).unwrap();
+    std::fs::File::create(&config_path)
+        .map_err(|_| {
+            return;
+        })
+        .unwrap();
 }
