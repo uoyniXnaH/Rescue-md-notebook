@@ -171,11 +171,7 @@ pub fn rename_node(id: Uuid, new_name: String) -> Result<TreeNode, BaseException
 }
 
 #[tauri::command]
-pub fn create_node(
-    parent: ParentId,
-    mut node_name: String,
-    node_type: String,
-) -> Result<TreeNode, BaseException> {
+pub fn create_node(parent: ParentId, mut node_name: String, node_type: String) -> Result<TreeNode, BaseException> {
     let rconfig: TreeData = get_rconfig()?;
     let root_path = get_gconfig_item("current_root")?;
 
@@ -187,13 +183,13 @@ pub fn create_node(
     }
 
     let siblings = rconfig.get_nodes_by_parent(&parent);
-    let mut silbing_names: Vec<String> = vec![];
+    let mut sibling_names: Vec<String> = Vec::new();
     let mut order: u32 = 1;
     let old_name = node_name.clone();
     for sibling in siblings {
-        silbing_names.push(sibling.data.node_name.clone());
+        sibling_names.push(sibling.text.clone());
     }
-    while silbing_names.contains(&node_name) {
+    while sibling_names.contains(&node_name) {
         node_name = format!("{} ({})", &old_name, order);
         order += 1;
     }
@@ -233,7 +229,7 @@ pub fn create_node(
         droppable: node_type == "folder",
         text: node_name.clone(),
         data: TreeNodeData {
-            node_name: node_name,
+            node_name: new_path.file_name().and_then(|s| s.to_str()).unwrap_or("").to_string(),
             node_type: node_type,
             is_open: Some(false),
         },
