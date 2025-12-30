@@ -143,8 +143,12 @@ pub fn rename_node(id: Uuid, new_name: String) -> Result<TreeNode, BaseException
 
     let node_path = PathBuf::from(rconfig.create_path_by_id(&id)?);
     let mut new_path = node_path.clone();
-    new_path.pop();
-    new_path.push(&new_name);
+    let ext = node_path.extension().and_then(|s| s.to_str()).unwrap_or("");
+    if ext != "" && node.data.node_type != "folder" {
+        new_path.set_file_name(format!("{}.{}", &new_name, ext));
+    } else {
+        new_path.set_file_name(&new_name);
+    }
 
     std::fs::rename(&node_path, &new_path).map_err(|_| {
         return BaseException::new("Failed to rename file", INVALID_OPERATION);
@@ -160,7 +164,7 @@ pub fn rename_node(id: Uuid, new_name: String) -> Result<TreeNode, BaseException
         })?;
     }
     let mut updated_node = node.clone();
-    updated_node.data.node_name = new_name.clone();
+    updated_node.data.node_name = new_path.file_name().and_then(|s| s.to_str()).unwrap_or("").to_string();
     updated_node.text = new_name;
 
     return Ok(updated_node);
