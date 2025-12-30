@@ -10,12 +10,14 @@ import FileTree from "./FileTree/FileTree";
 import SettingArea from "./SettingArea";
 import { useTranslation } from "react-i18next";
 import { useDisplayStore, useSettingStore, useFileTreeStore, useFocusStore } from "@store/store";
+import { useFileActions } from "@src/Hooks";
+import { NodeEnum } from '@type/types';
 import { VERSION, NODE_TYPE } from "@src/Defines";
 
 type RootMenuProps = {
   isOpen: boolean;
   anchorEl: null | HTMLElement;
-  handleClose: () => void;
+  handleClose: (type?: NodeEnum) => void;
 };
 const RootMenu: React.FC<RootMenuProps> = (props: RootMenuProps) => {
   const { isOpen, anchorEl, handleClose } = props;
@@ -28,7 +30,8 @@ const RootMenu: React.FC<RootMenuProps> = (props: RootMenuProps) => {
     <Menu
       id="root-menu"
       open={isOpen}
-      onClose={handleClose}
+      onAbort={() => handleClose()}
+      onClose={() => handleClose()}
       anchorEl={anchorEl}
     >
       <MenuItem component="label" onClick={async () => {
@@ -56,11 +59,11 @@ const RootMenu: React.FC<RootMenuProps> = (props: RootMenuProps) => {
       }}>
         <Typography variant="body2">{t("nav.change_root")}</Typography>
       </MenuItem>
-      <MenuItem onClick={handleClose}>
+      <MenuItem onClick={() => handleClose()}>
         <Typography variant="body2">{t("nav.open_root")}</Typography>
       </MenuItem>
       {NODE_TYPE.map((type) => (
-        <MenuItem key={type} onClick={handleClose}>
+        <MenuItem key={type} onClick={() => handleClose(type)}>
           <Typography variant="body2">{t("nav.new")}{t(`nav.${type}`)}</Typography>
         </MenuItem>
       ))}
@@ -72,6 +75,7 @@ function NavBar() {
   const { t } = useTranslation();
   const setIsNavBarShown = useDisplayStore((state) => state.setIsNavBarShown);
   const setFocusArea = useFocusStore((state) => state.setFocusArea);
+  const { createNode } = useFileActions();
   const [isRootMenuOpen, setIsRootMenuOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   return (
@@ -105,7 +109,15 @@ function NavBar() {
             <RootMenu
               isOpen={isRootMenuOpen}
               anchorEl={anchorEl}
-              handleClose={() => setIsRootMenuOpen(false)}
+              handleClose={(type) => {
+                setIsRootMenuOpen(false);
+                if (type) {
+                  createNode(0, "New Node", type)
+                  .catch((err) => {
+                    console.error("Failed to create node:", err);
+                  });
+                }
+              }}
             />
           </Stack>
           <FileTree />

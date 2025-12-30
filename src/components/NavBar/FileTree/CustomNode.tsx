@@ -15,7 +15,7 @@ import styles from "./FileTree.module.css";
 type AddMenuProps = {
   isOpen: boolean;
   anchorEl: null | HTMLElement;
-  handleAdd: (type: NodeEnum | null) => void;
+  handleAdd: (type?: NodeEnum) => void;
 };
 const AddMenu: React.FC<AddMenuProps> = (props: AddMenuProps) => {
   const { isOpen, anchorEl, handleAdd: handleAdd } = props;
@@ -25,8 +25,8 @@ const AddMenu: React.FC<AddMenuProps> = (props: AddMenuProps) => {
     <Menu
       id="add-menu"
       open={isOpen}
-      onAbort={() => handleAdd(null)}
-      onClose={() => handleAdd(null)}
+      onAbort={() => handleAdd()}
+      onClose={() => handleAdd()}
       anchorEl={anchorEl}
     >
       {NODE_TYPE.map((type) => (
