@@ -117,24 +117,24 @@ impl TreeData {
 
 fn get_type_and_name(path: &Path) -> (Option<&str>, &str) {
     let re = Regex::new(r"^__rsn-(\w+)\.(.+)$").unwrap();
-    let filename = path.file_name()
+    let filestem = path.file_stem()
     .and_then(|s| s.to_str())
     .unwrap_or("");
     let mut node_type = "";
     let mut node_name = "";
-    re.captures(filename).map(|caps| {
+    re.captures(filestem).map(|caps| {
         node_type = caps.get(1).map(|m| m.as_str()).unwrap_or("");
         node_name = caps.get(2).map(|m| m.as_str()).unwrap_or("");
     });
     if path.is_dir() {
         match node_type {
             "calendar" => (Some("calendar"), node_name),
-            _ => (Some("folder"), filename),
+            _ => (Some("folder"), filestem),
         }
     } else {
         match node_type {
             "folder" => (None, node_name),
-            _ => (Some("file"), filename),
+            _ => (Some("file"), filestem),
         }
     }
 }
