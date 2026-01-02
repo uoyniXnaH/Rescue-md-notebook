@@ -19,7 +19,7 @@ function Title() {
 
   React.useEffect(() => {
     if (selectedNodeId) {
-      invoke<NodeModel<NodeData>>("get_node_by_id", { nodeId: selectedNodeId })
+      invoke<NodeModel<NodeData>>("get_node_by_id", { id: selectedNodeId })
       .then((node) => {
           setFilename(node.text);
       })
