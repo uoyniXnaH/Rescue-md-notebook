@@ -17,7 +17,7 @@ const style = {
 };
 
 interface ModalOptions {
-    contents: string;
+    contents: Array<string> | string;
     leftButtonText?: string;
     rightButtonText?: string;
     onLeftButtonClick?: () => void;
@@ -38,9 +38,17 @@ const BasicModal: React.FC<ModalProps> = ({ open, onClose, contents, leftButtonT
             onClose={onClose}
         >
             <Box sx={style}>
-                <Typography sx={{ mt: 2 }}>
-                    {contents}
-                </Typography>
+                {Array.isArray(contents) ? (
+                    contents.map((line, index) => (
+                        <Typography key={index} sx={{ mt: 2 }}>
+                            {line}
+                        </Typography>
+                    ))
+                ) : (
+                    <Typography sx={{ mt: 2 }}>
+                        {contents}
+                    </Typography>
+                )}
                 <Stack direction="row" spacing={12} justifyContent="center" mx={2} mt={6}>
                     {leftButtonText && <Button variant="contained" onClick={() => { if (onLeftButtonClick) onLeftButtonClick(); onClose(); }}>{leftButtonText}</Button>}
                     {rightButtonText && <Button variant="contained" onClick={() => { if (onRightButtonClick) onRightButtonClick(); onClose(); }}>{rightButtonText}</Button>}
