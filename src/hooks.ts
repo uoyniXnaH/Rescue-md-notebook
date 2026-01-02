@@ -1,9 +1,10 @@
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { invoke } from "@tauri-apps/api/core";
 import { Menu, MenuItem, PredefinedMenuItem } from "@tauri-apps/api/menu";
 
 import { useFocusStore, useDisplayStore, useFileTreeStore } from "@store/store";
-import { useTranslation } from "react-i18next";
+import { useModal } from "./components/Modal";
 import * as Tauri from "./TauriCmd";
 import { NodeEnum } from "@type/types";
 
@@ -70,13 +71,17 @@ export function useFileActions() {
 
 export function useContextMenu() {
     const focusArea = useFocusStore((state) => state.focusArea);
+    const selectedNodeId = useFileTreeStore((state) => state.selectedNodeId);
     const setCtxMenuId = useFileTreeStore((state) => state.setCtxMenuId);
+    const setFileTreeData = useFileTreeStore((state) => state.setFileTreeData);
+    const setSelectedNodeId = useFileTreeStore((state) => state.setSelectedNodeId);
     const { showModal } = useModal();
     const { t } = useTranslation();
 
     const popUpCtxMenu = async (event: React.MouseEvent) => {
         event.preventDefault();
         const target_id = (event.target as HTMLElement).attributes.getNamedItem("data-testid")?.value;
+        const target_name = (await Tauri.getNodeById(target_id as string | number)).text;
 
         const copy = await PredefinedMenuItem.new({
             text: t("context_menu.copy"),
@@ -118,7 +123,23 @@ export function useContextMenu() {
             accelerator: "Delete",
             action: () => {
                 showModal({
-                    contents: "Are you sure you want to delete this item?"
+                    contents: [t("modal.confirm_delete"), target_name],
+                    leftButtonText: t("modal.cancel"),
+                    rightButtonText: t("modal.delete"),
+                    onLeftButtonClick: () => {},
+                    onRightButtonClick: () => {
+                        Tauri.deleteNode(target_id as string | number)
+                        .then((updatedFileTree) => {
+                            setCtxMenuId(null);
+                            setFileTreeData(updatedFileTree);
+                            if (selectedNodeId === target_id) {
+                                setSelectedNodeId(null);
+                            }
+                        })
+                        .catch((error) => {
+                            console.error("Failed to delete node:", error);
+                        });
+                    }
                 })
             }
         });

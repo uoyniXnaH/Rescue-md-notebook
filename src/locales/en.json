@@ -32,5 +32,10 @@
     "redo": "Redo",
     "rename": "Rename",
     "delete": "Delete"
+  },
+  "modal": {
+    "confirm_delete": "Are you sure you want to delete the following node? You can restore it from the trash.",
+    "cancel": "CANCEL",
+    "delete": "DELETE"
   }
 }

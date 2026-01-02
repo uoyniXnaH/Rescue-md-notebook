@@ -16,3 +16,14 @@ export async function createNode(parent: NodeModel["id"], nodeName: string, node
         return await invoke<NodeModel<NodeData>[]>("insert_rconfig_node", { parent: parent, newNode: newNode });
     });
 }
+
+export async function deleteNode(id: NodeModel["id"]): Promise<NodeModel<NodeData>[]> {
+    return await invoke<void>("move_node_to_trash", { id: id })
+    .then(async () => {
+        return await invoke<NodeModel<NodeData>[]>("remove_rconfig_node", { id: id });
+    });
+}
+
+export async function getNodeById(id: NodeModel["id"]): Promise<NodeModel<NodeData>> {
+    return await invoke<NodeModel<NodeData>>("get_node_by_id", { id: id });
+}

@@ -32,5 +32,10 @@
     "redo": "重做",
     "rename": "重命名",
     "delete": "删除"
+  },
+  "modal": {
+    "confirm_delete": "你确定要删除以下节点吗？你可以从回收站恢复它。",
+    "cancel": "取消",
+    "delete": "删除"
   }
 }
