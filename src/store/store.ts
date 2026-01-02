@@ -32,10 +32,12 @@ export const useFileTreeStore = create<types.FileTreeStoreType>()((set, get) => 
     fileTreeData: [],
     selectedNodeId: null,
     editNodeId: null,
+    ctxMenuId: null,
     getFileTreeData: () => get().fileTreeData,
     setFileTreeData: (data) => set({ fileTreeData: data }),
     setSelectedNodeId: (id) => set({ selectedNodeId: id }),
     setEditNodeId: (id) => set({ editNodeId: id }),
+    setCtxMenuId: (id) => set({ ctxMenuId: id }),
 }));
 
 export const useFocusStore = create<types.FocusStoreType>()((set) => ({

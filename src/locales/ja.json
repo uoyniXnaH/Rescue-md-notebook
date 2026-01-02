@@ -22,5 +22,15 @@
   "settings": {
     "language": "言語",
     "path": "ルーツパス"
+  },
+  "context_menu": {
+    "copy": "コピー",
+    "cut": "切り取り",
+    "paste": "貼り付け",
+    "select_all": "すべて選択",
+    "undo": "元に戻す",
+    "redo": "やり直す",
+    "rename": "名前を変更",
+    "delete": "削除"
   }
 }

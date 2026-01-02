@@ -13,7 +13,7 @@ import { useTranslation } from "react-i18next";
 import { useSettingStore, useFileTreeStore } from "@store/store";
 import { useDisplayStore } from "@store/store";
 import { GlobalConfig, BaseException } from "@type/types";
-import { useGlobalShortcuts } from "./Hooks";
+import { useGlobalShortcuts, useContextMenu } from "./Hooks";
 
 function App() {
   useGlobalShortcuts();
@@ -22,6 +22,8 @@ function App() {
   const setTheme = useSettingStore((state) => state.setTheme);
   const setLanguage = useSettingStore((state) => state.setLanguage);
   const setFileTreeData = useFileTreeStore((state) => state.setFileTreeData);
+  const setCtxMenuId = useFileTreeStore((state) => state.setCtxMenuId);
+  const { popUpCtxMenu } = useContextMenu();
   const { i18n, t } = useTranslation();
   const isNavBarShown = useDisplayStore((state) => state.isNavBarShown);
   const isEditAreaShown = useDisplayStore((state) => state.isEditAreaShown);
@@ -62,7 +64,7 @@ function App() {
   return (
     <ThemeProvider theme={selectTheme(settings.color_mode)}>
       <CssBaseline enableColorScheme />
-      <Box width="100%" height="100vh">
+      <Box onClick={() => setCtxMenuId(null)} onContextMenu={popUpCtxMenu} width="100%" height="100vh">
         <Stack direction="row" height="100%">
           {(!isNavBarShown || !isEditAreaShown) && <SideBar />}
           {isNavBarShown && <NavBar />}

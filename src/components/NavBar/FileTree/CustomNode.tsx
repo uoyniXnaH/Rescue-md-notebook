@@ -50,6 +50,7 @@ const CustomNode: React.FC<Props> = (props) => {
   const indent = props.depth * 3;
   const selectedNodeId = useFileTreeStore((state) => state.selectedNodeId);
   const editNodeId = useFileTreeStore((state) => state.editNodeId);
+  const ctxMenuId = useFileTreeStore((state) => state.ctxMenuId);
   const setEditNodeId = useFileTreeStore((state) => state.setEditNodeId);
   const setSelectedNodeId = useFileTreeStore((state) => state.setSelectedNodeId);
   const setFileTreeData = useFileTreeStore((state) => state.setFileTreeData);
@@ -87,16 +88,16 @@ const CustomNode: React.FC<Props> = (props) => {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         sx={{
-          backgroundColor: isHovered ? "action.hover" : "transparent"
+          backgroundColor: (isHovered || ctxMenuId === id) ? "action.hover" : "transparent"
         }}
       >
         <Stack direction="row" spacing={0.5} alignItems="center" sx={{ paddingInlineStart: indent }}>
           <Box>
             <TypeIcon fileType={data!.nodeType} isOpen={props.isOpen} onClick={handleToggle} />
           </Box>
-          <Box onClick={() => handleSelectNode(props.node)} onContextMenu={() => console.log(props.node)} px={0.5} sx={{
+          <Box onClick={() => handleSelectNode(props.node)} px={0.5} sx={{
             color: (selectedNodeId === id && editNodeId !== id) ? "primary.main" : "primary.contrastText",
-            backgroundColor: (selectedNodeId === id && editNodeId !== id) ? "primary.contrastText" : "transparent"
+            backgroundColor: (selectedNodeId === id && editNodeId !== id) ? "primary.contrastText" : "transparent",
           }}
           >
             {editNodeId === id ? (
@@ -111,7 +112,7 @@ const CustomNode: React.FC<Props> = (props) => {
                 autoFocus
               />
             ) : (
-              <Typography variant="body2" onDoubleClick={() => setEditNodeId(id)}>
+              <Typography variant="body2" onDoubleClick={() => setEditNodeId(id)} data-testid={id}>
                 {props.node.text}
               </Typography>
             )}

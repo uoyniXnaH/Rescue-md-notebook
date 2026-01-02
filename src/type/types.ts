@@ -38,10 +38,12 @@ export type FileTreeStoreType = {
     fileTreeData: NodeModel<NodeData>[];
     selectedNodeId: string | number | null;
     editNodeId: string | number | null;
+    ctxMenuId: string | number | null;
     getFileTreeData: () => NodeModel<NodeData>[];
     setFileTreeData: (data: NodeModel<NodeData>[]) => void;
     setSelectedNodeId: (id: string | number | null) => void;
     setEditNodeId: (id: string | number | null) => void;
+    setCtxMenuId: (id: string | number | null) => void;
 }
 
 export type FocusAreaEnum = "navBar" | "editArea" | "viewArea" | null;

@@ -22,5 +22,15 @@
   "settings": {
     "language": "Language",
     "path": "Root path"
+  },
+  "context_menu": {
+    "copy": "Copy",
+    "cut": "Cut",
+    "paste": "Paste",
+    "select_all": "Select All",
+    "undo": "Undo",
+    "redo": "Redo",
+    "rename": "Rename",
+    "delete": "Delete"
   }
 }
