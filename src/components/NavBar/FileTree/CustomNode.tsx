@@ -86,6 +86,9 @@ const CustomNode: React.FC<Props> = (props) => {
         py={0}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
+        sx={{
+          backgroundColor: isHovered ? "action.hover" : "transparent"
+        }}
       >
         <Stack direction="row" spacing={0.5} alignItems="center" sx={{ paddingInlineStart: indent }}>
           <Box>
