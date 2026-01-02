@@ -113,6 +113,14 @@ impl TreeData {
         }
         return Ok(());
     }
+
+    pub fn delete_node(&mut self, node_id: &Uuid) -> Result<(), BaseException> {
+        let index = self.0.iter().position(|n| &n.id == node_id).ok_or_else(|| {
+            return BaseException::new("Node ID not found", INVALID_PARAMETER);
+        })?;
+        self.0.remove(index);
+        return Ok(());
+    }
 }
 
 fn get_type_and_name(path: &Path) -> (Option<&str>, &str) {

@@ -2,6 +2,7 @@ use std::fs::{File, remove_file, read_to_string};
 use std::io::{BufWriter};
 use std::path::PathBuf;
 use serde_json::{to_writer, from_str};
+use uuid::Uuid;
 
 use crate::gconfig::{get_gconfig_item};
 use crate::utils::file_tree_handler::*;
@@ -77,6 +78,15 @@ pub fn insert_rconfig_node(
     let path = get_gconfig_item("current_root")?;
     let mut rconfig = get_rconfig()?;
     rconfig.insert_node(&parent, &new_node)?;
+    write_rconfig(&path, &rconfig)?;
+    return Ok(rconfig);
+}
+
+#[tauri::command]
+pub fn remove_rconfig_node(id: Uuid) -> Result<TreeData, BaseException> {
+    let path = get_gconfig_item("current_root")?;
+    let mut rconfig = get_rconfig()?;
+    rconfig.delete_node(&id)?;
     write_rconfig(&path, &rconfig)?;
     return Ok(rconfig);
 }

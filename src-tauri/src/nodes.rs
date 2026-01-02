@@ -8,9 +8,9 @@ use crate::utils::file_tree_handler::{TreeData, TreeNode ,TreeNodeData, ParentId
 use crate::exceptions::{*};
 
 #[tauri::command]
-pub fn move_to_trash(node_id: Uuid) -> Result<(), BaseException> {
+pub fn move_node_to_trash(id: Uuid) -> Result<(), BaseException> {
     let rconfig: TreeData = get_rconfig()?;
-    let node_path = rconfig.create_path_by_id(&node_id)?;
+    let node_path = rconfig.create_path_by_id(&id)?;
     delete(PathBuf::from(&node_path)).map_err(|_| {
         return BaseException::new("Failed to move file to trash", CANNOT_DELETE_FILE);
     })?;
@@ -115,9 +115,9 @@ pub fn update_node_contents(id: Uuid, new_contents: String) -> Result<(), BaseEx
 }
 
 #[tauri::command]
-pub fn get_node_by_id(node_id: Uuid) -> Result<TreeNode, BaseException> {
+pub fn get_node_by_id(id: Uuid) -> Result<TreeNode, BaseException> {
     let rconfig: TreeData = get_rconfig()?;
-    let node = rconfig.get_node_by_id(&node_id).ok_or_else(|| {
+    let node = rconfig.get_node_by_id(&id).ok_or_else(|| {
         return BaseException::new("Invalid node id", INVALID_PARAMETER);
     })?;
     return Ok(node.clone());
