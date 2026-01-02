@@ -1,7 +1,9 @@
 import { useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
+import { Menu, MenuItem, PredefinedMenuItem } from "@tauri-apps/api/menu";
 
 import { useFocusStore, useDisplayStore, useFileTreeStore } from "@store/store";
+import { useTranslation } from "react-i18next";
 import * as Tauri from "./TauriCmd";
 import { NodeEnum } from "@type/types";
 
@@ -64,4 +66,72 @@ export function useFileActions() {
   }
 
   return { saveFile, renameNode, createNode };
+}
+
+export function useContextMenu() {
+  const focusArea = useFocusStore((state) => state.focusArea);
+  const setCtxMenuId = useFileTreeStore((state) => state.setCtxMenuId);
+  const { t } = useTranslation();
+
+  const popUpCtxMenu = async (event: React.MouseEvent) => {
+    event.preventDefault();
+    const target_id = (event.target as HTMLElement).attributes.getNamedItem("data-testid")?.value;
+
+    const copy = await PredefinedMenuItem.new({
+      text: t("context_menu.copy"),
+      item: 'Copy',
+    });
+    const cut = await PredefinedMenuItem.new({
+      text: t("context_menu.cut"),
+      item: 'Cut',
+    });
+    const paste = await PredefinedMenuItem.new({
+      text: t("context_menu.paste"),
+      item: 'Paste',
+    });
+    const select_all = await PredefinedMenuItem.new({
+      text: t("context_menu.select_all"),
+      item: 'SelectAll',
+    });
+    const undo = await PredefinedMenuItem.new({
+      text: t("context_menu.undo"),
+      item: 'Undo',
+    });
+    const redo = await PredefinedMenuItem.new({
+      text: t("context_menu.redo"),
+      item: 'Redo',
+    });
+    const separator = await PredefinedMenuItem.new({
+      item: 'Separator',
+    });
+
+    const rename = await MenuItem.new({
+      text: t("context_menu.rename"),
+      accelerator: "F2",
+      action: () => {
+        console.log("Rename action triggered");
+      }
+    });
+    const move_to_trash = await MenuItem.new({
+      text: t("context_menu.delete"),
+      accelerator: "Delete",
+      action: () => {
+        console.log("Delete action triggered");
+      }
+    });
+
+    let items: Array<PredefinedMenuItem | MenuItem> = [];
+    if (focusArea == "editArea") {
+      items = [cut, copy, paste, select_all, separator, undo, redo];
+    } else if (target_id) {
+      setCtxMenuId(target_id);
+      items = [rename, move_to_trash]
+    }
+
+    const menu = await Menu.new({
+      items: items,
+    });
+    menu.popup();
+  }
+  return { popUpCtxMenu };
 }
