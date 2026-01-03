@@ -162,6 +162,7 @@ pub fn rename_node(id: Uuid, new_name: String) -> Result<TreeNode, BaseException
         std::fs::rename(&new_path, &new_attach_path).map_err(|_| {
             return BaseException::new("Failed to rename folder metadata file", INVALID_OPERATION);
         })?;
+        new_path.pop();
     }
     let mut updated_node = node.clone();
     updated_node.data.node_name = new_path.file_name().and_then(|s| s.to_str()).unwrap_or("").to_string();
