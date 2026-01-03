@@ -1,4 +1,6 @@
-import { NodeEnum } from "@type/types";
+import { NodeModel } from "@minoru/react-dnd-treeview";
+
+import { NodeEnum, GlobalConfig, NodeData } from "@type/types";
 
 export const VERSION = "0.1.0";
 
@@ -12,3 +14,21 @@ export const NODE_TYPE: NodeEnum[] = [
     "folder",
     "file"
 ]
+
+export const defaultGlobalConfig: GlobalConfig = {
+    current_root: "",
+    color_mode: "dark",
+    language: "en",
+};
+
+export const emptyNode: NodeModel<NodeData> = {
+    id: "",
+    parent: 0,
+    droppable: false,
+    text: "",
+    data: {
+        nodeType: "file",
+        nodeName: "",
+        isOpen: false,
+    },
+}
