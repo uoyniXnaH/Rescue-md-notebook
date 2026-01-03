@@ -2,12 +2,10 @@ import React from "react";
 import { Box, Stack, IconButton, Typography } from "@mui/material";
 import SaveIcon from '@mui/icons-material/Save';
 import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
-import { invoke } from "@tauri-apps/api/core";
 
 import { useDisplayStore, useFileTreeStore } from "@store/store";
 import { useFileActions } from "@src/Hooks";
-import { NodeModel } from "@minoru/react-dnd-treeview";
-import { NodeData } from "@type/types";
+import useTauriCmd from "@tauri/TauriCmd";
 
 function Title() {
   const setIsEditAreaShown = useDisplayStore((state) => state.setIsEditAreaShown);
@@ -15,16 +13,14 @@ function Title() {
   const selectedNodeId = useFileTreeStore((state) => state.selectedNodeId);
   const fileTreeData = useFileTreeStore((state) => state.fileTreeData);
   const { saveFile } = useFileActions();
+  const { getNodeById } = useTauriCmd();
   const [filename, setFilename] = React.useState<string>("");
 
   React.useEffect(() => {
     if (selectedNodeId) {
-      invoke<NodeModel<NodeData>>("get_node_by_id", { id: selectedNodeId })
+      getNodeById(selectedNodeId)
       .then((node) => {
           setFilename(node.text);
-      })
-      .catch((error) => {
-        console.error("Failed to get node by id:", error);
       });
     } else {
       setFilename("");

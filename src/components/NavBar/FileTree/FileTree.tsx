@@ -8,16 +8,16 @@ import {
   DropOptions,
 } from "@minoru/react-dnd-treeview";
 import { DndProvider } from "react-dnd";
-import { invoke } from "@tauri-apps/api/core";
 
 import CustomNode from "./CustomNode";
 import CustomDragPreview from "./CustomDragPreview";
 import { useFileTreeStore } from '@store/store';
-import { NodeData, BaseException } from "@type/types";
+import useTauriCmd from '@tauri/TauriCmd';
+import { NodeData } from "@type/types";
 import styles from "./FileTree.module.css";
 
 type Props = {
-  node: NodeModel;
+  node: NodeModel<NodeData>;
   depth: number;
 };
 
@@ -47,34 +47,28 @@ function getOpenedNodes(treeData: NodeModel<NodeData>[]): (string | number)[] {
 export default function FileTree() {
   const fileTreeData = useFileTreeStore((state) => state.fileTreeData);
   const setFileTreeData = useFileTreeStore((state) => state.setFileTreeData);
+  const { setRootConfig, moveNode } = useTauriCmd();
   const handleDrop = async (newTreeData: NodeModel<NodeData>[], options: DropOptions<NodeData>) => {
     let currentParent = options.dragSource?.parent;
     let newParent = options.dropTargetId;
     if (currentParent == newParent) {
-      await invoke("set_rconfig", { rconfig: newTreeData })
+      await setRootConfig(newTreeData)
       .then(() => {
         setFileTreeData(newTreeData);
-      })
-      .catch((err: BaseException) => {
-        console.error(err);
       });
     } else {
-      await invoke<NodeModel<NodeData>[]>("move_node", {
-        nodeId: options.dragSource!.id as string,
-        newParentId: newParent as string,
-        newFileTree: newTreeData
-      })
-      .then((res) => {
-        setFileTreeData(res);
-      })
-      .catch((err: BaseException) => {
-        console.error(err);
+      await moveNode(
+        options.dragSource!.id,
+        newParent,
+        newTreeData
+      )
+      .then((fileTree) => {
+        setFileTreeData(fileTree);
       });
     }
   };
   return (
     <Box overflow="auto" height="95%" pl={1.5}>
-      {/* <Button variant="contained" onClick={()=>console.log(fileTreeData)}>Touch!</Button> */}
       <DndProvider backend={MultiBackend} options={getBackendOptions()}>
         <Box height="95%">
           <Tree

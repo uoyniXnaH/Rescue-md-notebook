@@ -4,13 +4,13 @@ import HomeIcon from '@mui/icons-material/Home';
 import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { open } from '@tauri-apps/plugin-dialog';
-import { invoke } from "@tauri-apps/api/core";
 
 import FileTree from "./FileTree/FileTree";
 import SettingArea from "./SettingArea";
 import { useTranslation } from "react-i18next";
 import { useDisplayStore, useSettingStore, useFileTreeStore, useFocusStore } from "@store/store";
 import { useFileActions } from "@src/Hooks";
+import useTauriCmd from "@tauri/TauriCmd";
 import { NodeEnum } from '@type/types';
 import { VERSION, NODE_TYPE } from "@src/Defines";
 
@@ -24,6 +24,7 @@ const RootMenu: React.FC<RootMenuProps> = (props: RootMenuProps) => {
   const setCurrentRoot = useSettingStore((state) => state.setCurrentRoot);
   const getSettings = useSettingStore((state) => state.getSettings);
   const setFileTreeData = useFileTreeStore((state) => state.setFileTreeData);
+  const { setGlobalConfig, getRootConfig } = useTauriCmd();
   const { t } = useTranslation();
 
   return (
@@ -41,18 +42,12 @@ const RootMenu: React.FC<RootMenuProps> = (props: RootMenuProps) => {
         });
         if (selected && typeof selected === "string") {
           setCurrentRoot(selected);
-          await invoke("set_gconfig", { config: getSettings() })
+          await setGlobalConfig(getSettings())
           .then(async () => {
-            await invoke("get_rconfig")
-            .then(async (d) => {
-              setFileTreeData(d as any[]);
-            })
-            .catch((err) => {
-              console.error("Error getting file tree:", err);
+            await getRootConfig()
+            .then(async (filetree) => {
+              setFileTreeData(filetree);
             });
-          })
-          .catch((err) => {
-            console.error("Error setting global config:", err);
           });
         }
         handleClose();

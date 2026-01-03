@@ -1,13 +1,10 @@
 import { create } from "zustand";
 
+import { defaultGlobalConfig } from "@src/Defines";
 import * as types from "@type/types";
 
 export const useSettingStore = create<types.settingStoreType>()((set, get) => ({
-    settings: {
-        current_root: "",
-        color_mode: "dark",
-        language: "en"
-    },
+    settings: defaultGlobalConfig,
     setSettings: (settings) => set({ settings: settings }),
     getSettings: () => get().settings,
     setCurrentRoot: (path: String) => set((state) => ({ settings: { ...state.settings, current_root: path } })),

@@ -1,11 +1,10 @@
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { invoke } from "@tauri-apps/api/core";
 import { Menu, MenuItem, PredefinedMenuItem } from "@tauri-apps/api/menu";
 
 import { useFocusStore, useDisplayStore, useFileTreeStore } from "@store/store";
 import { useModal } from "./components/Modal";
-import * as Tauri from "./TauriCmd";
+import useTauriCmd from "@tauri/TauriCmd";
 import { NodeEnum } from "@type/types";
 
 export function useGlobalShortcuts() {
@@ -33,15 +32,13 @@ export function useFileActions() {
     const setFileTreeData = useFileTreeStore((state) => state.setFileTreeData);
     const currentFileContents = useDisplayStore((state) => state.currentFileContents);
     const setIsChanged = useDisplayStore((state) => state.setIsChanged);
+    const Tauri = useTauriCmd();
 
     const saveFile = async () => {
         if (selectedNodeId) {
-            await invoke("update_node_contents", { id: selectedNodeId, newContents: currentFileContents })
+            await Tauri.updateNodeContents(selectedNodeId, currentFileContents)
             .then(() => {
                 setIsChanged(false);
-            })
-            .catch((error) => {
-                console.error("Failed to save file contents:", error);
             });
         }
     };
@@ -50,9 +47,6 @@ export function useFileActions() {
         await Tauri.renameNode(id, newName)
         .then((updatedFileTree) => {
             setFileTreeData(updatedFileTree);
-        })
-        .catch((error) => {
-            console.error("Failed to rename node:", error);
         });
     }
 
@@ -60,9 +54,6 @@ export function useFileActions() {
         await Tauri.createNode(parent, nodeName, nodeType)
         .then((updatedFileTree) => {
             setFileTreeData(updatedFileTree);
-        })
-        .catch((error) => {
-            console.error("Failed to create node:", error);
         });
     }
 
@@ -75,13 +66,14 @@ export function useContextMenu() {
     const setCtxMenuId = useFileTreeStore((state) => state.setCtxMenuId);
     const setFileTreeData = useFileTreeStore((state) => state.setFileTreeData);
     const setSelectedNodeId = useFileTreeStore((state) => state.setSelectedNodeId);
-    const { showModal } = useModal();
+    const { showBasicModal } = useModal();
+    const { getNodeById, deleteNode } = useTauriCmd();
     const { t } = useTranslation();
 
     const popUpCtxMenu = async (event: React.MouseEvent) => {
         event.preventDefault();
         const target_id = (event.target as HTMLElement).attributes.getNamedItem("data-testid")?.value;
-        const target_name = (await Tauri.getNodeById(target_id as string | number)).text;
+        const target_name = (await getNodeById(target_id as string | number)).text;
 
         const copy = await PredefinedMenuItem.new({
             text: t("context_menu.copy"),
@@ -122,22 +114,19 @@ export function useContextMenu() {
             text: t("context_menu.delete"),
             accelerator: "Delete",
             action: () => {
-                showModal({
+                showBasicModal({
                     contents: [t("modal.confirm_delete"), target_name],
                     leftButtonText: t("modal.cancel"),
                     rightButtonText: t("modal.delete"),
                     onLeftButtonClick: () => {},
                     onRightButtonClick: () => {
-                        Tauri.deleteNode(target_id as string | number)
+                        deleteNode(target_id as string | number)
                         .then((updatedFileTree) => {
                             setCtxMenuId(null);
                             setFileTreeData(updatedFileTree);
                             if (selectedNodeId === target_id) {
                                 setSelectedNodeId(null);
                             }
-                        })
-                        .catch((error) => {
-                            console.error("Failed to delete node:", error);
                         });
                     }
                 })

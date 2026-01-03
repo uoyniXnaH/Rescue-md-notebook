@@ -25,6 +25,7 @@
     "paths": {
       "@store/*": ["./src/store/*"],
       "@type/*": ["./src/type/*"],
+      "@tauri/*": ["./src/tauri/*"],
       "@src/*": ["./src/*"]
     }
   },

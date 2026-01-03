@@ -2,12 +2,12 @@ import React from "react";
 import { Box, Stack, Typography, IconButton, Menu, MenuItem } from "@mui/material";
 import { NodeModel } from "@minoru/react-dnd-treeview";
 import AddIcon from '@mui/icons-material/Add';
-import { invoke } from "@tauri-apps/api/core";
 
 import TypeIcon from "./TypeIcon";
 import { NodeData, NodeEnum } from "@type/types";
 import { useFileTreeStore, useDisplayStore } from "@store/store";
 import { useFileActions } from "@src/Hooks";
+import useTauriCmd from "@tauri/TauriCmd";
 import { useTranslation } from "react-i18next";
 import { NODE_TYPE } from "@src/Defines";
 import styles from "./FileTree.module.css";
@@ -55,15 +55,16 @@ const CustomNode: React.FC<Props> = (props) => {
   const setSelectedNodeId = useFileTreeStore((state) => state.setSelectedNodeId);
   const setFileTreeData = useFileTreeStore((state) => state.setFileTreeData);
   const setCurrentFileContents = useDisplayStore((state) => state.setCurrentFileContents);
+  const { renameNode, createNode } = useFileActions();
+  const { updateRootConfigNode, getNodeContents } = useTauriCmd();
   const [isHovered, setIsHovered] = React.useState(false);
   const [isAddMenuOpen, setIsAddMenuOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [nodename, setNodename] = React.useState(props.node.text);
-  const { renameNode, createNode } = useFileActions();
 
   const handleToggle = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    await invoke<NodeModel<NodeData>[]>("update_rconfig_node", { updatedNode: { ...props.node, data: { ...props.node.data, isOpen: !props.isOpen } } })
+    await updateRootConfigNode({ ...props.node, data: { ...props.node.data!, isOpen: !props.isOpen } })
     .then((filetree) => {
       setFileTreeData(filetree);
       props.onToggle(props.node.id);
@@ -72,7 +73,7 @@ const CustomNode: React.FC<Props> = (props) => {
 
   const handleSelectNode = async (node: NodeModel<NodeData>) => {
     setSelectedNodeId(node.id);
-    await invoke<string>("get_node_contents", { node: node })
+    await getNodeContents(node.id)
     .then((contents) => {
       setCurrentFileContents(contents);
     });

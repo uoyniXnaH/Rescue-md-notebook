@@ -34,6 +34,7 @@ export default defineConfig(async () => ({
       "@src": "/src",
       "@store": "/src/store",
       "@type": "/src/type",
+      "@tauri": "/src/tauri",
     },
   },
 }));

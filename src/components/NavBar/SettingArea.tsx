@@ -4,8 +4,8 @@ import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LanguageIcon from '@mui/icons-material/Language';
 
 import { useSettingStore, useFocusStore } from "@store/store";
+import useTauriCmd from "@tauri/TauriCmd";
 import { LANGUAGE } from "@src/Defines";
-import { invoke } from "@tauri-apps/api/core";
 
 function SettingArea() {
   const settings = useSettingStore((state) => state.settings);
@@ -13,6 +13,8 @@ function SettingArea() {
   const setTheme = useSettingStore((state) => state.setTheme);
   const setLanguage = useSettingStore((state) => state.setLanguage);
   const setFocusArea = useFocusStore((state) => state.setFocusArea);
+  const { setGlobalConfig } = useTauriCmd();
+
   return (
     <Box onFocus={() => setFocusArea(null)} onClick={() => setFocusArea(null)} width="100%" height={60} alignSelf="center">
       <Stack height="100%" direction="row" spacing={4} alignItems="center" px={2}>
@@ -23,7 +25,7 @@ function SettingArea() {
           onChange={async (_, newTheme) => {
             if (newTheme) {
               setTheme(newTheme);
-              await invoke("set_gconfig", { config: getSettings() });
+              await setGlobalConfig(getSettings());
             }
           }}
           aria-label="color-mode"
@@ -44,7 +46,7 @@ function SettingArea() {
             value={settings.language}
             onChange={async (e) => {
               setLanguage(e.target.value)
-              await invoke("set_gconfig", { config: getSettings() });
+              await setGlobalConfig(getSettings());
             }}
             size="small"
           >
