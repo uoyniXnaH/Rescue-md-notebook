@@ -18,10 +18,10 @@ pub fn move_node_to_trash(id: Uuid) -> Result<(), BaseException> {
 }
 
 #[tauri::command]
-pub fn move_node(node_id: Uuid, new_parent_id: ParentId, new_file_tree: TreeData) -> Result<TreeData, BaseException> {
+pub fn move_node(id: Uuid, new_parent_id: ParentId, new_file_tree: TreeData) -> Result<TreeData, BaseException> {
     let root_path = get_gconfig_item("current_root")?;
     let old_file_tree = get_rconfig()?;
-    let node = new_file_tree.get_node_by_id(&node_id).ok_or_else(|| {
+    let node = new_file_tree.get_node_by_id(&id).ok_or_else(|| {
         return BaseException::new("Invalid node id", INVALID_PARAMETER);
     })?;
 
@@ -49,7 +49,7 @@ pub fn move_node(node_id: Uuid, new_parent_id: ParentId, new_file_tree: TreeData
         }
     };
 
-    let old_path = old_file_tree.create_path_by_id(&node_id)?;
+    let old_path = old_file_tree.create_path_by_id(&id)?;
     std::fs::rename(&old_path, &new_path).map_err(|_| {
         return BaseException::new("Failed to move file", INVALID_OPERATION);
     })?;
@@ -59,13 +59,16 @@ pub fn move_node(node_id: Uuid, new_parent_id: ParentId, new_file_tree: TreeData
 }
 
 #[tauri::command]
-pub fn get_node_contents(node: TreeNode) -> Result<String, BaseException> {
+pub fn get_node_contents(id: Uuid) -> Result<String, BaseException> {
     let rconfig: TreeData = get_rconfig()?;
+    let node = rconfig.get_node_by_id(&id).ok_or_else(|| {
+        return BaseException::new("Invalid node id", INVALID_PARAMETER);
+    })?;
     let node_path = match node.data.node_type.as_str() {
         "folder" => {
             let mut path = PathBuf::from(rconfig.create_path_by_id(&node.id)?);
-            let name = node.data.node_name;
-            path.push(format!("__rsn-folder.{}.md", &name));
+            let name = &node.data.node_name;
+            path.push(format!("__rsn-folder.{}.md", name));
             path
         },
         "calendar" => {
