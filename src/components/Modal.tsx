@@ -77,9 +77,10 @@ const BasicModal: React.FC<ModalProps> = ({ open, onClose, contents, leftButtonT
 const MessageModal: React.FC<ModalProps> = ({ open, onClose, contents }) => {
     const settings = useSettingStore((state) => state.settings);
     
-    setTimeout(() => {
+    let timeoutId = setTimeout(() => {
         if (open) {
             onClose();
+            clearTimeout(timeoutId);
         }
     }, 5000);
 
@@ -99,7 +100,7 @@ const MessageModal: React.FC<ModalProps> = ({ open, onClose, contents }) => {
                 )}
                 <IconButton
                     aria-label="close"
-                    onClick={onClose}
+                    onClick={() => {onClose(); clearTimeout(timeoutId);}}
                     size="small"
                     sx={{
                         position: 'absolute',
