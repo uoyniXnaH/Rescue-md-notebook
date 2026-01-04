@@ -28,7 +28,7 @@ pub fn move_node(id: Uuid, new_parent_id: ParentId, new_file_tree: TreeData) -> 
     let siblings = old_file_tree.get_nodes_by_parent(&new_parent_id);
     for sibling in siblings {
         if sibling.data.node_name == node.data.node_name {
-            return Err(BaseException::new("Already exists", INVALID_OPERATION));
+            return Err(BaseException::new("Already exists", ALREADY_EXISTS));
         }
     }
 
@@ -140,7 +140,7 @@ pub fn rename_node(id: Uuid, new_name: String) -> Result<TreeNode, BaseException
     let siblings = rconfig.get_nodes_by_parent(&node.parent);
     for sibling in siblings {
         if sibling.data.node_name == new_name {
-            return Err(BaseException::new("Already exists", INVALID_OPERATION));
+            return Err(BaseException::new("Already exists", ALREADY_EXISTS));
         }
     }
 

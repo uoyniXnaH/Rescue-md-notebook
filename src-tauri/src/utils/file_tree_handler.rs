@@ -98,7 +98,7 @@ impl TreeData {
     ) -> Result<(), BaseException> {
         for node in &self.0 {
             if &node.parent == parent && node.data.node_name == new_node.data.node_name {
-                return Err(BaseException::new("Node already exists", INVALID_OPERATION));
+                return Err(BaseException::new("Node already exists", ALREADY_EXISTS));
             }
         }
         let parent_index = match parent {
