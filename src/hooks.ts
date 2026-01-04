@@ -73,7 +73,10 @@ export function useContextMenu() {
     const popUpCtxMenu = async (event: React.MouseEvent) => {
         event.preventDefault();
         const target_id = (event.target as HTMLElement).attributes.getNamedItem("data-testid")?.value;
-        const target_name = (await getNodeById(target_id as string | number)).text;
+        let target_name = "";
+        if (target_id) {
+            target_name = (await getNodeById(target_id as string | number)).text;
+        }
 
         const copy = await PredefinedMenuItem.new({
             text: t("context_menu.copy"),
