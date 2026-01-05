@@ -80,4 +80,6 @@ export type TauriCmdEnum =
     "update_node_contents" |
     "get_node_by_id" |
     "rename_node" |
-    "create_node";
+    "create_node" |
+    "open_in_explorer" |
+    "fix_node";

@@ -13,7 +13,7 @@ function useTauriCmd() {
     const { showMessageModal } = useModal();
     const { t } = useTranslation();
     const fileTreeData = useFileTreeStore((state) => state.fileTreeData);
-    const TauriExceptions = useTauriExceptionMessage(t);
+    const { getExceptionMsg } = useTauriExceptionMessage(t);
 
     const getGlobalConfig = async (): Promise<Types.GlobalConfig> => {
         return new Promise((resolve) => {
@@ -23,7 +23,7 @@ function useTauriCmd() {
             })
             .catch((error: Types.BaseException) => {
                 showMessageModal({
-                    contents: TauriExceptions.getExceptionMsg("get_gconfig", error.code),
+                    contents: getExceptionMsg("get_gconfig", error.code),
                 });
                 resolve(defaultGlobalConfig);
             });
@@ -38,7 +38,7 @@ function useTauriCmd() {
             })
             .catch((error: Types.BaseException) => {
                 showMessageModal({
-                    contents: TauriExceptions.getExceptionMsg("set_gconfig", error.code),
+                    contents: getExceptionMsg("set_gconfig", error.code),
                 });
                 resolve();
             });
@@ -53,7 +53,7 @@ function useTauriCmd() {
             })
             .catch((error: Types.BaseException) => {
                 showMessageModal({
-                    contents: TauriExceptions.getExceptionMsg("get_rconfig", error.code),
+                    contents: getExceptionMsg("get_rconfig", error.code),
                 });
                 resolve([]);
             });
@@ -68,7 +68,7 @@ function useTauriCmd() {
             })
             .catch((error: Types.BaseException) => {
                 showMessageModal({
-                    contents: TauriExceptions.getExceptionMsg("set_rconfig", error.code),
+                    contents: getExceptionMsg("set_rconfig", error.code),
                 });
                 resolve();
             });
@@ -83,7 +83,7 @@ function useTauriCmd() {
             })
             .catch((error: Types.BaseException) => {
                 showMessageModal({
-                    contents: TauriExceptions.getExceptionMsg("update_rconfig_node", error.code),
+                    contents: getExceptionMsg("update_rconfig_node", error.code),
                 });
                 resolve(fileTreeData);
             });
@@ -100,14 +100,14 @@ function useTauriCmd() {
                 })
                 .catch((error: Types.BaseException) => {
                     showMessageModal({
-                        contents: TauriExceptions.getExceptionMsg("update_rconfig_node", error.code),
+                        contents: getExceptionMsg("update_rconfig_node", error.code),
                     });
                     resolve(fileTreeData);
                 });
             })
             .catch((error: Types.BaseException) => {
                 showMessageModal({
-                    contents: TauriExceptions.getExceptionMsg("rename_node", error.code),
+                    contents: getExceptionMsg("rename_node", error.code),
                 });
                 resolve(fileTreeData);
             });
@@ -124,14 +124,14 @@ function useTauriCmd() {
                 })
                 .catch((error: Types.BaseException) => {
                     showMessageModal({
-                        contents: TauriExceptions.getExceptionMsg("insert_rconfig_node", error.code),
+                        contents: getExceptionMsg("insert_rconfig_node", error.code),
                     });
                     resolve(fileTreeData);
                 });
             })
             .catch((error: Types.BaseException) => {
                 showMessageModal({
-                    contents: TauriExceptions.getExceptionMsg("create_node", error.code),
+                    contents: getExceptionMsg("create_node", error.code),
                 });
                 resolve(fileTreeData);
             });
@@ -148,14 +148,14 @@ function useTauriCmd() {
                 })
                 .catch((error: Types.BaseException) => {
                     showMessageModal({
-                        contents: TauriExceptions.getExceptionMsg("remove_rconfig_node", error.code),
+                        contents: getExceptionMsg("remove_rconfig_node", error.code),
                     });
                     resolve(fileTreeData);
                 });
             })
             .catch((error: Types.BaseException) => {
                 showMessageModal({
-                    contents: TauriExceptions.getExceptionMsg("move_node_to_trash", error.code),
+                    contents: getExceptionMsg("move_node_to_trash", error.code),
                 });
                 resolve(fileTreeData);
             });
@@ -170,7 +170,7 @@ function useTauriCmd() {
             })
             .catch((error: Types.BaseException) => {
                 showMessageModal({
-                    contents: TauriExceptions.getExceptionMsg("move_node", error.code),
+                    contents: getExceptionMsg("move_node", error.code),
                 });
                 resolve(fileTreeData);
             });
@@ -185,7 +185,7 @@ function useTauriCmd() {
             })
             .catch((error: Types.BaseException) => {
                 showMessageModal({
-                    contents: TauriExceptions.getExceptionMsg("get_node_by_id", error.code),
+                    contents: getExceptionMsg("get_node_by_id", error.code),
                 });
                 resolve(emptyNode);
             });
@@ -200,7 +200,7 @@ function useTauriCmd() {
             })
             .catch((error: Types.BaseException) => {
                 showMessageModal({
-                    contents: TauriExceptions.getExceptionMsg("get_node_contents", error.code),
+                    contents: getExceptionMsg("get_node_contents", error.code),
                 });
                 resolve("");
             });
@@ -215,7 +215,22 @@ function useTauriCmd() {
             })
             .catch((error: Types.BaseException) => {
                 showMessageModal({
-                    contents: TauriExceptions.getExceptionMsg("update_node_contents", error.code),
+                    contents: getExceptionMsg("update_node_contents", error.code),
+                });
+                resolve();
+            });
+        });
+    }
+
+    const openInExplorer = async (id: NodeModel["id"]): Promise<void> => {
+        return new Promise((resolve) => {
+            invoke<void>("open_in_explorer", { id: id })
+            .then(() => {
+                resolve();
+            })
+            .catch((error: Types.BaseException) => {
+                showMessageModal({
+                    contents: getExceptionMsg("open_in_explorer", error.code),
                 });
                 resolve();
             });
@@ -235,6 +250,7 @@ function useTauriCmd() {
         getNodeById,
         getNodeContents,
         updateNodeContents,
+        openInExplorer,
     };
 }
 

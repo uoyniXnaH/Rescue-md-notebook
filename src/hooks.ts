@@ -5,7 +5,8 @@ import { Menu, MenuItem, PredefinedMenuItem } from "@tauri-apps/api/menu";
 import { useFocusStore, useDisplayStore, useFileTreeStore } from "@store/store";
 import { useModal } from "./components/Modal";
 import useTauriCmd from "@tauri/TauriCmd";
-import { NodeEnum } from "@type/types";
+import { NodeData, NodeEnum } from "@type/types";
+import { NodeModel } from "@minoru/react-dnd-treeview";
 
 export function useGlobalShortcuts() {
     const focusArea = useFocusStore((state) => state.focusArea);
@@ -68,15 +69,15 @@ export function useContextMenu() {
     const setSelectedNodeId = useFileTreeStore((state) => state.setSelectedNodeId);
     const setEditNodeId = useFileTreeStore((state) => state.setEditNodeId);
     const { showBasicModal } = useModal();
-    const { getNodeById, deleteNode } = useTauriCmd();
+    const { getNodeById, deleteNode, openInExplorer } = useTauriCmd();
     const { t } = useTranslation();
 
     const popUpCtxMenu = async (event: React.MouseEvent) => {
         event.preventDefault();
         const target_id = (event.target as HTMLElement).attributes.getNamedItem("data-testid")?.value;
-        let target_name = "";
+        let target_node: NodeModel<NodeData> | null = null;
         if (target_id) {
-            target_name = (await getNodeById(target_id as string | number)).text;
+            target_node = await getNodeById(target_id as string | number);
         }
 
         const copy = await PredefinedMenuItem.new({
@@ -107,6 +108,17 @@ export function useContextMenu() {
             item: 'Separator',
         });
 
+        const open_in_explorer = await MenuItem.new({
+            text: t("context_menu.open_in_explorer"),
+            action: async () => {
+                await openInExplorer(target_id as string | number);
+            }
+        });
+        const fix_node = await MenuItem.new({
+            text: t("context_menu.fix_node"),
+            action: async () => {  
+            }
+        });
         const rename = await MenuItem.new({
             text: t("context_menu.rename"),
             accelerator: "F2",
@@ -119,7 +131,7 @@ export function useContextMenu() {
             accelerator: "Delete",
             action: () => {
                 showBasicModal({
-                    contents: [t("modal.confirm_delete"), target_name],
+                    contents: [t("modal.confirm_delete"), target_node!.text],
                     leftButtonText: t("modal.cancel"),
                     rightButtonText: t("modal.delete"),
                     onLeftButtonClick: () => {},
@@ -138,11 +150,14 @@ export function useContextMenu() {
         });
 
         let items: Array<PredefinedMenuItem | MenuItem> = [];
-        if (focusArea == "editArea") {
-            items = [cut, copy, paste, select_all, separator, undo, redo];
-        } else if (target_id) {
+        if (target_id) {
             setCtxMenuId(target_id);
-            items = [rename, move_to_trash]
+            items = [open_in_explorer, rename, move_to_trash];
+            if (target_node?.droppable) {
+                items.push(fix_node);
+            }
+        } else if (focusArea == "editArea") {
+            items = [cut, copy, paste, select_all, separator, undo, redo];
         }
 
         const menu = await Menu.new({

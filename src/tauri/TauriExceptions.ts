@@ -21,11 +21,17 @@ function useTauriExceptionMessage(t: TFunction<"translation", undefined>) {
             case INVALID_PARAMETER:
                 switch(cmd) {
                     case "create_node":
-                    case "move_node_to_trash":
+                        message = t("exceptions.create_node.invalid_parameter");
+                        break;
                     case "move_node":
+                        message = t("exceptions.move_node.invalid_parameter");
+                        break;
+                    case "rename_node":
+                    case "move_node_to_trash":
                     case "get_node_by_id":
                     case "update_node_contents":
-                        message = t(`exceptions.${cmd}.invalid_parameter`);
+                    case "open_in_explorer":
+                        message = t("exceptions.get_node_by_id.invalid_parameter");
                         break;
                     default:
                         message = t("exceptions.invalid_parameter");
@@ -129,6 +135,9 @@ function useTauriExceptionMessage(t: TFunction<"translation", undefined>) {
                         break;
                     case "rename_node":
                         message = t("exceptions.rename_node.invalid_operation");
+                        break;
+                    case "open_in_explorer":
+                        message = t("exceptions.open_in_explorer.invalid_operation");
                         break;
                     default:
                         message = t("exceptions.unknown_error");

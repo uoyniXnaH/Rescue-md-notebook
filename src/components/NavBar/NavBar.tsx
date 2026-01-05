@@ -24,7 +24,7 @@ const RootMenu: React.FC<RootMenuProps> = (props: RootMenuProps) => {
   const setCurrentRoot = useSettingStore((state) => state.setCurrentRoot);
   const getSettings = useSettingStore((state) => state.getSettings);
   const setFileTreeData = useFileTreeStore((state) => state.setFileTreeData);
-  const { setGlobalConfig, getRootConfig } = useTauriCmd();
+  const { setGlobalConfig, getRootConfig, openInExplorer } = useTauriCmd();
   const { t } = useTranslation();
 
   return (
@@ -54,7 +54,7 @@ const RootMenu: React.FC<RootMenuProps> = (props: RootMenuProps) => {
       }}>
         <Typography variant="body2">{t("nav.change_root")}</Typography>
       </MenuItem>
-      <MenuItem onClick={() => handleClose()}>
+      <MenuItem onClick={() => {openInExplorer(0);handleClose();}}>
         <Typography variant="body2">{t("nav.open_root")}</Typography>
       </MenuItem>
       {NODE_TYPE.map((type) => (
@@ -107,10 +107,7 @@ function NavBar() {
               handleClose={(type) => {
                 setIsRootMenuOpen(false);
                 if (type) {
-                  createNode(0, "New Node", type)
-                  .catch((err) => {
-                    console.error("Failed to create node:", err);
-                  });
+                  createNode(0, "New Node", type);
                 }
               }}
             />
