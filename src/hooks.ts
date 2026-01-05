@@ -66,6 +66,7 @@ export function useContextMenu() {
     const setCtxMenuId = useFileTreeStore((state) => state.setCtxMenuId);
     const setFileTreeData = useFileTreeStore((state) => state.setFileTreeData);
     const setSelectedNodeId = useFileTreeStore((state) => state.setSelectedNodeId);
+    const setEditNodeId = useFileTreeStore((state) => state.setEditNodeId);
     const { showBasicModal } = useModal();
     const { getNodeById, deleteNode } = useTauriCmd();
     const { t } = useTranslation();
@@ -110,7 +111,7 @@ export function useContextMenu() {
             text: t("context_menu.rename"),
             accelerator: "F2",
             action: () => {
-                console.log("Rename action triggered");
+                setEditNodeId(target_id as string | number);
             }
         });
         const move_to_trash = await MenuItem.new({
