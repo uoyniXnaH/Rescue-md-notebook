@@ -217,13 +217,13 @@ pub fn create_node(parent: ParentId, mut node_name: String, node_type: String) -
 
     if node_type == "folder" {
         std::fs::create_dir(&new_path).map_err(|_| {
-            return BaseException::new("Failed to create folder", INVALID_OPERATION);
+            return BaseException::new("Failed to create folder", CANNOT_CREATE_FILE);
         })?;
         init_folder(&new_path);
     } else {
         new_path.set_extension("md");
         std::fs::File::create(&new_path).map_err(|_| {
-            return BaseException::new("Failed to create file", INVALID_OPERATION);
+            return BaseException::new("Failed to create file", CANNOT_CREATE_FILE);
         })?;
     }
 
