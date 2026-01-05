@@ -15,10 +15,8 @@
   },
   "edit": {
     "empty_file_prompt": "开始编写你的文档..."
-},
-  "view": {
-
   },
+  "view": {},
   "settings": {
     "language": "语言",
     "path": "根文件夹路径"
@@ -37,5 +35,54 @@
     "confirm_delete": "你确定要删除以下节点吗？你可以从回收站恢复它。",
     "cancel": "取消",
     "delete": "删除"
+  },
+  "exceptions": {
+    "unknown_error": "发生未知错误。请在GitHub上报告此问题。",
+    "invalid_parameter": "传入了无效的配置键。这本不应该发生。请在GitHub上报告此问题。",
+    "exe_path_not_found": "无法获取应用程序可执行文件路径。请在GitHub上报告此问题。",
+    "already_exists": "目标位置中已存在相同的元素。",
+    "too_many_nodes": "我的妈呀！根文件夹中的节点数量过多。这怎么可能？为什么你会有超过2^32个节点？",
+    "comming_soon": "此功能即将推出 :)",
+    "get_gconfig": {
+      "read_error": "读取全局配置文件失败。文件可能已损坏。请尝试删除该文件并重新启动应用程序。路径：app_folder://config.json"
+    },
+    "set_gconfig": {
+      "cannot_delete_file": "无法删除全局配置文件。请检查应用程序是否有权限修改应用程序文件夹。",
+      "cannot_create_file": "无法创建全局配置文件。请检查应用程序是否有权限写入应用程序文件夹。",
+      "write_error": "写入全局配置文件失败。请检查应用程序是否有权限写入应用程序文件夹。"
+    },
+    "get_rconfig": {
+      "read_error": "读取根配置文件失败。文件可能已损坏。请在根菜单中尝试修复该文件。"
+    },
+    "set_rconfig": {
+      "cannot_delete_file": "无法删除根配置文件。请检查应用程序是否有权限修改根文件夹。",
+      "cannot_create_file": "无法创建根配置文件。请检查应用程序是否有权限写入根文件夹。",
+      "write_error": "写入根配置文件失败。请检查应用程序是否有权限写入根文件夹。"
+    },
+    "rename_node": {
+      "invalid_operation": "重命名节点失败。请确保节点存在且新名称有效。"
+    },
+    "create_node": {
+      "invalid_parameter": "亲节点无效。根配置文件可能已损坏。请在根菜单中尝试修复该文件。",
+      "cannot_create_file": "创建文件或文件夹失败。请确保应用程序有权限写入根文件夹。"
+    },
+    "move_node_to_trash": {
+      "invalid_parameter": "节点无效。根配置文件可能已损坏。请在根菜单中尝试修复该文件。",
+      "cannot_delete_file": "删除文件或文件夹失败。请确保节点存在且应用程序有权限修改根文件夹。"
+    },
+    "move_node": {
+      "invalid_parameter": "节点或目标亲节点无效。根配置文件可能已损坏。请在根菜单中尝试修复该文件。",
+      "invalid_operation": "移动节点失败。请确保节点和目标亲节点均存在。"
+    },
+    "get_node_by_id": {
+      "invalid_parameter": "节点ID无效。根配置文件可能已损坏。请在根菜单中尝试修复该文件。"
+    },
+    "get_node_contents": {
+      "read_error": "读取文件内容失败。请确保文件存在且应用程序有权限从根文件夹读取。"
+    },
+    "update_node_contents": {
+      "file_not_found": "找不到要写入的文件。请在根菜单中尝试修复根配置文件。",
+      "write_error": "写入文件失败。请确保文件存在且应用程序有权限写入根文件夹。"
+    }
   }
 }

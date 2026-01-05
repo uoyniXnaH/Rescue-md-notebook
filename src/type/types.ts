@@ -65,3 +65,19 @@ export type GlobalConfig = {
     color_mode: themeEnum;
     language: languageEnum;
 }
+
+export type TauriCmdEnum = 
+    "get_gconfig" |
+    "set_gconfig" |
+    "get_rconfig" |
+    "set_rconfig" |
+    "update_rconfig_node" |
+    "insert_rconfig_node" |
+    "remove_rconfig_node" |
+    "move_node_to_trash" |
+    "move_node" |
+    "get_node_contents" |
+    "update_node_contents" |
+    "get_node_by_id" |
+    "rename_node" |
+    "create_node";

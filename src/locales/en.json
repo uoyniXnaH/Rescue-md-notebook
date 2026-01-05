@@ -37,5 +37,54 @@
     "confirm_delete": "Are you sure you want to delete the following node? You can restore it from the trash.",
     "cancel": "CANCEL",
     "delete": "DELETE"
+  },
+  "exceptions": {
+    "unknown_error": "An unknown error occurred. Please report this issue in GitHub.",
+    "invalid_parameter": "An invalid config key is passed. This shall not happen. Please report this issue in GitHub.",
+    "exe_path_not_found": "Failed to get the application executable path. Please report this issue in GitHub.",
+    "already_exists": "The same element already exists in the target location.",
+    "too_many_nodes": "Oh no! You have too many nodes in the root folder. How could this happen? Why do you have over 2^32 nodes?",
+    "comming_soon": "This feature is coming soon :)",
+    "get_gconfig": {
+      "read_error": "Failed to read global configuration file. The file may be corrupted. Try deleting the file and restarting the application. Path: app_folder://config.json"
+    },
+    "set_gconfig": {
+      "cannot_delete_file": "Cannot delete global configuration file. Please check if the application has permission to change the app folder.",
+      "cannot_create_file": "Cannot create global configuration file. Please check if the application has permission to write to the app folder.",
+      "write_error": "Failed to write to global configuration file. Please check if the application has permission to write to the app folder."
+    },
+    "get_rconfig": {
+      "read_error": "Failed to read root configuration file. The file may be corrupted. Try fixing the file in the root menu"
+    },
+    "set_rconfig": {
+      "cannot_delete_file": "Cannot delete root configuration file. Please check if the application has permission to change the root folder.",
+      "cannot_create_file": "Cannot create root configuration file. Please check if the application has permission to write to the root folder.",
+      "write_error": "Failed to write to root configuration file. Please check if the application has permission to write to the root folder."
+    },
+    "rename_node": {
+      "invalid_operation": "Failed to rename the node. Please make sure the node exists and the new name is valid."
+    },
+    "create_node": {
+      "invalid_parameter": "The node parent is invalid. The root configuration file may be corrupted. Try fixing the file in the root menu",
+      "cannot_create_file": "Failed to create file or folder. Please make sure the application has permission to write to the root folder."
+    },
+    "move_node_to_trash": {
+      "invalid_parameter": "The node is invalid. The root configuration file may be corrupted. Try fixing the file in the root menu",
+      "cannot_delete_file": "Failed to delete file or folder. Please make sure the node exists and the application has permission to change the root folder."
+    },
+    "move_node": {
+      "invalid_parameter": "The node or target parent is invalid. The root configuration file may be corrupted. Try fixing the file in the root menu",
+      "invalid_operation": "Failed to move the node. Please make sure the node and target parent exist."
+    },
+    "get_node_by_id": {
+      "invalid_parameter": "The node ID is invalid. The root configuration file may be corrupted. Try fixing the file in the root menu"
+    },
+    "get_node_contents": {
+      "read_error": "Failed to read the file content. Please make sure the file exists and the application has permission to read from the root folder."
+    },
+    "update_node_contents": {
+      "file_not_found": "The file to write to is not found. Try fixing the root configuration file in the root menu.",
+      "write_error": "Failed to write to the file. Please make sure the file exists and the application has permission to write to the root folder."
+    }
   }
 }

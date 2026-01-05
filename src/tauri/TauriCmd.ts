@@ -1,15 +1,19 @@
 import { invoke } from "@tauri-apps/api/core";
 import { NodeModel } from "@minoru/react-dnd-treeview";
+import { useTranslation } from "react-i18next";
 
 import { useModal } from "@src/components/Modal";
 import { useFileTreeStore } from "@store/store";
+import useTauriExceptionMessage from "./TauriExceptions";
 import { defaultGlobalConfig, emptyNode } from "@src/Defines";
 
 import * as Types from "@type/types";
 
 function useTauriCmd() {
     const { showMessageModal } = useModal();
+    const { t } = useTranslation();
     const fileTreeData = useFileTreeStore((state) => state.fileTreeData);
+    const TauriExceptions = useTauriExceptionMessage(t);
 
     const getGlobalConfig = async (): Promise<Types.GlobalConfig> => {
         return new Promise((resolve) => {
@@ -17,9 +21,9 @@ function useTauriCmd() {
             .then((config) => {
                 resolve(config);
             })
-            .catch((error) => {
+            .catch((error: Types.BaseException) => {
                 showMessageModal({
-                    contents: `Error getting global config: ${error}`,
+                    contents: TauriExceptions.getExceptionMsg("get_gconfig", error.code),
                 });
                 resolve(defaultGlobalConfig);
             });
@@ -32,9 +36,9 @@ function useTauriCmd() {
             .then(() => {
                 resolve();
             })
-            .catch((error) => {
+            .catch((error: Types.BaseException) => {
                 showMessageModal({
-                    contents: `Error setting global config: ${error}`,
+                    contents: TauriExceptions.getExceptionMsg("set_gconfig", error.code),
                 });
                 resolve();
             });
@@ -47,9 +51,9 @@ function useTauriCmd() {
             .then((config) => {
                 resolve(config);
             })
-            .catch((error) => {
+            .catch((error: Types.BaseException) => {
                 showMessageModal({
-                    contents: `Error getting root config: ${error}`,
+                    contents: TauriExceptions.getExceptionMsg("get_rconfig", error.code),
                 });
                 resolve([]);
             });
@@ -62,9 +66,9 @@ function useTauriCmd() {
             .then(() => {
                 resolve();
             })
-            .catch((error) => {
+            .catch((error: Types.BaseException) => {
                 showMessageModal({
-                    contents: `Error setting root config: ${error}`,
+                    contents: TauriExceptions.getExceptionMsg("set_rconfig", error.code),
                 });
                 resolve();
             });
@@ -77,9 +81,9 @@ function useTauriCmd() {
             .then((config) => {
                 resolve(config);
             })
-            .catch((error) => {
+            .catch((error: Types.BaseException) => {
                 showMessageModal({
-                    contents: `Error updating root config node: ${error}`,
+                    contents: TauriExceptions.getExceptionMsg("update_rconfig_node", error.code),
                 });
                 resolve(fileTreeData);
             });
@@ -94,16 +98,16 @@ function useTauriCmd() {
                 .then((filetree) => {
                     resolve(filetree);
                 })
-                .catch((error) => {
+                .catch((error: Types.BaseException) => {
                     showMessageModal({
-                        contents: `Error updating root config node after renaming: ${error}`,
+                        contents: TauriExceptions.getExceptionMsg("update_rconfig_node", error.code),
                     });
                     resolve(fileTreeData);
                 });
             })
-            .catch((error) => {
+            .catch((error: Types.BaseException) => {
                 showMessageModal({
-                    contents: `Error renaming node: ${error}`,
+                    contents: TauriExceptions.getExceptionMsg("rename_node", error.code),
                 });
                 resolve(fileTreeData);
             });
@@ -118,16 +122,16 @@ function useTauriCmd() {
                 .then((filetree) => {
                     resolve(filetree);
                 })
-                .catch((error) => {
+                .catch((error: Types.BaseException) => {
                     showMessageModal({
-                        contents: `Error inserting new node into root config: ${error}`,
+                        contents: TauriExceptions.getExceptionMsg("insert_rconfig_node", error.code),
                     });
                     resolve(fileTreeData);
                 });
             })
-            .catch((error) => {
+            .catch((error: Types.BaseException) => {
                 showMessageModal({
-                    contents: `Error creating node: ${error}`,
+                    contents: TauriExceptions.getExceptionMsg("create_node", error.code),
                 });
                 resolve(fileTreeData);
             });
@@ -142,16 +146,16 @@ function useTauriCmd() {
                 .then((filetree) => {
                     resolve(filetree);
                 })
-                .catch((error) => {
+                .catch((error: Types.BaseException) => {
                     showMessageModal({
-                        contents: `Error removing node from root config: ${error}`,
+                        contents: TauriExceptions.getExceptionMsg("remove_rconfig_node", error.code),
                     });
                     resolve(fileTreeData);
                 });
             })
-            .catch((error) => {
+            .catch((error: Types.BaseException) => {
                 showMessageModal({
-                    contents: `Error deleting node: ${error}`,
+                    contents: TauriExceptions.getExceptionMsg("move_node_to_trash", error.code),
                 });
                 resolve(fileTreeData);
             });
@@ -164,9 +168,9 @@ function useTauriCmd() {
             .then((filetree) => {
                 resolve(filetree);
             })
-            .catch((error) => {
+            .catch((error: Types.BaseException) => {
                 showMessageModal({
-                    contents: `Error moving node: ${error}`,
+                    contents: TauriExceptions.getExceptionMsg("move_node", error.code),
                 });
                 resolve(fileTreeData);
             });
@@ -179,9 +183,9 @@ function useTauriCmd() {
             .then((node) => {
                 resolve(node);
             })
-            .catch((error) => {
+            .catch((error: Types.BaseException) => {
                 showMessageModal({
-                    contents: `Error getting node by id: ${error}`,
+                    contents: TauriExceptions.getExceptionMsg("get_node_by_id", error.code),
                 });
                 resolve(emptyNode);
             });
@@ -194,9 +198,9 @@ function useTauriCmd() {
             .then((contents) => {
                 resolve(contents);
             })
-            .catch((error) => {
+            .catch((error: Types.BaseException) => {
                 showMessageModal({
-                    contents: `Error getting node contents: ${error}`,
+                    contents: TauriExceptions.getExceptionMsg("get_node_contents", error.code),
                 });
                 resolve("");
             });
@@ -209,9 +213,9 @@ function useTauriCmd() {
             .then(() => {
                 resolve();
             })
-            .catch((error) => {
+            .catch((error: Types.BaseException) => {
                 showMessageModal({
-                    contents: `Error updating node contents: ${error}`,
+                    contents: TauriExceptions.getExceptionMsg("update_node_contents", error.code),
                 });
                 resolve();
             });
