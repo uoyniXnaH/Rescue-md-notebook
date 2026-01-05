@@ -241,6 +241,28 @@ pub fn create_node(parent: ParentId, mut node_name: String, node_type: String) -
     return Ok(new_node);
 }
 
+#[tauri::command]
+pub fn open_in_explorer(id: ParentId) -> Result<(), BaseException> {
+    let rconfig: TreeData = get_rconfig()?;
+    let node_path = match id {
+        ParentId::Root(0) => {
+            PathBuf::from(get_gconfig_item("current_root")?)
+        },
+        ParentId::Id(id) => {
+            let mut path = PathBuf::from(rconfig.create_path_by_id(&id)?);
+            path.pop();
+            path
+        },
+        _ => {
+            return Err(BaseException::new("Invalid parent ID", INVALID_PARAMETER));
+        }
+    };
+    open::that(&node_path).map_err(|_| {
+        return BaseException::new("Failed to open in explorer", INVALID_OPERATION);
+    })?;
+    return Ok(());
+}
+
 pub fn init_folder(path: &PathBuf) -> () {
     let mut config_path = path.clone();
     let name = path.file_name().and_then(|s| s.to_str()).unwrap_or("");

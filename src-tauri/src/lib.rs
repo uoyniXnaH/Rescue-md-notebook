@@ -35,6 +35,7 @@ pub fn run() {
             get_node_by_id,
             rename_node,
             create_node,
+            open_in_explorer
         ])
         .plugin(tauri_plugin_opener::init())
         .run(tauri::generate_context!())
