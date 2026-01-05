@@ -16,7 +16,7 @@ export type settingStoreType = {
     settings: GlobalConfig;
     getSettings: () => GlobalConfig;
     setSettings: (settings: GlobalConfig) => void;
-    setCurrentRoot: (root: String) => void;
+    setCurrentRoot: (root: string) => void;
     setTheme: (theme: themeEnum) => void;
     setLanguage: (language: languageEnum) => void;
 }
@@ -57,11 +57,11 @@ export type FocusStoreType = {
  */
 export type BaseException = {
     code: number;
-    message: String;
+    message: string;
 }
 
 export type GlobalConfig = {
-    current_root: String;
+    current_root: string;
     color_mode: themeEnum;
     language: languageEnum;
 }

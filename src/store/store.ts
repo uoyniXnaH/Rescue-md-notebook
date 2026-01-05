@@ -7,7 +7,7 @@ export const useSettingStore = create<types.settingStoreType>()((set, get) => ({
     settings: defaultGlobalConfig,
     setSettings: (settings) => set({ settings: settings }),
     getSettings: () => get().settings,
-    setCurrentRoot: (path: String) => set((state) => ({ settings: { ...state.settings, current_root: path } })),
+    setCurrentRoot: (path: string) => set((state) => ({ settings: { ...state.settings, current_root: path } })),
     setTheme: (theme: types.themeEnum) => set((state) => ({ settings: { ...state.settings, color_mode: theme } })),
     setLanguage: (language: types.languageEnum) => set((state) => ({ settings: { ...state.settings, language: language } })),
 }));
