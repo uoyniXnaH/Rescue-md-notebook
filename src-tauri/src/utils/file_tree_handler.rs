@@ -2,11 +2,11 @@ use std::fs::{read_dir};
 use std::path::Path;
 use serde::{Serialize, Deserialize};
 use uuid::Uuid;
-use regex::Regex;
 
 use crate::gconfig::{get_gconfig_item};
 use crate::nodes::{init_folder};
 use crate::exceptions::{*};
+use crate::utils::match_rsn_target;
 
 #[derive(Serialize, Deserialize, Clone)]
 #[serde(rename_all(serialize = "camelCase", deserialize = "camelCase"))]
@@ -124,13 +124,12 @@ impl TreeData {
 }
 
 fn get_type_and_name(path: &Path) -> (Option<&str>, &str) {
-    let re = Regex::new(r"^__rsn-(\w+)\.(.+)$").unwrap();
     let filestem = path.file_stem()
     .and_then(|s| s.to_str())
     .unwrap_or("");
     let mut node_type = "";
     let mut node_name = "";
-    re.captures(filestem).map(|caps| {
+    match_rsn_target(filestem).map(|caps| {
         node_type = caps.get(1).map(|m| m.as_str()).unwrap_or("");
         node_name = caps.get(2).map(|m| m.as_str()).unwrap_or("");
     });
