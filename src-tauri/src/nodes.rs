@@ -1,10 +1,12 @@
 use std::path::PathBuf;
+use std::fs::{read_dir};
 use uuid::Uuid;
 use trash::delete;
 
 use crate::gconfig::{get_gconfig_item};
 use crate::rconfig::{get_rconfig, set_rconfig};
 use crate::utils::file_tree_handler::{TreeData, TreeNode ,TreeNodeData, ParentId};
+use crate::utils::match_rsn_target;
 use crate::exceptions::{*};
 
 #[tauri::command]
@@ -262,6 +264,43 @@ pub fn open_in_explorer(id: ParentId) -> Result<(), BaseException> {
     })?;
     return Ok(());
 }
+
+#[tauri::command]
+pub fn get_rsn_entries_by_id(id: Uuid) -> Result<Vec<String>, BaseException> {
+    let rconfig: TreeData = get_rconfig()?;
+    let node = rconfig.get_node_by_id(&id).ok_or_else(|| {
+        return BaseException::new("Invalid node id", INVALID_PARAMETER);
+    })?;
+    match node.data.node_type.as_str() {
+        "folder" => {},
+        "calendar" => {
+            return Err(BaseException::new("Calendar feature coming soon :)", COMMING_SOON));
+        },
+        _ => {
+            return Err(BaseException::new("Node is not a folder", INVALID_PARAMETER));
+        }
+    };
+    let node_path = PathBuf::from(rconfig.create_path_by_id(&id)?);
+    let mut rsn_entries = Vec::new();
+    let entries = read_dir(&node_path).map_err(|_| {
+        return BaseException::new("Failed to read directory", READ_ERROR);
+    })?;
+    for entry in entries {
+        let entry = entry.map_err(|_| {
+            return BaseException::new("Failed to read directory entry", READ_ERROR);
+        })?;
+        let name = entry.path().file_name().and_then(|s| s.to_str()).unwrap_or("").to_string();
+        let captures = match_rsn_target(&name);
+        if let Some(caps) = captures {
+            let target = caps.get(1).unwrap().as_str().to_string();
+            if target == String::from("folder") {
+                rsn_entries.push(name);
+            }
+        }
+    }
+    return Ok(rsn_entries);
+}
+
 
 pub fn init_folder(path: &PathBuf) -> () {
     let mut config_path = path.clone();
