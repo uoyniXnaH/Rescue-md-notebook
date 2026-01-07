@@ -90,3 +90,15 @@ pub fn remove_rconfig_node(id: Uuid) -> Result<TreeData, BaseException> {
     write_rconfig(&path, &rconfig)?;
     return Ok(rconfig);
 }
+
+#[tauri::command]
+pub fn reset_rconfig() -> Result<TreeData, BaseException> {
+    let path = get_gconfig_item("current_root")?;
+    let config_path = get_rconfig_path(&path);
+    if config_path.exists() {
+        remove_file(&config_path).map_err(|_| {
+            return BaseException::new("Failed to remove root config file", CANNOT_DELETE_FILE);
+        })?;
+    }
+    return get_rconfig();
+}

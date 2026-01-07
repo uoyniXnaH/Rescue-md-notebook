@@ -150,9 +150,9 @@ pub fn create_tree_by_path(path: &str) -> Result<TreeData, BaseException> {
     let mut nodes: Vec<TreeNode> = Vec::new();
     const ACCEPTED_EXTENSIONS: [&str; 2] = ["md", "txt"];
     fn visit(path: &Path, parent: ParentId, nodes: &mut Vec<TreeNode>) -> Result<(), BaseException> {
-        let rd = read_dir(path).map_err(|e| BaseException::new(&format!("read_dir error: {}", e), READ_ERROR))?;
+        let rd = read_dir(path).map_err(|_| BaseException::new(&format!("failed to read directory"), READ_ERROR))?;
         for entry_result in rd {
-            let entry = entry_result.map_err(|e| BaseException::new(&format!("read_dir entry error: {}", e), READ_ERROR))?;
+            let entry = entry_result.map_err(|_| BaseException::new(&format!("failed to read directory entry"), READ_ERROR))?;
             let p = entry.path();
             if !p.is_dir() && !ACCEPTED_EXTENSIONS.contains(&p.extension().and_then(|s| s.to_str()).unwrap_or("")) {
                 continue;
