@@ -6,7 +6,7 @@
     "root": "Root",
     "change_root": "Select root path",
     "open_root": "Open root path location",
-    "fix_root": "Fix root configuration file",
+    "fix_root": "Reset root configuration",
     "new": "New ",
     "folder": "Folder",
     "calendar": "Calendar",
@@ -38,8 +38,10 @@
   },
   "modal": {
     "confirm_delete": "Are you sure you want to delete the following node? You can restore it from the trash.",
+    "confirm_reset_rconfig": "Are you sure you want to reset the root configuration? This will attempt to recreate the configuration based on the current files and folders in the root path. Any order changes will be lost.",
     "cancel": "CANCEL",
-    "delete": "DELETE"
+    "delete": "DELETE",
+    "reset": "RESET"
   },
   "exceptions": {
     "unknown_error": "An unknown error occurred. Please report this issue in GitHub.",

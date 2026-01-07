@@ -6,7 +6,7 @@
     "root": "根文件夹",
     "change_root": "选择根文件夹",
     "open_root": "打开根文件夹所在位置",
-    "fix_root": "修复根配置文件",
+    "fix_root": "重置根配置",
     "new": "新建",
     "folder": "文件夹",
     "calendar": "日历",
@@ -36,8 +36,10 @@
   },
   "modal": {
     "confirm_delete": "你确定要删除以下节点吗？你可以从回收站恢复它。",
+    "confirm_reset_rconfig": "你确定要重置根配置吗？这将尝试根据根路径中的当前文件和文件夹重新创建配置。任何顺序更改都将丢失。",
     "cancel": "取消",
-    "delete": "删除"
+    "delete": "删除",
+    "reset": "重置"
   },
   "exceptions": {
     "unknown_error": "发生未知错误。请在GitHub上报告此问题。",

@@ -10,6 +10,7 @@ import SettingArea from "./SettingArea";
 import { useTranslation } from "react-i18next";
 import { useDisplayStore, useSettingStore, useFileTreeStore, useFocusStore } from "@store/store";
 import { useFileActions } from "@src/Hooks";
+import { useModal } from "../Modal";
 import useTauriCmd from "@tauri/TauriCmd";
 import { NodeEnum } from '@type/types';
 import { VERSION, NODE_TYPE } from "@src/Defines";
@@ -24,7 +25,8 @@ const RootMenu: React.FC<RootMenuProps> = (props: RootMenuProps) => {
   const setCurrentRoot = useSettingStore((state) => state.setCurrentRoot);
   const getSettings = useSettingStore((state) => state.getSettings);
   const setFileTreeData = useFileTreeStore((state) => state.setFileTreeData);
-  const { setGlobalConfig, getRootConfig, openInExplorer } = useTauriCmd();
+  const { setGlobalConfig, getRootConfig, resetRootConfig, openInExplorer } = useTauriCmd();
+  const { showBasicModal } = useModal();
   const { t } = useTranslation();
 
   return (
@@ -35,7 +37,13 @@ const RootMenu: React.FC<RootMenuProps> = (props: RootMenuProps) => {
       onClose={() => handleClose()}
       anchorEl={anchorEl}
     >
+      {NODE_TYPE.map((type) => (
+        <MenuItem key={type} onClick={() => handleClose(type)}>
+          <Typography variant="body2">{t("nav.new")}{t(`nav.${type}`)}</Typography>
+        </MenuItem>
+      ))}
       <MenuItem component="label" onClick={async () => {
+        handleClose();
         const selected = await open({
           directory: true,
           multiple: false,
@@ -50,18 +58,29 @@ const RootMenu: React.FC<RootMenuProps> = (props: RootMenuProps) => {
             });
           });
         }
-        handleClose();
       }}>
         <Typography variant="body2">{t("nav.change_root")}</Typography>
       </MenuItem>
       <MenuItem onClick={() => {openInExplorer(0);handleClose();}}>
         <Typography variant="body2">{t("nav.open_root")}</Typography>
       </MenuItem>
-      {NODE_TYPE.map((type) => (
-        <MenuItem key={type} onClick={() => handleClose(type)}>
-          <Typography variant="body2">{t("nav.new")}{t(`nav.${type}`)}</Typography>
-        </MenuItem>
-      ))}
+      <MenuItem onClick={() => {
+        showBasicModal({
+          contents: t("modal.confirm_reset_rconfig"),
+          leftButtonText: t("modal.cancel"),
+          rightButtonText: t("modal.reset"),
+          onLeftButtonClick: () => {},
+          onRightButtonClick: async () => {
+            await resetRootConfig()
+            .then(async (filetree) => {
+              setFileTreeData(filetree);
+            });
+          }
+        });
+        handleClose();
+      }}>
+        <Typography variant="body2">{t("nav.fix_root")}</Typography>
+      </MenuItem>
     </Menu>
   );
 }

@@ -90,6 +90,21 @@ function useTauriCmd() {
         });
     }
 
+    const resetRootConfig = async (): Promise<NodeModel<Types.NodeData>[]> => {
+        return new Promise((resolve) => {
+            invoke<NodeModel<Types.NodeData>[]>("reset_rconfig")
+            .then((filetree) => {
+                resolve(filetree);
+            })
+            .catch((error: Types.BaseException) => {
+                showMessageModal({
+                    contents: getExceptionMsg("reset_rconfig", error.code),
+                });
+                resolve([]);
+            });
+        });
+    }
+
     const renameNode = async (id: NodeModel["id"], newName: string): Promise<NodeModel<Types.NodeData>[]> => {
         return new Promise((resolve) => {
             invoke<NodeModel<Types.NodeData>>("rename_node", { id: id, newName: newName })
@@ -237,12 +252,28 @@ function useTauriCmd() {
         });
     }
 
+    const getRsnEntriesById = async (id: NodeModel["id"]): Promise<string[]> => {
+        return new Promise((resolve) => {
+            invoke<string[]>("get_rsn_entries_by_id", { id: id })
+            .then((entries) => {
+                resolve(entries);
+            })
+            .catch((error: Types.BaseException) => {
+                showMessageModal({
+                    contents: getExceptionMsg("get_rsn_entries_by_id", error.code),
+                });
+                resolve([]);
+            });
+        });
+    }
+
     return {
         getGlobalConfig,
         setGlobalConfig,
         getRootConfig,
         setRootConfig,
         updateRootConfigNode,
+        resetRootConfig,
         renameNode,
         createNode,
         deleteNode,
@@ -251,6 +282,7 @@ function useTauriCmd() {
         getNodeContents,
         updateNodeContents,
         openInExplorer,
+        getRsnEntriesById,
     };
 }
 

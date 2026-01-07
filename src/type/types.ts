@@ -74,6 +74,7 @@ export type TauriCmdEnum =
     "update_rconfig_node" |
     "insert_rconfig_node" |
     "remove_rconfig_node" |
+    "reset_rconfig" |
     "move_node_to_trash" |
     "move_node" |
     "get_node_contents" |
@@ -82,4 +83,5 @@ export type TauriCmdEnum =
     "rename_node" |
     "create_node" |
     "open_in_explorer" |
+    "get_rsn_entries_by_id" |
     "fix_node";
