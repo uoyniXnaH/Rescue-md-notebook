@@ -69,7 +69,7 @@ export function useContextMenu() {
     const setSelectedNodeId = useFileTreeStore((state) => state.setSelectedNodeId);
     const setEditNodeId = useFileTreeStore((state) => state.setEditNodeId);
     const { showBasicModal } = useModal();
-    const { getNodeById, deleteNode, openInExplorer } = useTauriCmd();
+    const { getNodeById, deleteNode, openInExplorer, fixFolder } = useTauriCmd();
     const { t } = useTranslation();
 
     const popUpCtxMenu = async (event: React.MouseEvent) => {
@@ -116,7 +116,19 @@ export function useContextMenu() {
         });
         const fix_node = await MenuItem.new({
             text: t("context_menu.fix_node"),
-            action: async () => {  
+            action: async () => {
+                showBasicModal({
+                    contents: t("modal.confirm_fix_folder"),
+                    leftButtonText: t("modal.cancel"),
+                    rightButtonText: t("modal.ok"),
+                    onLeftButtonClick: () => {},
+                    onRightButtonClick: () => {
+                        fixFolder(target_id as string | number)
+                        .then(() => {
+                            setCtxMenuId(null);
+                        });
+                    }
+                })
             }
         });
         const rename = await MenuItem.new({
@@ -152,7 +164,7 @@ export function useContextMenu() {
         let items: Array<PredefinedMenuItem | MenuItem> = [];
         if (target_id) {
             setCtxMenuId(target_id);
-            items = [open_in_explorer, rename, move_to_trash];
+            items = [rename, move_to_trash, separator, open_in_explorer];
             if (target_node?.droppable) {
                 items.push(fix_node);
             }

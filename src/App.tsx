@@ -11,7 +11,7 @@ import ViewArea from "./components/ViewArea";
 import { useTranslation } from "react-i18next";
 import { useSettingStore, useFileTreeStore } from "@store/store";
 import { useDisplayStore } from "@store/store";
-import { useGlobalShortcuts, useContextMenu } from "./Hooks";
+import { useGlobalShortcuts, useContextMenu } from "./hooks";
 import useTauriCmd from "@tauri/TauriCmd";
 
 function App() {

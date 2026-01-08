@@ -4,7 +4,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
 
 import { useDisplayStore, useFileTreeStore } from "@store/store";
-import { useFileActions } from "@src/Hooks";
+import { useFileActions } from "@src/hooks";
 import useTauriCmd from "@tauri/TauriCmd";
 
 function Title() {

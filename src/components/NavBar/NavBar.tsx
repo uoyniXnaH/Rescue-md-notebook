@@ -9,7 +9,7 @@ import FileTree from "./FileTree/FileTree";
 import SettingArea from "./SettingArea";
 import { useTranslation } from "react-i18next";
 import { useDisplayStore, useSettingStore, useFileTreeStore, useFocusStore } from "@store/store";
-import { useFileActions } from "@src/Hooks";
+import { useFileActions } from "@src/hooks";
 import { useModal } from "../Modal";
 import useTauriCmd from "@tauri/TauriCmd";
 import { NodeEnum } from '@type/types';

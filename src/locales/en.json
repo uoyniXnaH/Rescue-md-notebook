@@ -39,9 +39,11 @@
   "modal": {
     "confirm_delete": "Are you sure you want to delete the following node? You can restore it from the trash.",
     "confirm_reset_rconfig": "Are you sure you want to reset the root configuration? This will attempt to recreate the configuration based on the current files and folders in the root path. Any order changes will be lost.",
+    "confirm_fix_folder": "Are you sure you want to fix this folder? This will attempt to recreate contents attached to the folder.",
     "cancel": "CANCEL",
     "delete": "DELETE",
-    "reset": "RESET"
+    "reset": "RESET",
+    "ok": "OK"
   },
   "exceptions": {
     "unknown_error": "An unknown error occurred. Please report this issue in GitHub.",

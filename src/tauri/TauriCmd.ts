@@ -267,6 +267,21 @@ function useTauriCmd() {
         });
     }
 
+    const fixFolder = async (id: NodeModel["id"]): Promise<void> => {
+        return new Promise((resolve) => {
+            invoke<void>("fix_folder", { id: id })
+            .then(() => {
+                resolve();
+            })
+            .catch((error: Types.BaseException) => {
+                showMessageModal({
+                    contents: getExceptionMsg("fix_folder", error.code),
+                });
+                resolve();
+            });
+        });
+    }
+
     return {
         getGlobalConfig,
         setGlobalConfig,
@@ -283,6 +298,7 @@ function useTauriCmd() {
         updateNodeContents,
         openInExplorer,
         getRsnEntriesById,
+        fixFolder,
     };
 }
 

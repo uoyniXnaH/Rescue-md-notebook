@@ -6,7 +6,7 @@ import AddIcon from '@mui/icons-material/Add';
 import TypeIcon from "./TypeIcon";
 import { NodeData, NodeEnum } from "@type/types";
 import { useFileTreeStore, useDisplayStore } from "@store/store";
-import { useFileActions } from "@src/Hooks";
+import { useFileActions } from "@src/hooks";
 import useTauriCmd from "@tauri/TauriCmd";
 import { useTranslation } from "react-i18next";
 import { NODE_TYPE } from "@src/Defines";

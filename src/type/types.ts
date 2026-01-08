@@ -84,4 +84,4 @@ export type TauriCmdEnum =
     "create_node" |
     "open_in_explorer" |
     "get_rsn_entries_by_id" |
-    "fix_node";
+    "fix_folder";
