@@ -11,7 +11,15 @@ import { NodeModel } from "@minoru/react-dnd-treeview";
 export function useGlobalShortcuts() {
     const focusArea = useFocusStore((state) => state.focusArea);
     const currentFileContents = useDisplayStore((state) => state.currentFileContents);
+    const selectedNodeId = useFileTreeStore((state) => state.selectedNodeId);
+    const editNodeId = useFileTreeStore((state) => state.editNodeId);
+    const setFileTreeData = useFileTreeStore((state) => state.setFileTreeData);
+    const setSelectedNodeId = useFileTreeStore((state) => state.setSelectedNodeId);
+    const setEditNodeId = useFileTreeStore((state) => state.setEditNodeId);
+    const { showBasicModal } = useModal();
     const { saveFile } = useFileActions();
+    const { deleteNode, getNodeById } = useTauriCmd();
+    const { t } = useTranslation();
 
     useEffect(() => {
         const handler = async (e: KeyboardEvent) => {
@@ -21,11 +29,43 @@ export function useGlobalShortcuts() {
                     await saveFile();
                 }
             }
+            if (e.key === "F2") {
+                e.preventDefault();
+                if (focusArea === "navBar" && selectedNodeId && editNodeId === null) {
+                    setEditNodeId(selectedNodeId);
+                }
+            }
+            if (e.key === "Escape") {
+                if (focusArea === "navBar" && editNodeId !== null) {
+                    setEditNodeId(null);
+                }
+            }
+            if (e.key === "Delete") {
+                if (focusArea === "navBar" && selectedNodeId && editNodeId === null) {
+                    const targetNode = await getNodeById(selectedNodeId);
+                    if (!targetNode) return;
+                    showBasicModal({
+                        contents: [t("modal.confirm_delete"), targetNode.text],
+                        leftButtonText: t("modal.cancel"),
+                        rightButtonText: t("modal.delete"),
+                        onLeftButtonClick: () => {},
+                        onRightButtonClick: () => {
+                            deleteNode(selectedNodeId)
+                            .then((updatedFileTree) => {
+                                setFileTreeData(updatedFileTree);
+                                if (selectedNodeId === selectedNodeId) {
+                                    setSelectedNodeId(null);
+                                }
+                            });
+                        }
+                    })
+                }
+            }
         };
 
         window.addEventListener("keydown", handler);
         return () => window.removeEventListener("keydown", handler);
-    }, [focusArea, currentFileContents]);
+    }, [focusArea, currentFileContents, selectedNodeId, editNodeId]);
 }
 
 export function useFileActions() {
