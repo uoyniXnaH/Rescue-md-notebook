@@ -301,6 +301,25 @@ pub fn get_rsn_entries_by_id(id: Uuid) -> Result<Vec<String>, BaseException> {
     return Ok(rsn_entries);
 }
 
+#[tauri::command]
+pub fn fix_folder(id: Uuid) -> Result<(), BaseException> {
+    let rconfig: TreeData = get_rconfig()?;
+    let node = rconfig.get_node_by_id(&id).ok_or_else(|| {
+        return BaseException::new("Invalid node id", INVALID_PARAMETER);
+    })?;
+    match node.data.node_type.as_str() {
+        "folder" => {},
+        "calendar" => {
+            return Err(BaseException::new("Calendar feature coming soon :)", COMMING_SOON));
+        },
+        _ => {
+            return Err(BaseException::new("Node is not a folder", INVALID_PARAMETER));
+        }
+    };
+    let node_path = PathBuf::from(rconfig.create_path_by_id(&id)?);
+    init_folder(&node_path);
+    return Ok(());
+}
 
 pub fn init_folder(path: &PathBuf) -> () {
     let mut config_path = path.clone();

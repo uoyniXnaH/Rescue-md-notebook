@@ -37,7 +37,8 @@ pub fn run() {
             rename_node,
             create_node,
             open_in_explorer,
-            get_rsn_entries_by_id
+            get_rsn_entries_by_id,
+            fix_folder
         ])
         .plugin(tauri_plugin_opener::init())
         .run(tauri::generate_context!())
