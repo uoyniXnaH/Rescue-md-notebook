@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Menu, MenuItem, PredefinedMenuItem } from "@tauri-apps/api/menu";
 
@@ -218,4 +218,30 @@ export function useContextMenu() {
         menu.popup();
     }
     return { popUpCtxMenu };
+}
+
+export function useWindowSize() {
+    const [width, setWidth] = useState(window.innerWidth);
+    const [height, setHeight] = useState(window.innerHeight);
+
+    useEffect(() => {
+        let timerId: number | null = null;
+        const handleResize = () => {
+            if (timerId) return;
+            timerId = window.setTimeout(() => {
+                setWidth(window.innerWidth);
+                setHeight(window.innerHeight);
+                timerId = null;
+            }, 200);
+        };
+        window.addEventListener("resize", handleResize);
+        return () => {
+            window.removeEventListener("resize", handleResize);
+            if (timerId) {
+                clearTimeout(timerId);
+            }
+        };
+    }, []);
+
+    return { width, height };
 }
