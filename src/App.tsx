@@ -2,12 +2,14 @@ import { useEffect } from "react";
 import { Stack, Box, CssBaseline } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 import { getCurrentWindow } from '@tauri-apps/api/window';
+import { open } from '@tauri-apps/plugin-dialog';
 
 import { selectTheme } from "./themes";
 import SideBar from "./components/SideBar";
 import NavBar from "./components/NavBar/NavBar";
 import EditArea from "./components/EditArea/EditArea";
 import ViewArea from "./components/ViewArea";
+import { useModal } from "./components/Modal";
 import { useTranslation } from "react-i18next";
 import { useSettingStore, useFileTreeStore } from "@store/store";
 import { useDisplayStore } from "@store/store";
@@ -17,7 +19,9 @@ import useTauriCmd from "@tauri/TauriCmd";
 function App() {
   useGlobalShortcuts();
   const settings = useSettingStore((state) => state.settings);
+  const getSettings = useSettingStore((state) => state.getSettings);
   const setSettings = useSettingStore((state) => state.setSettings);
+  const setCurrentRoot = useSettingStore((state) => state.setCurrentRoot);
   const setTheme = useSettingStore((state) => state.setTheme);
   const setLanguage = useSettingStore((state) => state.setLanguage);
   const setFileTreeData = useFileTreeStore((state) => state.setFileTreeData);
@@ -26,7 +30,8 @@ function App() {
   const { i18n, t } = useTranslation();
   const isNavBarShown = useDisplayStore((state) => state.isNavBarShown);
   const isEditAreaShown = useDisplayStore((state) => state.isEditAreaShown);
-  const { getGlobalConfig, getRootConfig } = useTauriCmd();
+  const { getGlobalConfig, getRootConfig, setGlobalConfig } = useTauriCmd();
+  const { showBasicModal, showMessageModal } = useModal();
 
   useEffect(() => {
     getGlobalConfig()
@@ -44,15 +49,39 @@ function App() {
     .then((gconfig) => {
       if (gconfig.current_root && gconfig.current_root.length > 0) {
         getCurrentWindow().setTitle(`${t("title")} - ${gconfig.current_root}`)
-        .catch((err) => {
-          console.error("Error setting window title:", err);
+        .catch(() => {
+          showMessageModal({
+            contents: t("exceptions.set_title_failed")
+          });
         });
+        getRootConfig()
+        .then((rconfig) => {
+          setFileTreeData(rconfig);
+        });
+      } else {
+        showBasicModal({
+          contents: [t("modal.root_not_set")],
+          rightButtonText: t("modal.set_root"),
+          onRightButtonClick: async () => {
+            const selected = await open({
+              directory: true,
+              multiple: false,
+            });
+            if (selected && typeof selected === "string") {
+              setCurrentRoot(selected);
+              await setGlobalConfig(getSettings())
+              .then(async () => {
+                await getRootConfig()
+                .then(async (filetree) => {
+                  setFileTreeData(filetree);
+                });
+              });
+            }
+          }
+        })
       }
     })
-    getRootConfig()
-    .then((rconfig) => {
-      setFileTreeData(rconfig);
-    });
+    
   }, [settings.current_root]);
 
   return (

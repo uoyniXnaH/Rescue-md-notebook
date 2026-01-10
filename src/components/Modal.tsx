@@ -52,6 +52,7 @@ const BasicModal: React.FC<ModalProps> = ({ open, onClose, contents, leftButtonT
         <ThemeProvider theme={selectTheme(settings.color_mode)}><Modal
             open={open}
             onClose={onClose}
+            disableAutoFocus={true}
         >
             <Box sx={basicModalStyle}>
                 {Array.isArray(contents) ? (
