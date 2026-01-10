@@ -34,6 +34,9 @@ fn write_rconfig(path: &String, rconfig: &TreeData) -> Result<(), BaseException>
 #[tauri::command]
 pub fn get_rconfig() -> Result<TreeData, BaseException> {
     let path = get_gconfig_item("current_root")?;
+    if path.is_empty() {
+        return Err(BaseException::new("Current root path is not set", INVALID_PARAMETER));
+    }
     let config_path = get_rconfig_path(&path);
     if !config_path.exists() {
         match create_tree_by_path(&path) {
