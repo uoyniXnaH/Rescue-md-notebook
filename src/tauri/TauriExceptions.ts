@@ -20,6 +20,9 @@ function useTauriExceptionMessage(t: TFunction<"translation", undefined>) {
         switch (code) {
             case INVALID_PARAMETER:
                 switch(cmd) {
+                    case "get_rconfig":
+                        message = t("exceptions.get_rconfig.invalid_parameter");
+                        break;
                     case "create_node":
                         message = t("exceptions.create_node.invalid_parameter");
                         break;
@@ -39,7 +42,6 @@ function useTauriExceptionMessage(t: TFunction<"translation", undefined>) {
                 break;
             case FILE_NOT_FOUND:
                 switch(cmd) {
-                    case "get_rconfig":
                     case "get_node_contents":
                         message = t(`exceptions.${cmd}.file_not_found`);
                         break;

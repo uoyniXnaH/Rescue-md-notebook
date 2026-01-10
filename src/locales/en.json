@@ -61,7 +61,8 @@
       "write_error": "Failed to write to global configuration file. Please check if the application has permission to write to the app folder."
     },
     "get_rconfig": {
-      "read_error": "Failed to read root configuration file. The file may be corrupted. Try fixing the file in the root menu"
+      "read_error": "Failed to read root configuration file. The file may be corrupted. Try fixing the file in the root menu",
+      "invalid_parameter": "The root is invalid. Try setting the root path again."
     },
     "set_rconfig": {
       "cannot_delete_file": "Cannot delete root configuration file. Please check if the application has permission to change the root folder.",
