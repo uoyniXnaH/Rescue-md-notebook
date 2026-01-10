@@ -135,6 +135,10 @@ pub fn rename_node(id: Uuid, new_name: String) -> Result<TreeNode, BaseException
         return BaseException::new("Invalid node id", INVALID_PARAMETER);
     })?;
 
+    if node.text == new_name {
+        return Ok(node.clone());
+    }
+
     if node.data.node_type == "calendar" {
         return Err(BaseException::new("Calendar feature coming soon :)", COMMING_SOON));
     }
