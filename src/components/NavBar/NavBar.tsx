@@ -9,11 +9,11 @@ import FileTree from "./FileTree/FileTree";
 import SettingArea from "./SettingArea";
 import { useTranslation } from "react-i18next";
 import { useDisplayStore, useSettingStore, useFileTreeStore, useFocusStore } from "@store/store";
-import { useFileActions } from "@src/hooks";
+import { useFileActions, useWindowSize } from "@src/hooks";
 import { useModal } from "../Modal";
 import useTauriCmd from "@tauri/TauriCmd";
 import { NodeEnum } from '@type/types';
-import { VERSION, NODE_TYPE } from "@src/Defines";
+import { VERSION, NODE_TYPE, FLOATING_NAV_WIDTH } from "@src/Defines";
 
 type RootMenuProps = {
   isOpen: boolean;
@@ -90,10 +90,18 @@ function NavBar() {
   const setIsNavBarShown = useDisplayStore((state) => state.setIsNavBarShown);
   const setFocusArea = useFocusStore((state) => state.setFocusArea);
   const { createNode } = useFileActions();
+  const { width } = useWindowSize();
   const [isRootMenuOpen, setIsRootMenuOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   return (
-    <Box width="18%" maxWidth={360} borderRight="1px solid" borderColor="secondary.main" sx={{ bgcolor: "primary.main", color: "primary.contrastText" }}>
+    <Box width="18%" minWidth={198} maxWidth={360} borderRight="1px solid" borderColor="secondary.main" sx={{
+      bgcolor: "primary.main",
+      color: "primary.contrastText",
+      position: width < FLOATING_NAV_WIDTH ? "absolute" : "relative",
+      height: "100vh",
+      left: width < FLOATING_NAV_WIDTH ? 40 : 0,
+      zIndex: 10,
+    }}>
       <Stack py={1.5} px={2} spacing={2} height="100%">
         {/* Title */}
         <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
@@ -101,9 +109,9 @@ function NavBar() {
             <Typography variant="h6">{t("title")}</Typography>
             <Typography color="info.contrastText" variant="body2">{t("nav.version")}{VERSION}</Typography>
           </Box>
-          <Box>
+          {width >= FLOATING_NAV_WIDTH && <Box>
             <IconButton size="small" onClick={() => setIsNavBarShown(false)}><CloseFullscreenIcon /></IconButton>
-          </Box>
+          </Box>}
         </Stack>
         {/* Root file tree */}
         <Box onFocus={() => setFocusArea("navBar")} onClick={() => setFocusArea("navBar")} flexGrow={1}>

@@ -13,8 +13,9 @@ import { useModal } from "./components/Modal";
 import { useTranslation } from "react-i18next";
 import { useSettingStore, useFileTreeStore } from "@store/store";
 import { useDisplayStore } from "@store/store";
-import { useGlobalShortcuts, useContextMenu } from "./hooks";
+import { useGlobalShortcuts, useContextMenu, useWindowSize } from "./hooks";
 import useTauriCmd from "@tauri/TauriCmd";
+import { FLOATING_NAV_WIDTH } from "./Defines";
 
 function App() {
   useGlobalShortcuts();
@@ -32,6 +33,7 @@ function App() {
   const isEditAreaShown = useDisplayStore((state) => state.isEditAreaShown);
   const { getGlobalConfig, getRootConfig, setGlobalConfig } = useTauriCmd();
   const { showBasicModal, showMessageModal } = useModal();
+  const { width } = useWindowSize();
 
   useEffect(() => {
     getGlobalConfig()
@@ -89,7 +91,7 @@ function App() {
       <CssBaseline enableColorScheme />
       <Box onClick={() => setCtxMenuId(null)} onContextMenu={popUpCtxMenu} width="100%" height="100vh">
         <Stack direction="row" height="100%">
-          {(!isNavBarShown || !isEditAreaShown) && <SideBar />}
+          {(!isNavBarShown || !isEditAreaShown || width < FLOATING_NAV_WIDTH) && <SideBar />}
           {isNavBarShown && <NavBar />}
           {isEditAreaShown && <EditArea />}
           <ViewArea />
