@@ -32,3 +32,6 @@ export const emptyNode: NodeModel<NodeData> = {
         isOpen: false,
     },
 }
+
+export const MINI_LANG_WIDTH = 1600;
+export const FLOATING_NAV_WIDTH = 1100;
