@@ -225,7 +225,7 @@ pub fn create_node(parent: ParentId, mut node_name: String, node_type: String) -
         std::fs::create_dir(&new_path).map_err(|_| {
             return BaseException::new("Failed to create folder", CANNOT_CREATE_FILE);
         })?;
-        init_folder(&new_path);
+        init_folder(&new_path)?;
     } else {
         new_path.set_extension("md");
         std::fs::File::create(&new_path).map_err(|_| {
@@ -321,20 +321,20 @@ pub fn fix_folder(id: Uuid) -> Result<(), BaseException> {
         }
     };
     let node_path = PathBuf::from(rconfig.create_path_by_id(&id)?);
-    init_folder(&node_path);
+    init_folder(&node_path)?;
     return Ok(());
 }
 
-pub fn init_folder(path: &PathBuf) -> () {
+pub fn init_folder(path: &PathBuf) -> Result<(), BaseException> {
     let mut config_path = path.clone();
     let name = path.file_name().and_then(|s| s.to_str()).unwrap_or("");
     config_path.push(format!("__rsn-folder.{}.md", name));
     if config_path.exists() {
-        return;
+        return Ok(());
     }
     std::fs::File::create(&config_path)
         .map_err(|_| {
-            return;
-        })
-        .unwrap();
+            return BaseException::new("Failed to create folder metadata file", CANNOT_CREATE_FILE);
+        })?;
+    return Ok(());
 }

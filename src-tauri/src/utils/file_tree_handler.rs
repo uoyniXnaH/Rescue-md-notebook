@@ -186,7 +186,7 @@ pub fn create_tree_by_path(path: &str) -> Result<TreeData, BaseException> {
             nodes.push(node);
 
             if file_type == "folder" {
-                init_folder(&p);
+                init_folder(&p)?;
                 visit(&p, ParentId::Id(id), nodes)?;
             }
         }
