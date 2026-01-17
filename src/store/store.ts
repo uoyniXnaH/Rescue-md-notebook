@@ -18,11 +18,13 @@ export const useDisplayStore = create<types.displayStoreType>()((set) => ({
     isSettingShown: false,
     currentFileContents: "",
     isChanged: false,
+    editAreaEl: null,
     setIsNavBarShown: (isShown) => set({ isNavBarShown: isShown }),
     setIsEditAreaShown: (isShown) => set({ isEditAreaShown: isShown }),
     setIsSettingShown: (isShown) => set({ isSettingShown: isShown }),
     setCurrentFileContents: (contents) => set({ currentFileContents: contents }),
     setIsChanged: (changed) => set({ isChanged: changed }),
+    setEditAreaEl: (el) => set({ editAreaEl: el }),
 }));
 
 export const useFileTreeStore = create<types.FileTreeStoreType>()((set, get) => ({

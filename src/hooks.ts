@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useLayoutEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Menu, MenuItem, PredefinedMenuItem } from "@tauri-apps/api/menu";
 
@@ -12,7 +12,10 @@ export function useGlobalShortcuts() {
     const focusArea = useFocusStore((state) => state.focusArea);
     const currentFileContents = useDisplayStore((state) => state.currentFileContents);
     const selectedNodeId = useFileTreeStore((state) => state.selectedNodeId);
+    const editAreaEl = useDisplayStore((state) => state.editAreaEl);
     const editNodeId = useFileTreeStore((state) => state.editNodeId);
+    const setCurrentFileContents = useDisplayStore((state) => state.setCurrentFileContents);
+    const setIsChanged = useDisplayStore((state) => state.setIsChanged);
     const setFileTreeData = useFileTreeStore((state) => state.setFileTreeData);
     const setSelectedNodeId = useFileTreeStore((state) => state.setSelectedNodeId);
     const setEditNodeId = useFileTreeStore((state) => state.setEditNodeId);
@@ -20,6 +23,24 @@ export function useGlobalShortcuts() {
     const { saveFile } = useFileActions();
     const { deleteNode, getNodeById } = useTauriCmd();
     const { t } = useTranslation();
+    const desiredCaretRef = useRef<number | null>(null);
+
+    useLayoutEffect(() => {
+        if (desiredCaretRef.current !== null && editAreaEl) {
+            try {
+                editAreaEl.setSelectionRange(desiredCaretRef.current, desiredCaretRef.current);
+            } catch (e) {}
+            desiredCaretRef.current = null;
+        }
+    }, [currentFileContents, editAreaEl]);
+    useLayoutEffect(() => {
+        if (desiredCaretRef.current !== null && editAreaEl) {
+            try {
+                editAreaEl.setSelectionRange(desiredCaretRef.current, desiredCaretRef.current);
+            } catch (e) {}
+            desiredCaretRef.current = null;
+        }
+    }, [currentFileContents, editAreaEl]);
 
     useEffect(() => {
         const handler = async (e: KeyboardEvent) => {
@@ -61,11 +82,27 @@ export function useGlobalShortcuts() {
                     })
                 }
             }
+            if (e.key === "Tab") {
+                if (focusArea === "editArea") {
+                    e.preventDefault();
+                    console.log(editAreaEl);
+                    if (editAreaEl && currentFileContents) {
+                        const start = editAreaEl.selectionStart;
+                        const end = editAreaEl.selectionEnd;
+                        const newValue = currentFileContents.substring(0, start) + "    " + currentFileContents.substring(end);
+                        const newPos = start + 4;
+                        desiredCaretRef.current = newPos;
+                        setCurrentFileContents(newValue);
+                        setIsChanged(true);
+                        // editAreaEl.focus();
+                    }
+                }
+            }
         };
 
         window.addEventListener("keydown", handler);
         return () => window.removeEventListener("keydown", handler);
-    }, [focusArea, currentFileContents, selectedNodeId, editNodeId]);
+    }, [focusArea, currentFileContents, selectedNodeId, editNodeId, editAreaEl]);
 }
 
 export function useFileActions() {
