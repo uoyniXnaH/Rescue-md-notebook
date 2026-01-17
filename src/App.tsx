@@ -16,6 +16,7 @@ import { useDisplayStore } from "@store/store";
 import { useGlobalShortcuts, useContextMenu, useWindowSize } from "./hooks";
 import useTauriCmd from "@tauri/TauriCmd";
 import { FLOATING_NAV_WIDTH } from "./Defines";
+import { use } from "i18next";
 
 function App() {
   useGlobalShortcuts();
@@ -36,30 +37,18 @@ function App() {
   const { width } = useWindowSize();
 
   useEffect(() => {
-    getGlobalConfig()
-    .then((gconfig) => {
-        setSettings(gconfig);
-        setTheme(gconfig.color_mode);
-        setLanguage(gconfig.language);
-    });
-  }, []);
-  useEffect(() => {
     i18n.changeLanguage(settings.language);
   }, [settings.language]);
+
   useEffect(() => {
     getGlobalConfig()
     .then((gconfig) => {
+      setSettings(gconfig);
+      setTheme(gconfig.color_mode);
+      setLanguage(gconfig.language);
+
       if (gconfig.current_root && gconfig.current_root.length > 0) {
-        getCurrentWindow().setTitle(`${t("title")} - ${gconfig.current_root}`)
-        .catch(() => {
-          showMessageModal({
-            contents: t("exceptions.set_title_failed")
-          });
-        });
-        getRootConfig()
-        .then((rconfig) => {
-          setFileTreeData(rconfig);
-        });
+        getRootConfig().then(setFileTreeData);
       } else {
         showBasicModal({
           contents: [t("modal.root_not_set")],
@@ -73,17 +62,22 @@ function App() {
               setCurrentRoot(selected);
               await setGlobalConfig(getSettings())
               .then(async () => {
-                await getRootConfig()
-                .then(async (filetree) => {
-                  setFileTreeData(filetree);
-                });
+                await getRootConfig().then(setFileTreeData);
               });
             }
           }
         })
       }
-    })
-    
+    });
+  }, []);
+
+  useEffect(() => {
+      getCurrentWindow().setTitle(`${t("title")} - ${settings.current_root}`)
+      .catch(() => {
+        showMessageModal({
+          contents: t("exceptions.set_title_failed")
+        });
+      });
   }, [settings.current_root]);
 
   return (
