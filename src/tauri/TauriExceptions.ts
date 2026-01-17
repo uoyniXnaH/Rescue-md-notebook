@@ -62,6 +62,7 @@ function useTauriExceptionMessage(t: TFunction<"translation", undefined>) {
                     case "remove_rconfig_node":
                         message = t("exceptions.set_rconfig.cannot_create_file");
                         break;
+                    case "fix_folder":
                     case "create_node":
                         message = t("exceptions.create_node.cannot_create_file");
                         break;
