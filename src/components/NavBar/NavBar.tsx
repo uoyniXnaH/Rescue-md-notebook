@@ -90,7 +90,7 @@ function NavBar() {
   const setIsNavBarShown = useDisplayStore((state) => state.setIsNavBarShown);
   const setFocusArea = useFocusStore((state) => state.setFocusArea);
   const { createNode } = useFileActions();
-  const { width } = useWindowSize();
+  const { width, height } = useWindowSize();
   const [isRootMenuOpen, setIsRootMenuOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   return (
@@ -104,7 +104,7 @@ function NavBar() {
     }}>
       <Stack py={1.5} px={2} spacing={2} height="100%">
         {/* Title */}
-        <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
+        <Stack direction="row" justifyContent="space-between" alignItems="flex-start" height={52}>
           <Box>
             <Typography variant="h6">{t("title")}</Typography>
             <Typography color="info.contrastText" variant="body2">{t("nav.version")}{VERSION}</Typography>
@@ -114,7 +114,7 @@ function NavBar() {
           </Box>}
         </Stack>
         {/* Root file tree */}
-        <Box onFocus={() => setFocusArea("navBar")} onClick={() => setFocusArea("navBar")} flexGrow={1}>
+        <Box onFocus={() => setFocusArea("navBar")} onClick={() => setFocusArea("navBar")} height={height - 112} overflow="auto">
           <Stack direction="row" spacing={1} alignItems="center">
             <HomeIcon sx={{ color: "info.contrastText" }} />
             <Typography variant="h6" color="info.contrastText">
