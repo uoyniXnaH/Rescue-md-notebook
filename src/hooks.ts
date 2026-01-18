@@ -96,6 +96,8 @@ export function useGlobalShortcuts() {
                         setIsChanged(true);
                         // editAreaEl.focus();
                     }
+                } else if (focusArea === null) {
+                    e.preventDefault();
                 }
             }
         };

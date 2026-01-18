@@ -4,7 +4,7 @@ import { Stack, Box, Typography, Modal, Button, IconButton, Fade } from '@mui/ma
 import CloseIcon from '@mui/icons-material/Close';
 
 import { selectTheme } from "../themes";
-import { useSettingStore } from "@store/store";
+import { useSettingStore, useFocusStore } from "@store/store";
 
 const style = {
     position: 'absolute',
@@ -119,12 +119,14 @@ type ModalContextType = {
 const ModalContext = React.createContext<ModalContextType | undefined>(undefined);
 
 const ModalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const setFocusArea = useFocusStore((state) => state.setFocusArea);
     const [openBasic, setOpenBasic] = React.useState(false);
     const [openMessage, setOpenMessage] = React.useState(false);
     const [opts, setOpts] = React.useState<ModalOptions>({ contents: "" });
 
     const showBasicModal = (options: ModalOptions) => {
         setOpts(options);
+        setFocusArea(null);
         setOpenBasic(true);
         setOpenMessage(false);
     }
