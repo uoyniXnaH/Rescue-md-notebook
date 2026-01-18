@@ -17,11 +17,20 @@ function EditArea() {
   const { height } = useWindowSize();
   const { t } = useTranslation();
   const inputEl = React.useRef<HTMLTextAreaElement>(null);
+  const [ lines, setLines ] = React.useState(0);
 
   const onChangeText = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setIsChanged(true);
     setCurrentFileContents(e.target.value);
   }
+
+  React.useEffect(() => {
+    if (currentFileContents) {
+      setLines(currentFileContents.split('\n').length);
+    } else {
+      setLines(0);
+    }
+  }, [selectedNodeId, currentFileContents]);
 
   React.useEffect(() => {
     if (inputEl.current) {
@@ -43,7 +52,7 @@ function EditArea() {
               focused
               variant="outlined"
               placeholder={t("edit.empty_file_prompt")}
-              rows={Math.floor(height * 0.93 / 24)}
+              rows={Math.floor(height * 0.93 / 24) + lines - 1}
               value={currentFileContents}
               onChange={(e) => onChangeText(e)}
             />

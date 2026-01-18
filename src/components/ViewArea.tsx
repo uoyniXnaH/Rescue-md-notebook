@@ -15,7 +15,7 @@ function ViewArea() {
   const setFocusArea = useFocusStore((state) => state.setFocusArea);
  
   return (
-    <Box onFocus={() => setFocusArea("viewArea")} onClick={() => setFocusArea("viewArea")} height="100%" flexBasis={600} flexGrow={1} px={1.5} pb={40} className="markdown-body markdown-container">
+    <Box onFocus={() => setFocusArea("viewArea")} onClick={() => setFocusArea("viewArea")} height="100%" flexBasis={600} flexGrow={1} px={1.5} pb={80} className="markdown-body markdown-container">
       {selectedNodeId ? (
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
