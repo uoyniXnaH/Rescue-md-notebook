@@ -41,10 +41,13 @@
     "confirm_reset_rconfig": "Are you sure you want to reset the root configuration? This will attempt to recreate the configuration based on the current files and folders in the root path. Any order changes will be lost.",
     "confirm_fix_folder": "Are you sure you want to fix this folder? This will attempt to recreate contents attached to the folder.",
     "root_not_set": "Root path is not set. Please set the root path first.",
+    "change_not_saved": "You have unsaved changes. Do you want to save the changes?",
     "cancel": "CANCEL",
     "delete": "DELETE",
     "reset": "RESET",
     "set_root": "SET ROOT",
+    "save": "SAVE",
+    "discard": "DISCARD",
     "ok": "OK"
   },
   "exceptions": {

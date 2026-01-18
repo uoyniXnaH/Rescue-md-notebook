@@ -16,7 +16,6 @@ import { useDisplayStore } from "@store/store";
 import { useGlobalShortcuts, useContextMenu, useWindowSize } from "./hooks";
 import useTauriCmd from "@tauri/TauriCmd";
 import { FLOATING_NAV_WIDTH } from "./Defines";
-import { use } from "i18next";
 
 function App() {
   useGlobalShortcuts();

@@ -140,7 +140,6 @@ const ModalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) =>
     const closeModal = () => {
         setOpenBasic(false);
         setOpenMessage(false);
-        if (opts.onLeftButtonClick) opts.onLeftButtonClick();
     }
 
     return (

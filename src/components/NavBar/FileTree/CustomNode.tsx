@@ -8,9 +8,11 @@ import { NodeData, NodeEnum } from "@type/types";
 import { useFileTreeStore, useDisplayStore } from "@store/store";
 import { useFileActions } from "@src/hooks";
 import useTauriCmd from "@tauri/TauriCmd";
+import { useModal } from "@src/components/Modal";
 import { useTranslation } from "react-i18next";
 import { NODE_TYPE } from "@src/Defines";
 import styles from "./FileTree.module.css";
+import { t } from "i18next";
 
 type AddMenuProps = {
   isOpen: boolean;
@@ -51,12 +53,15 @@ const CustomNode: React.FC<Props> = (props) => {
   const selectedNodeId = useFileTreeStore((state) => state.selectedNodeId);
   const editNodeId = useFileTreeStore((state) => state.editNodeId);
   const ctxMenuId = useFileTreeStore((state) => state.ctxMenuId);
+  const isChanged = useDisplayStore((state) => state.isChanged);
   const setEditNodeId = useFileTreeStore((state) => state.setEditNodeId);
   const setSelectedNodeId = useFileTreeStore((state) => state.setSelectedNodeId);
   const setFileTreeData = useFileTreeStore((state) => state.setFileTreeData);
   const setCurrentFileContents = useDisplayStore((state) => state.setCurrentFileContents);
-  const { renameNode, createNode } = useFileActions();
+  const setIsChanged = useDisplayStore((state) => state.setIsChanged);
+  const { renameNode, createNode, saveFile } = useFileActions();
   const { updateRootConfigNode, getNodeContents } = useTauriCmd();
+  const { showBasicModal } = useModal();
   const [isHovered, setIsHovered] = React.useState(false);
   const [isAddMenuOpen, setIsAddMenuOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -72,11 +77,41 @@ const CustomNode: React.FC<Props> = (props) => {
   };
 
   const handleSelectNode = async (node: NodeModel<NodeData>) => {
-    setSelectedNodeId(node.id);
-    await getNodeContents(node.id)
-    .then((contents) => {
-      setCurrentFileContents(contents);
-    });
+    if (selectedNodeId === node.id) {
+      return;
+    }
+    if (isChanged) {
+      showBasicModal({
+        contents: t("modal.change_not_saved"),
+        leftButtonText: t("modal.discard"),
+        onLeftButtonClick: async () => {
+          console.log("left clicked");
+          setSelectedNodeId(node.id);
+          await getNodeContents(node.id)
+          .then((contents) => {
+            setCurrentFileContents(contents);
+            setIsChanged(false);
+          });
+        },
+        rightButtonText: t("modal.save"),
+        onRightButtonClick: async () => {
+          console.log("right clicked");
+          await saveFile();
+          setSelectedNodeId(node.id);
+          await getNodeContents(node.id)
+          .then((contents) => {
+            setCurrentFileContents(contents);
+            setIsChanged(false);
+          });
+        }
+      });
+    } else {
+      setSelectedNodeId(node.id);
+      await getNodeContents(node.id)
+      .then((contents) => {
+        setCurrentFileContents(contents);
+      });
+    }
   }
 
   return (

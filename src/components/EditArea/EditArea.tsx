@@ -46,7 +46,6 @@ function EditArea() {
               rows={Math.floor(height * 0.93 / 24)}
               value={currentFileContents}
               onChange={(e) => onChangeText(e)}
-              // sx={{ borderRadius: 1, bgcolor: "primary.main" }}
             />
           </Box>
         </>
