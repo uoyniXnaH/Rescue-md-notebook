@@ -40,11 +40,11 @@ function EditArea() {
   }, [inputEl.current]);
 
   return (
-    <Box onFocus={() => setFocusArea("editArea")} onClick={() => setFocusArea("editArea")} width="41%" flexBasis={788} maxWidth={788} px={2} sx={{ bgcolor: "secondary.main", color: "secondary.contrastText" }}>
+    <Box onFocus={() => setFocusArea("editArea")} onClick={() => setFocusArea("editArea")} width="41%" height="100%" flexBasis={788} maxWidth={788} px={2} sx={{ bgcolor: "secondary.main", color: "secondary.contrastText" }}>
       {selectedNodeId ? (
         <>
           <Title />
-          <Box height="93%" overflow="auto" bgcolor="primary.main" borderRadius={1}>
+          <Box height={height - 64} overflow="auto" bgcolor="primary.main" borderRadius={1}>
               <TextField
               inputRef={inputEl}
               multiline
@@ -52,7 +52,7 @@ function EditArea() {
               focused
               variant="outlined"
               placeholder={t("edit.empty_file_prompt")}
-              rows={Math.floor(height * 0.93 / 24) + lines - 1}
+              rows={Math.floor(height * 0.8 / 24) + lines - 1}
               value={currentFileContents}
               onChange={(e) => onChangeText(e)}
             />

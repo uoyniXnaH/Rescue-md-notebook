@@ -33,5 +33,5 @@ export const emptyNode: NodeModel<NodeData> = {
     },
 }
 
-export const MINI_LANG_WIDTH = 1600;
+export const MINI_NAV_WIDTH = 1600;
 export const FLOATING_NAV_WIDTH = 1100;

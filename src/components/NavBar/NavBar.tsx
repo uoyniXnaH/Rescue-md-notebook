@@ -13,7 +13,7 @@ import { useFileActions, useWindowSize } from "@src/hooks";
 import { useModal } from "../Modal";
 import useTauriCmd from "@tauri/TauriCmd";
 import { NodeEnum } from '@type/types';
-import { VERSION, NODE_TYPE, FLOATING_NAV_WIDTH } from "@src/Defines";
+import { VERSION, NODE_TYPE, FLOATING_NAV_WIDTH, MINI_NAV_WIDTH } from "@src/Defines";
 
 type RootMenuProps = {
   isOpen: boolean;
@@ -106,7 +106,7 @@ function NavBar() {
         {/* Title */}
         <Stack direction="row" justifyContent="space-between" alignItems="flex-start" height={52}>
           <Box>
-            <Typography variant="h6">{t("title")}</Typography>
+            <Typography variant={width < MINI_NAV_WIDTH ? "body1" : "h6"}>{t("title")}</Typography>
             <Typography color="info.contrastText" variant="body2">{t("nav.version")}{VERSION}</Typography>
           </Box>
           {width >= FLOATING_NAV_WIDTH && <Box>

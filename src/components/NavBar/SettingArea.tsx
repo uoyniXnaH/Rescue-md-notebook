@@ -7,7 +7,7 @@ import LanguageIcon from '@mui/icons-material/Language';
 import { useSettingStore, useFocusStore } from "@store/store";
 import useTauriCmd from "@tauri/TauriCmd";
 import { useWindowSize } from "@src/hooks";
-import { LANGUAGE, MINI_LANG_WIDTH } from "@src/Defines";
+import { LANGUAGE, MINI_NAV_WIDTH } from "@src/Defines";
 
 type MiniLangIconProps = {
   isOpen: boolean;
@@ -78,7 +78,7 @@ function SettingArea() {
 
         {/* Language Selector */}
         <Stack direction="row" alignItems="center" spacing={1}>
-          {width > MINI_LANG_WIDTH
+          {width > MINI_NAV_WIDTH
             ? <LanguageIcon />
             : <IconButton size="small" onClick={(e) => {
                 setLangAnchorEl(e.currentTarget);
@@ -90,7 +90,7 @@ function SettingArea() {
             anchorEl={langAnchorEl}
             handleClose={() => setIsLangMenuOpen(false)}
           />
-          {width > MINI_LANG_WIDTH && <Select
+          {width > MINI_NAV_WIDTH && <Select
             value={settings.language}
             onChange={async (e) => {
               setLanguage(e.target.value)
