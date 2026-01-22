@@ -2,7 +2,7 @@ import { NodeModel } from "@minoru/react-dnd-treeview";
 
 import { NodeEnum, GlobalConfig, NodeData } from "@type/types";
 
-export const VERSION = "0.1.1";
+export const VERSION = "0.1.2";
 
 export const LANGUAGE = {
     sc: "简体中文",
