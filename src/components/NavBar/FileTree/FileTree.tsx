@@ -68,7 +68,7 @@ export default function FileTree() {
     }
   };
   return (
-    <Box height="95%" pl={1.5}>
+    <Box pl={1.5}>
       <DndProvider backend={MultiBackend} options={getBackendOptions()}>
         <Box height="95%">
           <Tree
