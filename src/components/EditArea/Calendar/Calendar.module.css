@@ -1,0 +1,71 @@
+.reactCalendar {
+  width: 350px;
+  max-width: 100%;
+  border: 1px solid #a0a096;
+  font-family: 'Arial', 'Helvetica', sans-serif;
+  line-height: 1.125em;
+}
+
+.reactCalendar,
+.reactCalendar *,
+.reactCalendar *:before,
+.reactCalendar *:after {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.reactCalendar button {
+  margin: 0;
+  border: 0;
+  background: none;
+  outline: none;
+  padding: 6px 4px;
+}
+
+.reactCalendar button:enabled:hover {
+  cursor: pointer;
+}
+
+.reactCalendarNavigation {
+  display: flex;
+  height: 44px;
+  margin-bottom: 1em;
+}
+
+.reactCalendarNavigation button:enabled:hover {
+  background-color: #808080;
+}
+
+.reactCalendarTileActive,
+.reactCalendarTileActive:enabled:hover,
+.reactCalendarTileActive:enabled:focus {
+  background-color: #5771ff !important;
+  color: white;
+}
+
+.reactCalendarTile {
+  max-width: 100%;
+  padding: 4px 0;
+  background: none;
+  border: 0;
+  text-align: center;
+  font: inherit;
+  font-size: 0.833em;
+}
+
+.reactCalendarTile:disabled {
+  background-color: #f0f0f0;
+  color: #ababab;
+}
+
+.reactCalendarTile:enabled:hover {
+  background-color: #808080;
+}
+
+.markedDate abbr {
+  border-style: solid;
+  border-color: #ff2222;
+  border-width: 0 0 2px 0;
+  /* border-radius: 99px; */
+}
