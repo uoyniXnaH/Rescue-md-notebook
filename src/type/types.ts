@@ -8,6 +8,7 @@ export type NodeData = {
     nodeType: NodeEnum;
     isOpen?: boolean;
     nodeName: string;
+    date?: Date[];
 };
 
 export type themeEnum = "light" | "dark";
@@ -39,11 +40,13 @@ export type displayStoreType = {
 export type FileTreeStoreType = {
     fileTreeData: NodeModel<NodeData>[];
     selectedNodeId: string | number | null;
+    selectedDate: Date | null;
     editNodeId: string | number | null;
     ctxMenuId: string | number | null;
     getFileTreeData: () => NodeModel<NodeData>[];
     setFileTreeData: (data: NodeModel<NodeData>[]) => void;
     setSelectedNodeId: (id: string | number | null) => void;
+    setSelectedDate: (date: Date | null) => void;
     setEditNodeId: (id: string | number | null) => void;
     setCtxMenuId: (id: string | number | null) => void;
 }

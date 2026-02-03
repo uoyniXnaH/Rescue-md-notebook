@@ -30,11 +30,13 @@ export const useDisplayStore = create<types.displayStoreType>()((set) => ({
 export const useFileTreeStore = create<types.FileTreeStoreType>()((set, get) => ({
     fileTreeData: [],
     selectedNodeId: null,
+    selectedDate: null,
     editNodeId: null,
     ctxMenuId: null,
     getFileTreeData: () => get().fileTreeData,
     setFileTreeData: (data) => set({ fileTreeData: data }),
-    setSelectedNodeId: (id) => set({ selectedNodeId: id }),
+    setSelectedNodeId: (id) => set({ selectedNodeId: id, selectedDate: null }),
+    setSelectedDate: (date) => set({ selectedDate: date }),
     setEditNodeId: (id) => set({ editNodeId: id }),
     setCtxMenuId: (id) => set({ ctxMenuId: id }),
 }));
