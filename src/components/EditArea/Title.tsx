@@ -32,6 +32,9 @@ function Title() {
       .then((node) => {
           setFilename(node.text);
           setShowCalendarIcon(node.data?.nodeType == "calendar");
+          if (node.data?.nodeType != "calendar") {
+            setCalendarAnchorEl(null);
+          }
       });
     } else {
       setFilename("");
@@ -54,9 +57,9 @@ function Title() {
           </IconButton>
         </Stack>
         <Box>
-          {showCalendarIcon && <IconButton size="small" onClick={handleCalendarToggle}>
+          {showCalendarIcon && <><IconButton size="small" onClick={handleCalendarToggle}>
               <CalendarMonthIcon />
-            </IconButton>}
+            </IconButton>
           <Popper
             open={Boolean(calendarAnchorEl)}
             anchorEl={calendarAnchorEl}
@@ -64,7 +67,7 @@ function Title() {
             sx={{backgroundColor: 'secondary.main'}}
           >
             <RsnCalendar />
-          </Popper>
+          </Popper></>}
           <IconButton size="small" onClick={() => setIsEditAreaShown(false)}>
             <CloseFullscreenIcon />
           </IconButton>
