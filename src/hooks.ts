@@ -123,11 +123,13 @@ export function useFileActions() {
         }
     };
 
-    const renameNode = async (id: string | number, newName: string) => {
+    const renameNode = async (id: string | number, newName: string): Promise<boolean> => {
+        if (!newName) return false;
         await Tauri.renameNode(id, newName)
         .then((updatedFileTree) => {
             setFileTreeData(updatedFileTree);
         });
+        return true;
     }
 
     const createNode = async (parent: string | number, nodeName: string, nodeType: NodeEnum) => {

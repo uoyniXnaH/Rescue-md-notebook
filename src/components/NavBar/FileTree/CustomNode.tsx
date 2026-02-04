@@ -142,7 +142,10 @@ const CustomNode: React.FC<Props> = (props) => {
                 value={nodename}
                 onChange={(e) => setNodename(e.target.value)}
                 onBlur={async () => {
-                  await renameNode(id, nodename);
+                  const result = await renameNode(id, nodename);
+                  if (!result) {
+                    setNodename(props.node.text);
+                  }
                   setEditNodeId(null);
                 }}
                 autoFocus
