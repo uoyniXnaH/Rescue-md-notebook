@@ -3,6 +3,7 @@ import { Box, Stack, IconButton, Typography, Popper } from "@mui/material";
 import SaveIcon from '@mui/icons-material/Save';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import dayjs from "dayjs";
 
 import RsnCalendar from "./Calendar/RsnCalendar";
@@ -16,6 +17,7 @@ function Title() {
   const selectedNodeId = useFileTreeStore((state) => state.selectedNodeId);
   const fileTreeData = useFileTreeStore((state) => state.fileTreeData);
   const selectedDate = useFileTreeStore((state) => state.selectedDate);
+  const setSelectedDate = useFileTreeStore((state) => state.setSelectedDate);
   const { saveFile } = useFileActions();
   const { width } = useWindowSize();
   const { getNodeById } = useTauriCmd();
@@ -31,8 +33,9 @@ function Title() {
       getNodeById(selectedNodeId)
       .then((node) => {
           setFilename(node.text);
-          setShowCalendarIcon(node.data?.nodeType == "calendar");
-          if (node.data?.nodeType != "calendar") {
+          if (node.data?.nodeType == "calendar") {
+            setShowCalendarIcon(true);
+          } else {
             setCalendarAnchorEl(null);
           }
       });
@@ -50,8 +53,22 @@ function Title() {
     <Box pt={1.5} sx={{ display: 'flex', alignItems: 'center', color: 'primary.contrastText' }}>
       <Stack direction="row" spacing={1} justifyContent="space-between" alignItems="center" width="100%">
         <Stack direction="row" spacing={1} alignItems="center">
-          <Typography variant="body1" noWrap maxWidth={width * 0.25}>{filename}</Typography>
-          <Typography variant="body1">{selectedDate ? ` - ${dayjs(selectedDate).format("YY/MM/DD")}` : ""}</Typography>
+          <Typography
+            noWrap
+            variant="body1"
+            maxWidth={width * 0.25}
+            onClick={() => {
+              if (selectedDate) {
+                setSelectedDate(null);
+                setCalendarAnchorEl(null);
+              }
+            }}
+            sx={{ cursor: selectedDate ? 'pointer' : 'text' }}
+          >{filename}</Typography>
+          {selectedDate && <>
+            <KeyboardArrowRightIcon fontSize="small" />
+            <Typography variant="body1">{dayjs(selectedDate).format("YY/MM/DD")}</Typography>
+          </>}
           <IconButton color="inherit" onClick={handleSave} disabled={!isChanged}>
             <SaveIcon />
           </IconButton>
