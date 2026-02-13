@@ -111,15 +111,11 @@ pub fn update_node_contents(id: Uuid, new_contents: String) -> Result<(), BaseEx
     let node_path = match rconfig.get_node_by_id(&id) {
         Some(node) => {
             match node.data.node_type.as_str() {
-                "folder" => {
+                "folder" | "calendar" => {
                     let mut path = PathBuf::from(rconfig.create_path_by_id(&node.id)?);
-                    let name = &node.data.node_name;
-                    path.push(format!("__rsn-folder.{}.md", name));
+                    path.push(format!("__rsn-{}.{}.md", &node.data.node_type, &node.text));
                     path
                 },
-                "calendar" => {
-                    return Err(BaseException::new("Calendar feature coming soon :)", COMMING_SOON));
-                }
                 _ => {
                     PathBuf::from(rconfig.create_path_by_id(&node.id)?)
                 }
