@@ -144,18 +144,19 @@ pub fn get_node_by_id(id: Uuid) -> Result<TreeNode, BaseException> {
 }
 
 #[tauri::command]
-pub fn rename_node(id: Uuid, new_name: String) -> Result<TreeNode, BaseException> {
+pub fn rename_node(id: Uuid, new_text: String) -> Result<TreeNode, BaseException> {
     let rconfig: TreeData = get_rconfig()?;
     let node = rconfig.get_node_by_id(&id).ok_or_else(|| {
         return BaseException::new("Invalid node id", INVALID_PARAMETER);
     })?;
 
-    if node.text == new_name {
+    if node.text == new_text {
         return Ok(node.clone());
     }
 
+    let mut new_name = new_text.clone();
     if node.data.node_type == "calendar" {
-        return Err(BaseException::new("Calendar feature coming soon :)", COMMING_SOON));
+        new_name = generate_rsn_name(&new_text, NodeType::Calendar);
     }
 
     let siblings = rconfig.get_nodes_by_parent(&node.parent);
@@ -168,7 +169,7 @@ pub fn rename_node(id: Uuid, new_name: String) -> Result<TreeNode, BaseException
     let node_path = PathBuf::from(rconfig.create_path_by_id(&id)?);
     let mut new_path = node_path.clone();
     let ext = node_path.extension().and_then(|s| s.to_str()).unwrap_or("");
-    if ext != "" && node.data.node_type != "folder" {
+    if ext != "" && node.data.node_type != "folder" && node.data.node_type != "calendar" {
         new_path.set_file_name(format!("{}.{}", &new_name, ext));
     } else {
         new_path.set_file_name(&new_name);
@@ -178,19 +179,19 @@ pub fn rename_node(id: Uuid, new_name: String) -> Result<TreeNode, BaseException
         return BaseException::new("Failed to rename file", INVALID_OPERATION);
     })?;
 
-    if node.data.node_type == "folder" {
+    if node.data.node_type == "folder" || node.data.node_type == "calendar" {
         let mut new_attach_path = new_path.clone();
-        new_path.push(format!("__rsn-folder.{}.md", &node.data.node_name));
-        new_attach_path.push(format!("__rsn-folder.{}.md", &new_name));
+        new_path.push(format!("__rsn-{}.{}.md", &node.data.node_type, &node.text));
+        new_attach_path.push(format!("__rsn-{}.{}.md", &node.data.node_type, &new_text));
 
         std::fs::rename(&new_path, &new_attach_path).map_err(|_| {
-            return BaseException::new("Failed to rename folder metadata file", INVALID_OPERATION);
+            return BaseException::new("Failed to rename node metadata file", INVALID_OPERATION);
         })?;
         new_path.pop();
     }
     let mut updated_node = node.clone();
     updated_node.data.node_name = new_path.file_name().and_then(|s| s.to_str()).unwrap_or("").to_string();
-    updated_node.text = new_name;
+    updated_node.text = new_text;
 
     return Ok(updated_node);
 }
