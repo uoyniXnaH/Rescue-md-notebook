@@ -4,7 +4,7 @@ use serde::{Serialize, Deserialize};
 use uuid::Uuid;
 
 use crate::gconfig::{get_gconfig_item};
-use crate::nodes::{init_folder};
+use crate::nodes::{init_folder, init_calendar};
 use crate::exceptions::{*};
 use crate::utils::match_rsn_target;
 
@@ -13,7 +13,8 @@ use crate::utils::match_rsn_target;
 pub struct TreeNodeData {
     pub node_type: String,
     pub node_name: String,
-    pub is_open: Option<bool>
+    pub is_open: Option<bool>,
+    pub dates: Option<Vec<String>>,
 }
 
 #[derive(Serialize, Deserialize, Clone, PartialEq)]
@@ -124,7 +125,10 @@ impl TreeData {
 }
 
 fn get_type_and_name(path: &Path) -> (Option<&str>, &str) {
-    let filestem = path.file_stem()
+    let filestem = match path.is_dir() {
+        true => path.file_name(),
+        false => path.file_stem(),
+    }
     .and_then(|s| s.to_str())
     .unwrap_or("");
     let mut node_type = "";
@@ -179,7 +183,11 @@ pub fn create_tree_by_path(path: &str) -> Result<TreeData, BaseException> {
                 data: TreeNodeData {
                     node_type: file_type.to_string(),
                     node_name: p.file_name().and_then(|s| s.to_str()).unwrap_or("").to_string(),
-                    is_open: Some(false)
+                    is_open: Some(false),
+                    dates: match file_type {
+                        "calendar" => Some(init_calendar(&p)?),
+                        _ => None,
+                    }
                 }
             };
 
