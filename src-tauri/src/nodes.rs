@@ -274,6 +274,33 @@ pub fn create_node(parent: ParentId, mut node_name: String, node_type: String) -
 }
 
 #[tauri::command]
+pub fn upsert_calendar_date(id: Uuid, date: String, contents: String) -> Result<(), BaseException> {
+    let rconfig: TreeData = get_rconfig()?;
+    let node = rconfig.get_node_by_id(&id).ok_or_else(|| {
+        return BaseException::new("Invalid node id", INVALID_PARAMETER);
+    })?;
+    if node.data.node_type.as_str() != "calendar" {
+        return Err(BaseException::new("Node is not a calendar", INVALID_PARAMETER));
+    }
+    if !is_valid_date(&date) {
+        return Err(BaseException::new("Invalid date format", INVALID_PARAMETER));
+    }
+
+    let mut node_path = PathBuf::from(rconfig.create_path_by_id(&id)?);
+    node_path.push(date);
+    node_path.set_extension("md");
+    if !node_path.exists() {
+        std::fs::File::create(&node_path).map_err(|_| {
+            return BaseException::new("Failed to create calendar entry file", CANNOT_CREATE_FILE);
+        })?;
+    }
+    std::fs::write(&node_path, contents).map_err(|_| {
+        return BaseException::new("Failed to write calendar entry contents", WRITE_ERROR);
+    })?;
+    return Ok(());
+}
+
+#[tauri::command]
 pub fn open_in_explorer(id: ParentId) -> Result<(), BaseException> {
     let rconfig: TreeData = get_rconfig()?;
     let node_path = match id {
@@ -363,4 +390,38 @@ pub fn init_folder(path: &PathBuf) -> Result<(), BaseException> {
             return BaseException::new("Failed to create folder metadata file", CANNOT_CREATE_FILE);
         })?;
     return Ok(());
+}
+
+pub fn init_calendar(path: &PathBuf) -> Result<Vec<String>, BaseException> {
+    let mut config_path = path.clone();
+    let name = path.file_name().and_then(|s| s.to_str()).unwrap_or("");
+    config_path.push(format!("{}.md", name));
+    if !config_path.exists() {
+        std::fs::File::create(&config_path)
+            .map_err(|_| {
+                return BaseException::new("Failed to create calendar metadata file", CANNOT_CREATE_FILE);
+            })?;
+    }
+    let dates = get_calendar_members(path)?;
+    return Ok(dates);
+}
+
+pub fn get_calendar_members(path: &PathBuf) -> Result<Vec<String>, BaseException> {
+    let mut dates: Vec<String> = Vec::new();
+    let entries = read_dir(&path).map_err(|_| {
+        return BaseException::new("Failed to read directory", READ_ERROR);
+    })?;
+    for entry in entries {
+        let entry = entry.map_err(|_| {
+            return BaseException::new("Failed to read directory entry", READ_ERROR);
+        })?;
+        if entry.path().is_dir() {
+            continue;
+        }
+        let name = entry.path().file_stem().and_then(|s| s.to_str()).unwrap_or("").to_string();
+        if is_valid_date(&name) {
+            dates.push(name);
+        }
+    }
+    return Ok(dates);
 }
