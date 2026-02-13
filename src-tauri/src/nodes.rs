@@ -61,7 +61,7 @@ pub fn move_node(id: Uuid, new_parent_id: ParentId, new_file_tree: TreeData) -> 
 }
 
 #[tauri::command]
-pub fn get_node_contents(id: Uuid) -> Result<String, BaseException> {
+pub fn get_node_contents(id: Uuid, child: Option<String>) -> Result<String, BaseException> {
     let rconfig: TreeData = get_rconfig()?;
     let node = rconfig.get_node_by_id(&id).ok_or_else(|| {
         return BaseException::new("Invalid node id", INVALID_PARAMETER);
@@ -74,7 +74,22 @@ pub fn get_node_contents(id: Uuid) -> Result<String, BaseException> {
             path
         },
         "calendar" => {
-            return Err(BaseException::new("Calendar feature coming soon :)", COMMING_SOON));
+            if let Some(child_name) = child {
+                let mut path = PathBuf::from(rconfig.create_path_by_id(&node.id)?);
+                path.push(child_name);
+                path.set_extension("md");
+                if !path.exists() {
+                    return Ok(String::new());
+                }
+                return std::fs::read_to_string(&path).map_err(|_| {
+                    return BaseException::new("Failed to read calendar entry contents", READ_ERROR);
+                });
+            } else {
+                let mut path = PathBuf::from(rconfig.create_path_by_id(&node.id)?);
+                let name = &node.data.node_name;
+                path.push(format!("{}.md", name));
+                path
+            }
         }
         _ => {
             PathBuf::from(rconfig.create_path_by_id(&node.id)?)
