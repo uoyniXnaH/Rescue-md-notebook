@@ -6,8 +6,12 @@ use trash::delete;
 use crate::gconfig::{get_gconfig_item};
 use crate::rconfig::{get_rconfig, set_rconfig};
 use crate::utils::file_tree_handler::{TreeData, TreeNode ,TreeNodeData, ParentId};
-use crate::utils::match_rsn_target;
+use crate::utils::{match_rsn_target, is_valid_date, generate_rsn_name};
 use crate::exceptions::{*};
+
+pub enum NodeType {
+    Calendar,
+}
 
 #[tauri::command]
 pub fn move_node_to_trash(id: Uuid) -> Result<(), BaseException> {
@@ -200,13 +204,6 @@ pub fn create_node(parent: ParentId, mut node_name: String, node_type: String) -
     let rconfig: TreeData = get_rconfig()?;
     let root_path = get_gconfig_item("current_root")?;
 
-    if node_type == "calendar" {
-        return Err(BaseException::new(
-            "Calendar feature coming soon :)",
-            COMMING_SOON,
-        ));
-    }
-
     let siblings = rconfig.get_nodes_by_parent(&parent);
     let mut sibling_names: Vec<String> = Vec::new();
     let mut order: u32 = 1;
@@ -219,16 +216,21 @@ pub fn create_node(parent: ParentId, mut node_name: String, node_type: String) -
         order += 1;
     }
 
+    let mut file_name: String = node_name.clone();
+    if node_type == "calendar" {
+        file_name = generate_rsn_name(&node_name, NodeType::Calendar);
+    }
+
     let mut new_path = match &parent {
         ParentId::Root(0) => {
             let mut path = PathBuf::from(&root_path);
-            path.push(PathBuf::from(&node_name));
+            path.push(PathBuf::from(&file_name));
             path
         }
         ParentId::Id(id) => {
             let parent_path = rconfig.create_path_by_id(&id)?;
             let mut path = PathBuf::from(&parent_path);
-            path.push(PathBuf::from(&node_name));
+            path.push(PathBuf::from(&file_name));
             path
         }
         _ => {
@@ -241,6 +243,11 @@ pub fn create_node(parent: ParentId, mut node_name: String, node_type: String) -
             return BaseException::new("Failed to create folder", CANNOT_CREATE_FILE);
         })?;
         init_folder(&new_path)?;
+    } else if node_type == "calendar" {
+        std::fs::create_dir(&new_path).map_err(|_| {
+            return BaseException::new("Failed to create folder", CANNOT_CREATE_FILE);
+        })?;
+        init_calendar(&new_path)?;
     } else {
         new_path.set_extension("md");
         std::fs::File::create(&new_path).map_err(|_| {
@@ -255,8 +262,12 @@ pub fn create_node(parent: ParentId, mut node_name: String, node_type: String) -
         text: node_name.clone(),
         data: TreeNodeData {
             node_name: new_path.file_name().and_then(|s| s.to_str()).unwrap_or("").to_string(),
-            node_type: node_type,
+            node_type: node_type.clone(),
             is_open: Some(false),
+            dates: match node_type.as_str() {
+                "calendar" => Some(Vec::new()),
+                _ => None,
+            }
         },
     };
     return Ok(new_node);
