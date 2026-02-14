@@ -12,7 +12,8 @@ export const LANGUAGE = {
 
 export const NODE_TYPE: NodeEnum[] = [
     "folder",
-    "file"
+    "file",
+    "calendar"
 ]
 
 export const defaultGlobalConfig: GlobalConfig = {

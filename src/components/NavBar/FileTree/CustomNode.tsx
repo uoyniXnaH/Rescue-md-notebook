@@ -85,7 +85,6 @@ const CustomNode: React.FC<Props> = (props) => {
         contents: t("modal.change_not_saved"),
         leftButtonText: t("modal.discard"),
         onLeftButtonClick: async () => {
-          console.log("left clicked");
           setSelectedNodeId(node.id);
           await getNodeContents(node.id)
           .then((contents) => {
@@ -95,7 +94,6 @@ const CustomNode: React.FC<Props> = (props) => {
         },
         rightButtonText: t("modal.save"),
         onRightButtonClick: async () => {
-          console.log("right clicked");
           await saveFile();
           setSelectedNodeId(node.id);
           await getNodeContents(node.id)

@@ -1,6 +1,7 @@
 import { invoke } from "@tauri-apps/api/core";
 import { NodeModel } from "@minoru/react-dnd-treeview";
 import { useTranslation } from "react-i18next";
+import dayjs from "dayjs";
 
 import { useModal } from "@src/components/Modal";
 import { useFileTreeStore } from "@store/store";
@@ -105,9 +106,9 @@ function useTauriCmd() {
         });
     }
 
-    const renameNode = async (id: NodeModel["id"], newName: string): Promise<NodeModel<Types.NodeData>[]> => {
+    const renameNode = async (id: NodeModel["id"], newText: string): Promise<NodeModel<Types.NodeData>[]> => {
         return new Promise((resolve) => {
-            invoke<NodeModel<Types.NodeData>>("rename_node", { id: id, newName: newName })
+            invoke<NodeModel<Types.NodeData>>("rename_node", { id: id, newText: newText })
             .then(async (updatedNode) => {
                 await invoke<NodeModel<Types.NodeData>[]>("update_rconfig_node", { updatedNode: updatedNode })
                 .then((filetree) => {
@@ -121,6 +122,7 @@ function useTauriCmd() {
                 });
             })
             .catch((error: Types.BaseException) => {
+                console.log(error);
                 showMessageModal({
                     contents: getExceptionMsg("rename_node", error.code),
                 });
@@ -151,6 +153,22 @@ function useTauriCmd() {
                 resolve(fileTreeData);
             });
         });
+    }
+
+    const upsertCalendarDate = async (id: NodeModel["id"], date: Date, contents: string | undefined, newNode: NodeModel<Types.NodeData>): Promise<NodeModel<Types.NodeData>[]> => {
+        return new Promise((resolve) => {
+            invoke<void>("upsert_calendar_date", { id: id, date: dayjs(date).format("YYYY-MM-DD"), contents: contents || "" })
+            .then(() => {
+                resolve(updateRootConfigNode(newNode));
+            })
+            .catch((error: Types.BaseException) => {
+                console.log(error);
+                showMessageModal({
+                    contents: getExceptionMsg("upsert_calendar_date", error.code),
+                });
+                resolve(fileTreeData);
+            });
+        })
     }
 
     const deleteNode = async (id: NodeModel["id"]): Promise<NodeModel<Types.NodeData>[]> => {
@@ -207,9 +225,9 @@ function useTauriCmd() {
         });
     }
 
-    const getNodeContents = async (id: NodeModel["id"]): Promise<string> => {
+    const getNodeContents = async (id: NodeModel["id"], child?: string): Promise<string> => {
         return new Promise((resolve) => {
-            invoke<string>("get_node_contents", { id: id })
+            invoke<string>("get_node_contents", { id: id, child: child })
             .then((contents) => {
                 resolve(contents);
             })
@@ -291,6 +309,7 @@ function useTauriCmd() {
         resetRootConfig,
         renameNode,
         createNode,
+        upsertCalendarDate,
         deleteNode,
         moveNode,
         getNodeById,

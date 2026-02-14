@@ -8,7 +8,7 @@ export type NodeData = {
     nodeType: NodeEnum;
     isOpen?: boolean;
     nodeName: string;
-    date?: Date[];
+    dates?: Date[];
 };
 
 export type themeEnum = "light" | "dark";
@@ -87,6 +87,7 @@ export type TauriCmdEnum =
     "get_node_by_id" |
     "rename_node" |
     "create_node" |
+    "upsert_calendar_date" |
     "open_in_explorer" |
     "get_rsn_entries_by_id" |
     "fix_folder";

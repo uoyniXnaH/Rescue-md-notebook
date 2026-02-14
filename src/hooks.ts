@@ -109,13 +109,31 @@ export function useGlobalShortcuts() {
 
 export function useFileActions() {
     const selectedNodeId = useFileTreeStore((state) => state.selectedNodeId);
+    const selectedDate = useFileTreeStore((state) => state.selectedDate);
     const setFileTreeData = useFileTreeStore((state) => state.setFileTreeData);
     const currentFileContents = useDisplayStore((state) => state.currentFileContents);
     const setIsChanged = useDisplayStore((state) => state.setIsChanged);
     const Tauri = useTauriCmd();
 
     const saveFile = async () => {
-        if (selectedNodeId) {
+        if (!selectedNodeId) return;
+        if (selectedDate) {
+            let newNode = await Tauri.getNodeById(selectedNodeId);
+            if (!newNode || newNode.data?.nodeType !== "calendar") return;
+            if (!newNode.data.dates?.includes(selectedDate)) {
+                newNode.data.dates?.push(selectedDate);
+            }
+            await Tauri.upsertCalendarDate(
+                selectedNodeId,
+                selectedDate,
+                currentFileContents,
+                newNode
+            )
+            .then((updatedFileTree) => {
+                setFileTreeData(updatedFileTree);
+                setIsChanged(false);
+            })
+        } else {
             await Tauri.updateNodeContents(selectedNodeId, currentFileContents)
             .then(() => {
                 setIsChanged(false);
@@ -139,7 +157,14 @@ export function useFileActions() {
         });
     }
 
-    return { saveFile, renameNode, createNode };
+    const upsertCalendarDate = async (id: string | number, date: Date, contents: string, newNode: NodeModel<NodeData>) => {
+        await Tauri.upsertCalendarDate(id, date, contents, newNode)
+        .then((updatedFileTree) => {
+            setFileTreeData(updatedFileTree);
+        });
+    }
+
+    return { saveFile, renameNode, createNode, upsertCalendarDate };
 }
 
 export function useContextMenu() {
