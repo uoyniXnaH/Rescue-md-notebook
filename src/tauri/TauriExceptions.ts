@@ -24,6 +24,7 @@ function useTauriExceptionMessage(t: TFunction<"translation", undefined>) {
                         message = t("exceptions.get_rconfig.invalid_parameter");
                         break;
                     case "create_node":
+                    case "upsert_calendar_date":
                         message = t("exceptions.create_node.invalid_parameter");
                         break;
                     case "move_node":
@@ -64,6 +65,7 @@ function useTauriExceptionMessage(t: TFunction<"translation", undefined>) {
                         break;
                     case "fix_folder":
                     case "create_node":
+                    case "upsert_calendar_date":
                         message = t("exceptions.create_node.cannot_create_file");
                         break;
                     default:
