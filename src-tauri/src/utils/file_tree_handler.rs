@@ -1,11 +1,11 @@
-use std::fs::{read_dir};
+use serde::{Deserialize, Serialize};
+use std::fs::read_dir;
 use std::path::Path;
-use serde::{Serialize, Deserialize};
 use uuid::Uuid;
 
-use crate::gconfig::{get_gconfig_item};
-use crate::nodes::{init_folder, init_calendar};
-use crate::exceptions::{*};
+use crate::exceptions::*;
+use crate::gconfig::get_gconfig_item;
+use crate::nodes::{init_calendar, init_folder};
 use crate::utils::match_rsn_target;
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -21,7 +21,7 @@ pub struct TreeNodeData {
 #[serde(untagged)]
 pub enum ParentId {
     Root(u8),
-    Id(Uuid)
+    Id(Uuid),
 }
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -30,7 +30,7 @@ pub struct TreeNode {
     pub parent: ParentId,
     pub droppable: bool,
     pub text: String,
-    pub data: TreeNodeData
+    pub data: TreeNodeData,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -69,10 +69,10 @@ impl TreeData {
                 ParentId::Root(0) => {
                     path_components.push(root);
                     break;
-                },
+                }
                 ParentId::Id(parent_id) => {
                     current_id = parent_id.clone();
-                },
+                }
                 _ => {
                     return Err(BaseException::new("Invalid parent ID", INVALID_PARAMETER));
                 }
@@ -116,9 +116,13 @@ impl TreeData {
     }
 
     pub fn delete_node(&mut self, node_id: &Uuid) -> Result<(), BaseException> {
-        let index = self.0.iter().position(|n| &n.id == node_id).ok_or_else(|| {
-            return BaseException::new("Node ID not found", INVALID_PARAMETER);
-        })?;
+        let index = self
+            .0
+            .iter()
+            .position(|n| &n.id == node_id)
+            .ok_or_else(|| {
+                return BaseException::new("Node ID not found", INVALID_PARAMETER);
+            })?;
         self.0.remove(index);
         return Ok(());
     }
@@ -153,12 +157,22 @@ fn get_type_and_name(path: &Path) -> (Option<&str>, &str) {
 pub fn create_tree_by_path(path: &str) -> Result<TreeData, BaseException> {
     let mut nodes: Vec<TreeNode> = Vec::new();
     const ACCEPTED_EXTENSIONS: [&str; 2] = ["md", "txt"];
-    fn visit(path: &Path, parent: ParentId, nodes: &mut Vec<TreeNode>) -> Result<(), BaseException> {
-        let rd = read_dir(path).map_err(|_| BaseException::new(&format!("failed to read directory"), READ_ERROR))?;
+    fn visit(
+        path: &Path,
+        parent: ParentId,
+        nodes: &mut Vec<TreeNode>,
+    ) -> Result<(), BaseException> {
+        let rd = read_dir(path)
+            .map_err(|_| BaseException::new(&format!("failed to read directory"), READ_ERROR))?;
         for entry_result in rd {
-            let entry = entry_result.map_err(|_| BaseException::new(&format!("failed to read directory entry"), READ_ERROR))?;
+            let entry = entry_result.map_err(|_| {
+                BaseException::new(&format!("failed to read directory entry"), READ_ERROR)
+            })?;
             let p = entry.path();
-            if !p.is_dir() && !ACCEPTED_EXTENSIONS.contains(&p.extension().and_then(|s| s.to_str()).unwrap_or("")) {
+            if !p.is_dir()
+                && !ACCEPTED_EXTENSIONS
+                    .contains(&p.extension().and_then(|s| s.to_str()).unwrap_or(""))
+            {
                 continue;
             }
 
@@ -182,13 +196,17 @@ pub fn create_tree_by_path(path: &str) -> Result<TreeData, BaseException> {
                 text: name.to_string(),
                 data: TreeNodeData {
                     node_type: file_type.to_string(),
-                    node_name: p.file_name().and_then(|s| s.to_str()).unwrap_or("").to_string(),
+                    node_name: p
+                        .file_name()
+                        .and_then(|s| s.to_str())
+                        .unwrap_or("")
+                        .to_string(),
                     is_open: Some(false),
                     dates: match file_type {
                         "calendar" => Some(init_calendar(&p)?),
                         _ => None,
-                    }
-                }
+                    },
+                },
             };
 
             nodes.push(node);
@@ -203,7 +221,10 @@ pub fn create_tree_by_path(path: &str) -> Result<TreeData, BaseException> {
 
     let root_path = Path::new(path);
     if !root_path.exists() {
-        return Err(BaseException::new(&format!("path not found: {}", path), FILE_NOT_FOUND));
+        return Err(BaseException::new(
+            &format!("path not found: {}", path),
+            FILE_NOT_FOUND,
+        ));
     }
 
     if root_path.is_dir() {

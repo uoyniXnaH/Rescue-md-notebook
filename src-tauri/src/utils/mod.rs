@@ -1,4 +1,4 @@
-use regex::{Regex, Captures};
+use regex::{Captures, Regex};
 
 use crate::nodes::NodeType;
 
@@ -20,9 +20,18 @@ pub fn is_valid_date(name: &str) -> bool {
     let mut day: u16 = 0;
 
     match_date(name).map(|caps| {
-        year = caps.get(1).map(|m| m.as_str().parse::<u16>().unwrap_or(0)).unwrap_or(0);
-        month = caps.get(2).map(|m| m.as_str().parse::<u16>().unwrap_or(0)).unwrap_or(0);
-        day = caps.get(3).map(|m| m.as_str().parse::<u16>().unwrap_or(0)).unwrap_or(0);
+        year = caps
+            .get(1)
+            .map(|m| m.as_str().parse::<u16>().unwrap_or(0))
+            .unwrap_or(0);
+        month = caps
+            .get(2)
+            .map(|m| m.as_str().parse::<u16>().unwrap_or(0))
+            .unwrap_or(0);
+        day = caps
+            .get(3)
+            .map(|m| m.as_str().parse::<u16>().unwrap_or(0))
+            .unwrap_or(0);
     });
 
     if year < 1900 || year > 3000 {
@@ -38,7 +47,11 @@ pub fn is_valid_date(name: &str) -> bool {
         4 | 6 | 9 | 11 => 30,
         2 => {
             let leap = (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
-            if leap { 29 } else { 28 }
+            if leap {
+                29
+            } else {
+                28
+            }
         }
         _ => unreachable!(),
     };
@@ -47,7 +60,7 @@ pub fn is_valid_date(name: &str) -> bool {
 }
 
 pub fn generate_rsn_name(name: &String, node_type: NodeType) -> String {
-    let rsn_name =match node_type {
+    let rsn_name = match node_type {
         NodeType::Calendar => {
             format!("__rsn-calendar.{}", &name)
         }

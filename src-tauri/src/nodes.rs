@@ -1,13 +1,13 @@
+use std::fs::read_dir;
 use std::path::PathBuf;
-use std::fs::{read_dir};
-use uuid::Uuid;
 use trash::delete;
+use uuid::Uuid;
 
-use crate::gconfig::{get_gconfig_item};
+use crate::exceptions::*;
+use crate::gconfig::get_gconfig_item;
 use crate::rconfig::{get_rconfig, set_rconfig};
-use crate::utils::file_tree_handler::{TreeData, TreeNode ,TreeNodeData, ParentId};
-use crate::utils::{match_rsn_target, is_valid_date, generate_rsn_name};
-use crate::exceptions::{*};
+use crate::utils::file_tree_handler::{ParentId, TreeData, TreeNode, TreeNodeData};
+use crate::utils::{generate_rsn_name, is_valid_date, match_rsn_target};
 
 pub enum NodeType {
     Calendar,
@@ -24,7 +24,11 @@ pub fn move_node_to_trash(id: Uuid) -> Result<(), BaseException> {
 }
 
 #[tauri::command]
-pub fn move_node(id: Uuid, new_parent_id: ParentId, new_file_tree: TreeData) -> Result<TreeData, BaseException> {
+pub fn move_node(
+    id: Uuid,
+    new_parent_id: ParentId,
+    new_file_tree: TreeData,
+) -> Result<TreeData, BaseException> {
     let root_path = get_gconfig_item("current_root")?;
     let old_file_tree = get_rconfig()?;
     let node = new_file_tree.get_node_by_id(&id).ok_or_else(|| {
@@ -43,13 +47,13 @@ pub fn move_node(id: Uuid, new_parent_id: ParentId, new_file_tree: TreeData) -> 
             let mut path = PathBuf::from(&root_path);
             path.push(PathBuf::from(&node.data.node_name));
             path
-        },
+        }
         ParentId::Id(id) => {
             let parent_path = new_file_tree.create_path_by_id(&id)?;
             let mut path = PathBuf::from(&parent_path);
             path.push(PathBuf::from(&node.data.node_name));
             path
-        },
+        }
         _ => {
             return Err(BaseException::new("Invalid parent ID", INVALID_PARAMETER));
         }
@@ -76,7 +80,7 @@ pub fn get_node_contents(id: Uuid, child: Option<String>) -> Result<String, Base
             let name = &node.data.node_name;
             path.push(format!("__rsn-folder.{}.md", name));
             path
-        },
+        }
         "calendar" => {
             if let Some(child_name) = child {
                 let mut path = PathBuf::from(rconfig.create_path_by_id(&node.id)?);
@@ -86,7 +90,10 @@ pub fn get_node_contents(id: Uuid, child: Option<String>) -> Result<String, Base
                     return Ok(String::new());
                 }
                 return std::fs::read_to_string(&path).map_err(|_| {
-                    return BaseException::new("Failed to read calendar entry contents", READ_ERROR);
+                    return BaseException::new(
+                        "Failed to read calendar entry contents",
+                        READ_ERROR,
+                    );
                 });
             } else {
                 let mut path = PathBuf::from(rconfig.create_path_by_id(&node.id)?);
@@ -95,9 +102,7 @@ pub fn get_node_contents(id: Uuid, child: Option<String>) -> Result<String, Base
                 path
             }
         }
-        _ => {
-            PathBuf::from(rconfig.create_path_by_id(&node.id)?)
-        }
+        _ => PathBuf::from(rconfig.create_path_by_id(&node.id)?),
     };
     let contents = std::fs::read_to_string(&node_path).map_err(|_| {
         return BaseException::new("Failed to read file contents", READ_ERROR);
@@ -109,17 +114,13 @@ pub fn get_node_contents(id: Uuid, child: Option<String>) -> Result<String, Base
 pub fn update_node_contents(id: Uuid, new_contents: String) -> Result<(), BaseException> {
     let rconfig: TreeData = get_rconfig()?;
     let node_path = match rconfig.get_node_by_id(&id) {
-        Some(node) => {
-            match node.data.node_type.as_str() {
-                "folder" | "calendar" => {
-                    let mut path = PathBuf::from(rconfig.create_path_by_id(&node.id)?);
-                    path.push(format!("__rsn-{}.{}.md", &node.data.node_type, &node.text));
-                    path
-                },
-                _ => {
-                    PathBuf::from(rconfig.create_path_by_id(&node.id)?)
-                }
+        Some(node) => match node.data.node_type.as_str() {
+            "folder" | "calendar" => {
+                let mut path = PathBuf::from(rconfig.create_path_by_id(&node.id)?);
+                path.push(format!("__rsn-{}.{}.md", &node.data.node_type, &node.text));
+                path
             }
+            _ => PathBuf::from(rconfig.create_path_by_id(&node.id)?),
         },
         None => {
             return Err(BaseException::new("Invalid node id", INVALID_PARAMETER));
@@ -190,14 +191,22 @@ pub fn rename_node(id: Uuid, new_text: String) -> Result<TreeNode, BaseException
         new_path.pop();
     }
     let mut updated_node = node.clone();
-    updated_node.data.node_name = new_path.file_name().and_then(|s| s.to_str()).unwrap_or("").to_string();
+    updated_node.data.node_name = new_path
+        .file_name()
+        .and_then(|s| s.to_str())
+        .unwrap_or("")
+        .to_string();
     updated_node.text = new_text;
 
     return Ok(updated_node);
 }
 
 #[tauri::command]
-pub fn create_node(parent: ParentId, mut node_name: String, node_type: String) -> Result<TreeNode, BaseException> {
+pub fn create_node(
+    parent: ParentId,
+    mut node_name: String,
+    node_type: String,
+) -> Result<TreeNode, BaseException> {
     let rconfig: TreeData = get_rconfig()?;
     let root_path = get_gconfig_item("current_root")?;
 
@@ -258,13 +267,17 @@ pub fn create_node(parent: ParentId, mut node_name: String, node_type: String) -
         droppable: node_type == "folder",
         text: node_name.clone(),
         data: TreeNodeData {
-            node_name: new_path.file_name().and_then(|s| s.to_str()).unwrap_or("").to_string(),
+            node_name: new_path
+                .file_name()
+                .and_then(|s| s.to_str())
+                .unwrap_or("")
+                .to_string(),
             node_type: node_type.clone(),
             is_open: Some(false),
             dates: match node_type.as_str() {
                 "calendar" => Some(Vec::new()),
                 _ => None,
-            }
+            },
         },
     };
     return Ok(new_node);
@@ -277,7 +290,10 @@ pub fn upsert_calendar_date(id: Uuid, date: String, contents: String) -> Result<
         return BaseException::new("Invalid node id", INVALID_PARAMETER);
     })?;
     if node.data.node_type.as_str() != "calendar" {
-        return Err(BaseException::new("Node is not a calendar", INVALID_PARAMETER));
+        return Err(BaseException::new(
+            "Node is not a calendar",
+            INVALID_PARAMETER,
+        ));
     }
     if !is_valid_date(&date) {
         return Err(BaseException::new("Invalid date format", INVALID_PARAMETER));
@@ -301,14 +317,12 @@ pub fn upsert_calendar_date(id: Uuid, date: String, contents: String) -> Result<
 pub fn open_in_explorer(id: ParentId) -> Result<(), BaseException> {
     let rconfig: TreeData = get_rconfig()?;
     let node_path = match id {
-        ParentId::Root(0) => {
-            PathBuf::from(get_gconfig_item("current_root")?)
-        },
+        ParentId::Root(0) => PathBuf::from(get_gconfig_item("current_root")?),
         ParentId::Id(id) => {
             let mut path = PathBuf::from(rconfig.create_path_by_id(&id)?);
             path.pop();
             path
-        },
+        }
         _ => {
             return Err(BaseException::new("Invalid parent ID", INVALID_PARAMETER));
         }
@@ -326,12 +340,18 @@ pub fn get_rsn_entries_by_id(id: Uuid) -> Result<Vec<String>, BaseException> {
         return BaseException::new("Invalid node id", INVALID_PARAMETER);
     })?;
     match node.data.node_type.as_str() {
-        "folder" => {},
+        "folder" => {}
         "calendar" => {
-            return Err(BaseException::new("Calendar feature coming soon :)", COMMING_SOON));
-        },
+            return Err(BaseException::new(
+                "Calendar feature coming soon :)",
+                COMMING_SOON,
+            ));
+        }
         _ => {
-            return Err(BaseException::new("Node is not a folder", INVALID_PARAMETER));
+            return Err(BaseException::new(
+                "Node is not a folder",
+                INVALID_PARAMETER,
+            ));
         }
     };
     let node_path = PathBuf::from(rconfig.create_path_by_id(&id)?);
@@ -343,7 +363,12 @@ pub fn get_rsn_entries_by_id(id: Uuid) -> Result<Vec<String>, BaseException> {
         let entry = entry.map_err(|_| {
             return BaseException::new("Failed to read directory entry", READ_ERROR);
         })?;
-        let name = entry.path().file_name().and_then(|s| s.to_str()).unwrap_or("").to_string();
+        let name = entry
+            .path()
+            .file_name()
+            .and_then(|s| s.to_str())
+            .unwrap_or("")
+            .to_string();
         let captures = match_rsn_target(&name);
         if let Some(caps) = captures {
             let target = caps.get(1).unwrap().as_str().to_string();
@@ -362,12 +387,18 @@ pub fn fix_folder(id: Uuid) -> Result<(), BaseException> {
         return BaseException::new("Invalid node id", INVALID_PARAMETER);
     })?;
     match node.data.node_type.as_str() {
-        "folder" => {},
+        "folder" => {}
         "calendar" => {
-            return Err(BaseException::new("Calendar feature coming soon :)", COMMING_SOON));
-        },
+            return Err(BaseException::new(
+                "Calendar feature coming soon :)",
+                COMMING_SOON,
+            ));
+        }
         _ => {
-            return Err(BaseException::new("Node is not a folder", INVALID_PARAMETER));
+            return Err(BaseException::new(
+                "Node is not a folder",
+                INVALID_PARAMETER,
+            ));
         }
     };
     let node_path = PathBuf::from(rconfig.create_path_by_id(&id)?);
@@ -382,10 +413,9 @@ pub fn init_folder(path: &PathBuf) -> Result<(), BaseException> {
     if config_path.exists() {
         return Ok(());
     }
-    std::fs::File::create(&config_path)
-        .map_err(|_| {
-            return BaseException::new("Failed to create folder metadata file", CANNOT_CREATE_FILE);
-        })?;
+    std::fs::File::create(&config_path).map_err(|_| {
+        return BaseException::new("Failed to create folder metadata file", CANNOT_CREATE_FILE);
+    })?;
     return Ok(());
 }
 
@@ -394,10 +424,12 @@ pub fn init_calendar(path: &PathBuf) -> Result<Vec<String>, BaseException> {
     let name = path.file_name().and_then(|s| s.to_str()).unwrap_or("");
     config_path.push(format!("{}.md", name));
     if !config_path.exists() {
-        std::fs::File::create(&config_path)
-            .map_err(|_| {
-                return BaseException::new("Failed to create calendar metadata file", CANNOT_CREATE_FILE);
-            })?;
+        std::fs::File::create(&config_path).map_err(|_| {
+            return BaseException::new(
+                "Failed to create calendar metadata file",
+                CANNOT_CREATE_FILE,
+            );
+        })?;
     }
     let dates = get_calendar_members(path)?;
     return Ok(dates);
@@ -415,7 +447,12 @@ pub fn get_calendar_members(path: &PathBuf) -> Result<Vec<String>, BaseException
         if entry.path().is_dir() {
             continue;
         }
-        let name = entry.path().file_stem().and_then(|s| s.to_str()).unwrap_or("").to_string();
+        let name = entry
+            .path()
+            .file_stem()
+            .and_then(|s| s.to_str())
+            .unwrap_or("")
+            .to_string();
         if is_valid_date(&name) {
             dates.push(name);
         }

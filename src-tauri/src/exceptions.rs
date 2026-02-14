@@ -1,4 +1,4 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 pub const INVALID_PARAMETER: u16 = 400;
 pub const FILE_NOT_FOUND: u16 = 404;

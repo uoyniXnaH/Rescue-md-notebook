@@ -1,12 +1,12 @@
-use std::fs::{File, remove_file, read_to_string};
-use std::io::{BufWriter};
+use serde_json::{from_str, to_writer};
+use std::fs::{read_to_string, remove_file, File};
+use std::io::BufWriter;
 use std::path::PathBuf;
-use serde_json::{to_writer, from_str};
 use uuid::Uuid;
 
-use crate::gconfig::{get_gconfig_item};
+use crate::exceptions::*;
+use crate::gconfig::get_gconfig_item;
 use crate::utils::file_tree_handler::*;
-use crate::exceptions::{*};
 
 fn get_rconfig_path(base_path: &String) -> PathBuf {
     let mut config_path = PathBuf::from(base_path);
@@ -35,7 +35,10 @@ fn write_rconfig(path: &String, rconfig: &TreeData) -> Result<(), BaseException>
 pub fn get_rconfig() -> Result<TreeData, BaseException> {
     let path = get_gconfig_item("current_root")?;
     if path.is_empty() {
-        return Err(BaseException::new("Current root path is not set", INVALID_PARAMETER));
+        return Err(BaseException::new(
+            "Current root path is not set",
+            INVALID_PARAMETER,
+        ));
     }
     let config_path = get_rconfig_path(&path);
     if !config_path.exists() {
@@ -43,7 +46,7 @@ pub fn get_rconfig() -> Result<TreeData, BaseException> {
             Ok(file_tree) => {
                 write_rconfig(&path, &file_tree)?;
                 return Ok(file_tree);
-            },
+            }
             Err(e) => {
                 return Err(e);
             }
