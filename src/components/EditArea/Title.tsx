@@ -17,10 +17,11 @@ function Title() {
   const selectedNodeId = useFileTreeStore((state) => state.selectedNodeId);
   const fileTreeData = useFileTreeStore((state) => state.fileTreeData);
   const selectedDate = useFileTreeStore((state) => state.selectedDate);
+  const setCurrentFileContents = useDisplayStore((state) => state.setCurrentFileContents);
   const setSelectedDate = useFileTreeStore((state) => state.setSelectedDate);
   const { saveFile } = useFileActions();
   const { width } = useWindowSize();
-  const { getNodeById } = useTauriCmd();
+  const { getNodeById, getNodeContents } = useTauriCmd();
   const [filename, setFilename] = React.useState<string>("");
   const [calendarAnchorEl, setCalendarAnchorEl] = React.useState<null | HTMLElement>(null);
   const [showCalendarIcon, setShowCalendarIcon] = React.useState<boolean>(false);
@@ -61,13 +62,17 @@ function Title() {
               if (selectedDate) {
                 setSelectedDate(null);
                 setCalendarAnchorEl(null);
+                getNodeContents(selectedNodeId!)
+                .then((contents) => {
+                    setCurrentFileContents(contents);
+                });
               }
             }}
             sx={{ cursor: selectedDate ? 'pointer' : 'text' }}
           >{filename}</Typography>
           {selectedDate && <>
             <KeyboardArrowRightIcon fontSize="small" />
-            <Typography variant="body1">{dayjs(selectedDate).format("YY/MM/DD")}</Typography>
+            <Typography variant="body1">{dayjs(selectedDate).format("YY-MM-DD")}</Typography>
           </>}
           <IconButton color="inherit" onClick={handleSave} disabled={!isChanged}>
             <SaveIcon />
@@ -83,7 +88,7 @@ function Title() {
             placement="bottom-start"
             sx={{backgroundColor: 'secondary.main'}}
           >
-            <RsnCalendar />
+            <RsnCalendar setCalendarOpen={(isOpen) => setCalendarAnchorEl(isOpen ? calendarAnchorEl : null)} />
           </Popper></>}
           <IconButton size="small" onClick={() => setIsEditAreaShown(false)}>
             <CloseFullscreenIcon />
