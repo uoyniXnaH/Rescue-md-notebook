@@ -8,7 +8,7 @@ import { selectTheme } from "./themes";
 import SideBar from "./components/SideBar";
 import NavBar from "./components/NavBar/NavBar";
 import EditArea from "./components/EditArea/EditArea";
-import ViewArea from "./components/ViewArea";
+import ViewArea from "./components/ViewArea/ViewArea";
 import { useModal } from "./components/Modal";
 import { useTranslation } from "react-i18next";
 import { useSettingStore, useFileTreeStore } from "@store/store";

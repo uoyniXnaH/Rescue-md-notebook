@@ -4,7 +4,7 @@ import remarkGfm from 'remark-gfm';
 import { Prism } from 'react-syntax-highlighter';
 import { atomDark, prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
-import BlankPage from "./BlankPage";
+import BlankPage from "../BlankPage";
 import { useDisplayStore, useFileTreeStore, useFocusStore } from "@store/store";
 import { useSettingStore } from "@store/store";
 import { useWindowSize } from "@src/hooks";
