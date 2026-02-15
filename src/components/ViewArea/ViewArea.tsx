@@ -4,6 +4,7 @@ import remarkGfm from 'remark-gfm';
 import { Prism } from 'react-syntax-highlighter';
 import { atomDark, prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
+import RsnMermaid from "./RsnMermaid";
 import BlankPage from "../BlankPage";
 import { useDisplayStore, useFileTreeStore, useFocusStore } from "@store/store";
 import { useSettingStore } from "@store/store";
@@ -15,7 +16,7 @@ function ViewArea() {
   const settings = useSettingStore((state) => state.settings);
   const setFocusArea = useFocusStore((state) => state.setFocusArea);
   const { height } = useWindowSize();
- 
+
   return (
     <Box onFocus={() => setFocusArea("viewArea")} onClick={() => setFocusArea("viewArea")} height="100%" flexBasis={600} flexGrow={1} px={1.5} pb={height / 10} className="markdown-body markdown-container">
       {selectedNodeId ? (
@@ -34,6 +35,9 @@ function ViewArea() {
               return <input type={type} readOnly disabled={type === 'checkbox' ? false : disabled} {...props} />;
             },
             code({ node, className, children, ref, ...props }) {
+              if (className === 'language-mermaid') {
+                return <RsnMermaid>{children}</RsnMermaid>;
+              }
               const match = /language-(\w+)/.exec(className || '');
               return match ? (
                 <Prism
