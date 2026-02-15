@@ -22,6 +22,14 @@ function ViewArea() {
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
           components={{
+            a({ node, children, ...props }: any) {
+              try {
+                new URL(props.href ?? "");
+                props.target = "_blank";
+                props.rel = "noopener noreferrer";
+              } catch (e) { }
+              return <a {...props}>{children}</a>;
+            },
             input({ node, type, disabled, ...props }) {
               return <input type={type} readOnly disabled={type === 'checkbox' ? false : disabled} {...props} />;
             },
@@ -29,9 +37,9 @@ function ViewArea() {
               const match = /language-(\w+)/.exec(className || '');
               return match ? (
                 <Prism
-                  style={ (settings.color_mode === 'dark' ? atomDark : prism) as any }
+                  style={(settings.color_mode === 'dark' ? atomDark : prism) as any}
                   className={'syntax-highlighter'}
-                  customStyle={{  margin: 0, background: 'transparent' }}
+                  customStyle={{ margin: 0, background: 'transparent' }}
                   showLineNumbers={true}
                   language={match[1]}
                   PreTag="div"
