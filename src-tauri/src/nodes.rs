@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use std::fs::read_dir;
 use std::path::PathBuf;
 use trash::delete;
@@ -9,8 +10,22 @@ use crate::rconfig::{get_rconfig, set_rconfig};
 use crate::utils::file_tree_handler::{ParentId, TreeData, TreeNode, TreeNodeData};
 use crate::utils::{generate_rsn_name, is_valid_date, match_rsn_target};
 
+#[derive(Serialize, Deserialize, Clone, PartialEq)]
+#[serde(rename_all(serialize = "lowercase", deserialize = "lowercase"))]
 pub enum NodeType {
+    File,
+    Folder,
     Calendar,
+}
+
+impl NodeType {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            NodeType::File => "file",
+            NodeType::Folder => "folder",
+            NodeType::Calendar => "calendar",
+        }
+    }
 }
 
 #[tauri::command]
@@ -74,14 +89,14 @@ pub fn get_node_contents(id: Uuid, child: Option<String>) -> Result<String, Base
     let node = rconfig.get_node_by_id(&id).ok_or_else(|| {
         return BaseException::new("Invalid node id", INVALID_PARAMETER);
     })?;
-    let node_path = match node.data.node_type.as_str() {
-        "folder" => {
+    let node_path = match node.data.node_type {
+        NodeType::Folder => {
             let mut path = PathBuf::from(rconfig.create_path_by_id(&node.id)?);
             let name = &node.data.node_name;
             path.push(format!("__rsn-folder.{}.md", name));
             path
         }
-        "calendar" => {
+        NodeType::Calendar => {
             if let Some(child_name) = child {
                 let mut path = PathBuf::from(rconfig.create_path_by_id(&node.id)?);
                 path.push(child_name);
@@ -114,10 +129,14 @@ pub fn get_node_contents(id: Uuid, child: Option<String>) -> Result<String, Base
 pub fn update_node_contents(id: Uuid, new_contents: String) -> Result<(), BaseException> {
     let rconfig: TreeData = get_rconfig()?;
     let node_path = match rconfig.get_node_by_id(&id) {
-        Some(node) => match node.data.node_type.as_str() {
-            "folder" | "calendar" => {
+        Some(node) => match node.data.node_type {
+            NodeType::Folder | NodeType::Calendar => {
                 let mut path = PathBuf::from(rconfig.create_path_by_id(&node.id)?);
-                path.push(format!("__rsn-{}.{}.md", &node.data.node_type, &node.text));
+                path.push(format!(
+                    "__rsn-{}.{}.md",
+                    &node.data.node_type.as_str(),
+                    &node.text
+                ));
                 path
             }
             _ => PathBuf::from(rconfig.create_path_by_id(&node.id)?),
@@ -155,10 +174,7 @@ pub fn rename_node(id: Uuid, new_text: String) -> Result<TreeNode, BaseException
         return Ok(node.clone());
     }
 
-    let mut new_name = new_text.clone();
-    if node.data.node_type == "calendar" {
-        new_name = generate_rsn_name(&new_text, NodeType::Calendar);
-    }
+    let new_name = generate_rsn_name(&new_text, &node.data.node_type);
 
     let siblings = rconfig.get_nodes_by_parent(&node.parent);
     for sibling in siblings {
@@ -170,7 +186,10 @@ pub fn rename_node(id: Uuid, new_text: String) -> Result<TreeNode, BaseException
     let node_path = PathBuf::from(rconfig.create_path_by_id(&id)?);
     let mut new_path = node_path.clone();
     let ext = node_path.extension().and_then(|s| s.to_str()).unwrap_or("");
-    if ext != "" && node.data.node_type != "folder" && node.data.node_type != "calendar" {
+    if ext != ""
+        && node.data.node_type != NodeType::Folder
+        && node.data.node_type != NodeType::Calendar
+    {
         new_path.set_file_name(format!("{}.{}", &new_name, ext));
     } else {
         new_path.set_file_name(&new_name);
@@ -180,10 +199,18 @@ pub fn rename_node(id: Uuid, new_text: String) -> Result<TreeNode, BaseException
         return BaseException::new("Failed to rename file", INVALID_OPERATION);
     })?;
 
-    if node.data.node_type == "folder" || node.data.node_type == "calendar" {
+    if node.data.node_type == NodeType::Folder || node.data.node_type == NodeType::Calendar {
         let mut new_attach_path = new_path.clone();
-        new_path.push(format!("__rsn-{}.{}.md", &node.data.node_type, &node.text));
-        new_attach_path.push(format!("__rsn-{}.{}.md", &node.data.node_type, &new_text));
+        new_path.push(format!(
+            "__rsn-{}.{}.md",
+            &node.data.node_type.as_str(),
+            &node.text
+        ));
+        new_attach_path.push(format!(
+            "__rsn-{}.{}.md",
+            &node.data.node_type.as_str(),
+            &new_text
+        ));
 
         std::fs::rename(&new_path, &new_attach_path).map_err(|_| {
             return BaseException::new("Failed to rename node metadata file", INVALID_OPERATION);
@@ -205,7 +232,7 @@ pub fn rename_node(id: Uuid, new_text: String) -> Result<TreeNode, BaseException
 pub fn create_node(
     parent: ParentId,
     mut node_name: String,
-    node_type: String,
+    node_type: NodeType,
 ) -> Result<TreeNode, BaseException> {
     let rconfig: TreeData = get_rconfig()?;
     let root_path = get_gconfig_item("current_root")?;
@@ -222,10 +249,7 @@ pub fn create_node(
         order += 1;
     }
 
-    let mut file_name: String = node_name.clone();
-    if node_type == "calendar" {
-        file_name = generate_rsn_name(&node_name, NodeType::Calendar);
-    }
+    let file_name = generate_rsn_name(&node_name, &node_type);
 
     let mut new_path = match &parent {
         ParentId::Root(0) => {
@@ -244,12 +268,12 @@ pub fn create_node(
         }
     };
 
-    if node_type == "folder" {
+    if node_type == NodeType::Folder {
         std::fs::create_dir(&new_path).map_err(|_| {
             return BaseException::new("Failed to create folder", CANNOT_CREATE_FILE);
         })?;
         init_folder(&new_path)?;
-    } else if node_type == "calendar" {
+    } else if node_type == NodeType::Calendar {
         std::fs::create_dir(&new_path).map_err(|_| {
             return BaseException::new("Failed to create folder", CANNOT_CREATE_FILE);
         })?;
@@ -264,7 +288,7 @@ pub fn create_node(
     let new_node = TreeNode {
         id: Uuid::new_v4(),
         parent: parent,
-        droppable: node_type == "folder",
+        droppable: node_type == NodeType::Folder,
         text: node_name.clone(),
         data: TreeNodeData {
             node_name: new_path
@@ -274,8 +298,8 @@ pub fn create_node(
                 .to_string(),
             node_type: node_type.clone(),
             is_open: Some(false),
-            dates: match node_type.as_str() {
-                "calendar" => Some(Vec::new()),
+            dates: match node_type {
+                NodeType::Calendar => Some(Vec::new()),
                 _ => None,
             },
         },
@@ -289,7 +313,7 @@ pub fn upsert_calendar_date(id: Uuid, date: String, contents: String) -> Result<
     let node = rconfig.get_node_by_id(&id).ok_or_else(|| {
         return BaseException::new("Invalid node id", INVALID_PARAMETER);
     })?;
-    if node.data.node_type.as_str() != "calendar" {
+    if node.data.node_type != NodeType::Calendar {
         return Err(BaseException::new(
             "Node is not a calendar",
             INVALID_PARAMETER,
@@ -339,9 +363,9 @@ pub fn get_rsn_entries_by_id(id: Uuid) -> Result<Vec<String>, BaseException> {
     let node = rconfig.get_node_by_id(&id).ok_or_else(|| {
         return BaseException::new("Invalid node id", INVALID_PARAMETER);
     })?;
-    match node.data.node_type.as_str() {
-        "folder" => {}
-        "calendar" => {
+    match node.data.node_type {
+        NodeType::Folder => {}
+        NodeType::Calendar => {
             return Err(BaseException::new(
                 "Calendar feature coming soon :)",
                 COMMING_SOON,
@@ -386,9 +410,9 @@ pub fn fix_folder(id: Uuid) -> Result<(), BaseException> {
     let node = rconfig.get_node_by_id(&id).ok_or_else(|| {
         return BaseException::new("Invalid node id", INVALID_PARAMETER);
     })?;
-    match node.data.node_type.as_str() {
-        "folder" => {}
-        "calendar" => {
+    match node.data.node_type {
+        NodeType::Folder => {}
+        NodeType::Calendar => {
             return Err(BaseException::new(
                 "Calendar feature coming soon :)",
                 COMMING_SOON,

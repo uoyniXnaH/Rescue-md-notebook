@@ -59,11 +59,12 @@ pub fn is_valid_date(name: &str) -> bool {
     return day >= 1 && day <= days_in_month;
 }
 
-pub fn generate_rsn_name(name: &String, node_type: NodeType) -> String {
+pub fn generate_rsn_name(name: &String, node_type: &NodeType) -> String {
     let rsn_name = match node_type {
         NodeType::Calendar => {
             format!("__rsn-calendar.{}", &name)
         }
+        _ => name.clone(),
     };
     return rsn_name;
 }

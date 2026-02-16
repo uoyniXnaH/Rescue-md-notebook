@@ -5,13 +5,13 @@ use uuid::Uuid;
 
 use crate::exceptions::*;
 use crate::gconfig::get_gconfig_item;
-use crate::nodes::{init_calendar, init_folder};
+use crate::nodes::{init_calendar, init_folder, NodeType};
 use crate::utils::match_rsn_target;
 
 #[derive(Serialize, Deserialize, Clone)]
 #[serde(rename_all(serialize = "camelCase", deserialize = "camelCase"))]
 pub struct TreeNodeData {
-    pub node_type: String,
+    pub node_type: NodeType,
     pub node_name: String,
     pub is_open: Option<bool>,
     pub dates: Option<Vec<String>>,
@@ -128,7 +128,7 @@ impl TreeData {
     }
 }
 
-fn get_type_and_name(path: &Path) -> (Option<&str>, &str) {
+fn get_type_and_name(path: &Path) -> (Option<&NodeType>, &str) {
     let filestem = match path.is_dir() {
         true => path.file_name(),
         false => path.file_stem(),
@@ -143,13 +143,13 @@ fn get_type_and_name(path: &Path) -> (Option<&str>, &str) {
     });
     if path.is_dir() {
         match node_type {
-            "calendar" => (Some("calendar"), node_name),
-            _ => (Some("folder"), filestem),
+            "calendar" => (Some(&NodeType::Calendar), node_name),
+            _ => (Some(&NodeType::Folder), filestem),
         }
     } else {
         match node_type {
             "folder" => (None, node_name),
-            _ => (Some("file"), filestem),
+            _ => (Some(&NodeType::File), filestem),
         }
     }
 }
@@ -192,10 +192,10 @@ pub fn create_tree_by_path(path: &str) -> Result<TreeData, BaseException> {
             let node = TreeNode {
                 id: id,
                 parent: parent.clone(),
-                droppable: file_type == "folder",
+                droppable: file_type == &NodeType::Folder,
                 text: name.to_string(),
                 data: TreeNodeData {
-                    node_type: file_type.to_string(),
+                    node_type: file_type.clone(),
                     node_name: p
                         .file_name()
                         .and_then(|s| s.to_str())
@@ -203,7 +203,7 @@ pub fn create_tree_by_path(path: &str) -> Result<TreeData, BaseException> {
                         .to_string(),
                     is_open: Some(false),
                     dates: match file_type {
-                        "calendar" => Some(init_calendar(&p)?),
+                        NodeType::Calendar => Some(init_calendar(&p)?),
                         _ => None,
                     },
                 },
@@ -211,7 +211,7 @@ pub fn create_tree_by_path(path: &str) -> Result<TreeData, BaseException> {
 
             nodes.push(node);
 
-            if file_type == "folder" {
+            if file_type == &NodeType::Folder {
                 init_folder(&p)?;
                 visit(&p, ParentId::Id(id), nodes)?;
             }
