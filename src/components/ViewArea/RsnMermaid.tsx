@@ -1,31 +1,35 @@
 'use client';
 
-import { memo, useEffect, useRef, type ReactNode } from 'react';
+import { memo, useEffect, useRef, useMemo, type ReactNode } from 'react';
 import mermaid from 'mermaid';
 
 import { useSettingStore } from "@store/store";
 
-// eslint-disable-next-line react/display-name
-const RsnMermaid = memo(({ children }: { children: ReactNode }) => {
+function RsnMermaidInner({ children }: { children: ReactNode }) {
   const settings = useSettingStore((state) => state.settings);
   const ref = useRef<HTMLDivElement>(null);
 
-  mermaid.initialize({
-    startOnLoad: false,
-    theme: settings.color_mode === 'dark' ? 'dark' : 'default',
-  });
+  const diagram = useMemo(() => String(children), [children]);
+
+  useEffect(() => {
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: settings.color_mode === 'dark' ? 'dark' : 'default',
+    });
+  }, [settings.color_mode]);
 
   useEffect(() => {
     if (ref.current) {
-      mermaid.run({ nodes: [ref.current] });
+      mermaid.run({ nodes: [ref.current] }).catch(() => {});
     }
-  }, [settings.color_mode]);
+  }, [diagram, settings.color_mode]);
 
   return (
     <div className="mermaid" ref={ref}>
       {children}
     </div>
   );
-});
+}
 
-export default RsnMermaid;
+// Only re-render when diagram text actually changes.
+export default memo(RsnMermaidInner, (prev, next) => String(prev.children) === String(next.children));
