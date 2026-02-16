@@ -37,7 +37,7 @@ function EditArea() {
       inputEl.current.focus();
       setEditAreaEl(inputEl.current);
     }
-  }, [inputEl.current]);
+  }, [selectedNodeId, inputEl.current]);
 
   return (
     <Box onFocus={() => setFocusArea("editArea")} onClick={() => setFocusArea("editArea")} width="41%" height="100%" flexBasis={788} maxWidth={788} px={2} sx={{ bgcolor: "secondary.main", color: "secondary.contrastText" }}>
