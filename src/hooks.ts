@@ -85,7 +85,6 @@ export function useGlobalShortcuts() {
             if (e.key === "Tab") {
                 if (focusArea === "editArea") {
                     e.preventDefault();
-                    console.log(editAreaEl);
                     if (editAreaEl && currentFileContents) {
                         const start = editAreaEl.selectionStart;
                         const end = editAreaEl.selectionEnd;

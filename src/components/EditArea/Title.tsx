@@ -37,6 +37,7 @@ function Title() {
           if (node.data?.nodeType == "calendar") {
             setShowCalendarIcon(true);
           } else {
+            setShowCalendarIcon(false);
             setCalendarAnchorEl(null);
           }
       });
