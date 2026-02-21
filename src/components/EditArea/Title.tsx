@@ -10,6 +10,8 @@ import RsnCalendar from "./Calendar/RsnCalendar";
 import { useDisplayStore, useFileTreeStore } from "@store/store";
 import { useFileActions, useWindowSize } from "@src/hooks";
 import useTauriCmd from "@tauri/TauriCmd";
+import { useModal } from "@src/components/Modal";
+import { t } from "i18next";
 
 function Title() {
   const setIsEditAreaShown = useDisplayStore((state) => state.setIsEditAreaShown);
@@ -22,6 +24,7 @@ function Title() {
   const { saveFile } = useFileActions();
   const { width } = useWindowSize();
   const { getNodeById, getNodeContents } = useTauriCmd();
+  const { showBasicModal } = useModal();
   const [filename, setFilename] = React.useState<string>("");
   const [calendarAnchorEl, setCalendarAnchorEl] = React.useState<null | HTMLElement>(null);
   const [showCalendarIcon, setShowCalendarIcon] = React.useState<boolean>(false);
@@ -33,13 +36,13 @@ function Title() {
     if (selectedNodeId) {
       getNodeById(selectedNodeId)
       .then((node) => {
-          setFilename(node.text);
-          if (node.data?.nodeType == "calendar") {
-            setShowCalendarIcon(true);
-          } else {
-            setShowCalendarIcon(false);
-            setCalendarAnchorEl(null);
-          }
+        setFilename(node.text);
+        if (node.data?.nodeType == "calendar") {
+          setShowCalendarIcon(true);
+        } else {
+          setShowCalendarIcon(false);
+          setCalendarAnchorEl(null);
+        }
       });
     } else {
       setFilename("");
@@ -61,12 +64,37 @@ function Title() {
             maxWidth={width * 0.25}
             onClick={() => {
               if (selectedDate) {
-                setSelectedDate(null);
-                setCalendarAnchorEl(null);
-                getNodeContents(selectedNodeId!)
-                .then((contents) => {
+                if (isChanged) {
+                  showBasicModal({
+                    contents: t("modal.change_not_saved"),
+                    leftButtonText: t("modal.discard"),
+                    onLeftButtonClick: async () => {
+                      setSelectedDate(null);
+                      setCalendarAnchorEl(null);
+                      getNodeContents(selectedNodeId!)
+                      .then((contents) => {
+                        setCurrentFileContents(contents);
+                      });
+                    },
+                    rightButtonText: t("modal.save"),
+                    onRightButtonClick: async () => {
+                      await saveFile();
+                      setSelectedDate(null);
+                      setCalendarAnchorEl(null);
+                      getNodeContents(selectedNodeId!)
+                      .then((contents) => {
+                        setCurrentFileContents(contents);
+                      });
+                    }
+                  });
+                } else {
+                  setSelectedDate(null);
+                  setCalendarAnchorEl(null);
+                  getNodeContents(selectedNodeId!)
+                  .then((contents) => {
                     setCurrentFileContents(contents);
-                });
+                  });
+                }
               }
             }}
             sx={{ cursor: selectedDate ? 'pointer' : 'text' }}
@@ -83,14 +111,14 @@ function Title() {
           {showCalendarIcon && <><IconButton size="small" onClick={handleCalendarToggle}>
               <CalendarMonthIcon />
             </IconButton>
-          <Popper
-            open={Boolean(calendarAnchorEl)}
-            anchorEl={calendarAnchorEl}
-            placement="bottom-start"
-            sx={{backgroundColor: 'secondary.main'}}
-          >
-            <RsnCalendar setCalendarOpen={(isOpen) => setCalendarAnchorEl(isOpen ? calendarAnchorEl : null)} />
-          </Popper></>}
+            <Popper
+              open={Boolean(calendarAnchorEl)}
+              anchorEl={calendarAnchorEl}
+              placement="bottom-start"
+              sx={{backgroundColor: 'secondary.main'}}
+            >
+              <RsnCalendar setCalendarOpen={(isOpen) => setCalendarAnchorEl(isOpen ? calendarAnchorEl : null)} />
+            </Popper></>}
           <IconButton size="small" onClick={() => setIsEditAreaShown(false)}>
             <CloseFullscreenIcon />
           </IconButton>
