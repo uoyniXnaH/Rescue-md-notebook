@@ -3212,7 +3212,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "rescue-md-notebook"
+name = "rescue-notepad"
 version = "0.1.0"
 dependencies = [
  "log",
