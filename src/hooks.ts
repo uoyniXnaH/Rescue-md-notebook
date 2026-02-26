@@ -310,3 +310,30 @@ export function useWindowSize() {
 
     return { width, height };
 }
+
+export function useUnsavedWarning() {
+    const isChanged = useDisplayStore((state) => state.isChanged);
+    const { showBasicModal } = useModal();
+    const { saveFile } = useFileActions();
+    const { t } = useTranslation();
+
+    const unsavedWarning = async () => {
+        return new Promise<void>((resolve) => {
+            if (isChanged) {
+                showBasicModal({
+                    contents: t("modal.change_not_saved"),
+                    leftButtonText: t("modal.discard"),
+                    rightButtonText: t("modal.save"),
+                    onLeftButtonClick: resolve,
+                    onRightButtonClick: () => {
+                        saveFile().then(resolve);
+                    }
+                });
+            } else {
+                resolve();
+            }
+        });
+    };
+
+    return { unsavedWarning };
+}
