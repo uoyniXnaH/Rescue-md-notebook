@@ -11,8 +11,6 @@ import RsnCalendar from "./Calendar/RsnCalendar";
 import { useDisplayStore, useFileTreeStore } from "@store/store";
 import { useFileActions, useWindowSize, useUnsavedWarning } from "@src/hooks";
 import useTauriCmd from "@tauri/TauriCmd";
-import { useModal } from "@src/components/Modal";
-import { t } from "i18next";
 
 function Title() {
   const setIsEditAreaShown = useDisplayStore((state) => state.setIsEditAreaShown);
@@ -26,7 +24,6 @@ function Title() {
   const { width } = useWindowSize();
   const { unsavedWarning } = useUnsavedWarning();
   const { getNodeById, getNodeContents } = useTauriCmd();
-  const { showBasicModal } = useModal();
   const [filename, setFilename] = React.useState<string>("");
   const [calendarAnchorEl, setCalendarAnchorEl] = React.useState<null | HTMLElement>(null);
   const [isCalendarNode, setIsCalendarNode] = React.useState<boolean>(false);
