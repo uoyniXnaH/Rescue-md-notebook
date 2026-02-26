@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, Stack, IconButton, Typography, Popper } from "@mui/material";
 import SaveIcon from '@mui/icons-material/Save';
+import ListAltIcon from '@mui/icons-material/ListAlt';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
@@ -8,7 +9,7 @@ import dayjs from "dayjs";
 
 import RsnCalendar from "./Calendar/RsnCalendar";
 import { useDisplayStore, useFileTreeStore } from "@store/store";
-import { useFileActions, useWindowSize } from "@src/hooks";
+import { useFileActions, useWindowSize, useUnsavedWarning } from "@src/hooks";
 import useTauriCmd from "@tauri/TauriCmd";
 import { useModal } from "@src/components/Modal";
 import { t } from "i18next";
@@ -23,11 +24,12 @@ function Title() {
   const setSelectedDate = useFileTreeStore((state) => state.setSelectedDate);
   const { saveFile } = useFileActions();
   const { width } = useWindowSize();
+  const { unsavedWarning } = useUnsavedWarning();
   const { getNodeById, getNodeContents } = useTauriCmd();
   const { showBasicModal } = useModal();
   const [filename, setFilename] = React.useState<string>("");
   const [calendarAnchorEl, setCalendarAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [showCalendarIcon, setShowCalendarIcon] = React.useState<boolean>(false);
+  const [isCalendarNode, setIsCalendarNode] = React.useState<boolean>(false);
   const handleCalendarToggle = (event: React.MouseEvent<HTMLElement>) => {
     setCalendarAnchorEl(calendarAnchorEl ? null : event.currentTarget);
   };
@@ -38,15 +40,15 @@ function Title() {
       .then((node) => {
         setFilename(node.text);
         if (node.data?.nodeType == "calendar") {
-          setShowCalendarIcon(true);
+          setIsCalendarNode(true);
         } else {
-          setShowCalendarIcon(false);
+          setIsCalendarNode(false);
           setCalendarAnchorEl(null);
         }
       });
     } else {
       setFilename("");
-      setShowCalendarIcon(false);
+      setIsCalendarNode(false);
     }
   }, [selectedNodeId, fileTreeData]);
 
@@ -62,39 +64,15 @@ function Title() {
             noWrap
             variant="body1"
             maxWidth={width * 0.25}
-            onClick={() => {
+            onClick={async () => {
               if (selectedDate) {
-                if (isChanged) {
-                  showBasicModal({
-                    contents: t("modal.change_not_saved"),
-                    leftButtonText: t("modal.discard"),
-                    onLeftButtonClick: async () => {
-                      setSelectedDate(null);
-                      setCalendarAnchorEl(null);
-                      getNodeContents(selectedNodeId!)
-                      .then((contents) => {
-                        setCurrentFileContents(contents);
-                      });
-                    },
-                    rightButtonText: t("modal.save"),
-                    onRightButtonClick: async () => {
-                      await saveFile();
-                      setSelectedDate(null);
-                      setCalendarAnchorEl(null);
-                      getNodeContents(selectedNodeId!)
-                      .then((contents) => {
-                        setCurrentFileContents(contents);
-                      });
-                    }
-                  });
-                } else {
+                await unsavedWarning()
+                .then(async () => {
                   setSelectedDate(null);
                   setCalendarAnchorEl(null);
                   getNodeContents(selectedNodeId!)
-                  .then((contents) => {
-                    setCurrentFileContents(contents);
-                  });
-                }
+                  .then(setCurrentFileContents);
+                })
               }
             }}
             sx={{ cursor: selectedDate ? 'pointer' : 'text' }}
@@ -108,7 +86,11 @@ function Title() {
           </IconButton>
         </Stack>
         <Box>
-          {showCalendarIcon && <><IconButton size="small" onClick={handleCalendarToggle}>
+          {isCalendarNode && <>
+            <IconButton size="small">
+              <ListAltIcon />
+            </IconButton>
+            <IconButton size="small" onClick={handleCalendarToggle}>
               <CalendarMonthIcon />
             </IconButton>
             <Popper
