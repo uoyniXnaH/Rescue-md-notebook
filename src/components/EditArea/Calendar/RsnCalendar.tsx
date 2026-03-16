@@ -1,5 +1,7 @@
 import React from "react";
 import Calendar from 'react-calendar';
+import { Stack, Box, Typography, IconButton } from "@mui/material";
+import DeleteIcon from '@mui/icons-material/Delete';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
@@ -63,23 +65,32 @@ export default function RsnCalendar({ setCalendarOpen }: Props) {
     }, []);
 
     return (
-        <div ref={calendarRef}><Calendar
-            locale={locale[settings.language]}
-            className={calendarClass.join(" ")}
-            prevLabel={<KeyboardArrowLeftIcon />}
-            nextLabel={<KeyboardArrowRightIcon />}
-            prev2Label={<KeyboardDoubleArrowLeftIcon />}
-            next2Label={<KeyboardDoubleArrowRightIcon />}
-            tileClassName={({ date }) => addTileClass(date)}
-            value={selectedDate}
-            onChange={(date: Value) => {
-                setSelectedDate(date as Date);
-                getNodeContents(selectedNodeId!, dayjs(date as Date).format("YYYY-MM-DD"))
-                .then((contents) => {
-                    setCurrentFileContents(contents);
-                    setCalendarOpen(false);
-                });
-            }}
-        /></div>
+        <Stack direction="row">
+            <Box overflow="auto" height={230} p={1} border="1px solid" borderColor="#a0a096">
+                {markedDates.map((date, index) => (
+                    <Typography key={index} variant="body2" color="primary.contrastText">
+                        {dayjs(date).format("YY-MM-DD")}
+                    </Typography>
+                ))}
+            </Box>
+            <div ref={calendarRef}><Calendar
+                locale={locale[settings.language]}
+                className={calendarClass.join(" ")}
+                prevLabel={<KeyboardArrowLeftIcon />}
+                nextLabel={<KeyboardArrowRightIcon />}
+                prev2Label={<KeyboardDoubleArrowLeftIcon />}
+                next2Label={<KeyboardDoubleArrowRightIcon />}
+                tileClassName={({ date }) => addTileClass(date)}
+                value={selectedDate}
+                onChange={(date: Value) => {
+                    setSelectedDate(date as Date);
+                    getNodeContents(selectedNodeId!, dayjs(date as Date).format("YYYY-MM-DD"))
+                    .then((contents) => {
+                        setCurrentFileContents(contents);
+                        setCalendarOpen(false);
+                    });
+                }}
+            /></div>
+        </Stack>
     );
 }
