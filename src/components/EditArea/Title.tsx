@@ -1,7 +1,6 @@
 import React from "react";
 import { Box, Stack, IconButton, Typography, Popper } from "@mui/material";
 import SaveIcon from '@mui/icons-material/Save';
-import ListAltIcon from '@mui/icons-material/ListAlt';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
@@ -84,9 +83,6 @@ function Title() {
         </Stack>
         <Box>
           {isCalendarNode && <>
-            <IconButton size="small">
-              <ListAltIcon />
-            </IconButton>
             <IconButton size="small" onClick={handleCalendarToggle}>
               <CalendarMonthIcon />
             </IconButton>
