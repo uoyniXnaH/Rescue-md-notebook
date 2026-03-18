@@ -8,7 +8,7 @@ export type NodeData = {
     nodeType: NodeEnum;
     isOpen?: boolean;
     nodeName: string;
-    dates?: Date[];
+    dates?: string[];
 };
 
 export type themeEnum = "light" | "dark";
