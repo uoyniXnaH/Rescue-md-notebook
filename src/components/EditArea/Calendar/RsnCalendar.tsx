@@ -1,7 +1,7 @@
 import React from "react";
 import Calendar from 'react-calendar';
 import { Stack, Box, Typography, IconButton } from "@mui/material";
-import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
@@ -26,7 +26,7 @@ export default function RsnCalendar({ setCalendarOpen }: Props) {
     const settings = useSettingStore((state) => state.settings);
     const setSelectedDate = useFileTreeStore((state) => state.setSelectedDate);
     const setCurrentFileContents = useDisplayStore((state) => state.setCurrentFileContents);
-    const [markedDates, setMarkedDates] = React.useState<Date[]>([]);
+    const [markedDates, setMarkedDates] = React.useState<string[]>([]);
     const calendarClass = [styles.reactCalendar];
     const locale = {
         en: "en-US",
@@ -60,19 +60,13 @@ export default function RsnCalendar({ setCalendarOpen }: Props) {
         }
         getNodeById(selectedNodeId!)
         .then((node) => {
-            setMarkedDates(node.data?.dates || []);
+            setMarkedDates(node.data?.dates?.filter((v) => !isNaN(Date.parse(v))) || []);
         })
     }, []);
 
     return (
-        <Stack direction="row">
-            <Box overflow="auto" height={230} p={1} border="1px solid" borderColor="#a0a096">
-                {markedDates.map((date, index) => (
-                    <Typography key={index} variant="body2" color="primary.contrastText">
-                        {dayjs(date).format("YY-MM-DD")}
-                    </Typography>
-                ))}
-            </Box>
+        // <Stack direction="row" alignItems="stretch">
+        <div style={{ position: "relative" }}>
             <div ref={calendarRef}><Calendar
                 locale={locale[settings.language]}
                 className={calendarClass.join(" ")}
@@ -91,6 +85,26 @@ export default function RsnCalendar({ setCalendarOpen }: Props) {
                     });
                 }}
             /></div>
-        </Stack>
+            <Box overflow="auto" position="absolute" top={0} height="100%" width={120} left={-120} p={1} border="1px solid" borderColor="#a0a096" borderRadius={1} display="flex" flexDirection="column" gap={1} backgroundColor="primary.main">
+                {markedDates.map((date, index) => (
+                    <Stack key={index} direction="row" alignItems="center" justifyContent="space-between">
+                        <Typography key={index} variant="body2" color="primary.contrastText" onClick={() => {
+                            setSelectedDate(new Date(date));
+                            getNodeContents(selectedNodeId!, dayjs(date).format("YYYY-MM-DD"))
+                            .then((contents) => {
+                                setCurrentFileContents(contents);
+                                setCalendarOpen(false);
+                            });
+                        }}>
+                            {dayjs(date).format("YY-MM-DD")}
+                        </Typography>
+                        <IconButton size="small">
+                            <DeleteOutlineIcon fontSize="small" />
+                        </IconButton>
+                    </Stack>
+                ))}
+            </Box>
+        </div>
+        // </Stack>
     );
 }
