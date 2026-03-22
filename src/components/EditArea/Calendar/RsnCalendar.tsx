@@ -42,12 +42,22 @@ export default function RsnCalendar({ setCalendarOpen }: Props) {
                 new Date(d).getDate() === date.getDate()
         );
     
+    const isToday = (date: Date) => {
+        let today = new Date();
+        return date.getFullYear() === today.getFullYear() &&
+            date.getMonth() === today.getMonth() &&
+            date.getDate() === today.getDate();
+    }
+    
     const addTileClass = (date: Date) => {
         let className = [styles.reactCalendarTile];
         if (date.getTime() === selectedDate?.getTime()) {
             className.push(styles.reactCalendarTileActive);
         } else if (isMarked(date)) {
             className.push(styles.markedDate);
+        }
+        if (isToday(date)) {
+            className.push(styles.today);
         }
         return className;
     }
