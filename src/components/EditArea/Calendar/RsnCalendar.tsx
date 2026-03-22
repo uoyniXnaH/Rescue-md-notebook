@@ -65,46 +65,44 @@ export default function RsnCalendar({ setCalendarOpen }: Props) {
     }, []);
 
     return (
-        // <Stack direction="row" alignItems="stretch">
-        <div style={{ position: "relative" }}>
-            <div ref={calendarRef}><Calendar
-                locale={locale[settings.language]}
-                className={calendarClass.join(" ")}
-                prevLabel={<KeyboardArrowLeftIcon />}
-                nextLabel={<KeyboardArrowRightIcon />}
-                prev2Label={<KeyboardDoubleArrowLeftIcon />}
-                next2Label={<KeyboardDoubleArrowRightIcon />}
-                tileClassName={({ date }) => addTileClass(date)}
-                value={selectedDate}
-                onChange={(date: Value) => {
-                    setSelectedDate(date as Date);
-                    getNodeContents(selectedNodeId!, dayjs(date as Date).format("YYYY-MM-DD"))
-                    .then((contents) => {
-                        setCurrentFileContents(contents);
-                        setCalendarOpen(false);
-                    });
-                }}
-            /></div>
-            <Box overflow="auto" position="absolute" top={0} height="100%" width={120} left={-120} p={1} border="1px solid" borderColor="#a0a096" borderRadius={1} display="flex" flexDirection="column" gap={1} backgroundColor="primary.main">
-                {markedDates.map((date, index) => (
-                    <Stack key={index} direction="row" alignItems="center" justifyContent="space-between">
-                        <Typography key={index} variant="body2" color="primary.contrastText" onClick={() => {
-                            setSelectedDate(new Date(date));
-                            getNodeContents(selectedNodeId!, dayjs(date).format("YYYY-MM-DD"))
-                            .then((contents) => {
-                                setCurrentFileContents(contents);
-                                setCalendarOpen(false);
-                            });
-                        }}>
-                            {dayjs(date).format("YY-MM-DD")}
-                        </Typography>
-                        <IconButton size="small">
-                            <DeleteOutlineIcon fontSize="small" />
-                        </IconButton>
-                    </Stack>
-                ))}
-            </Box>
-        </div>
-        // </Stack>
+      <div style={{ position: "relative" }}>
+          <div ref={calendarRef}><Calendar
+              locale={locale[settings.language]}
+              className={calendarClass.join(" ")}
+              prevLabel={<KeyboardArrowLeftIcon />}
+              nextLabel={<KeyboardArrowRightIcon />}
+              prev2Label={<KeyboardDoubleArrowLeftIcon />}
+              next2Label={<KeyboardDoubleArrowRightIcon />}
+              tileClassName={({ date }) => addTileClass(date)}
+              value={selectedDate}
+              onChange={(date: Value) => {
+                  setSelectedDate(date as Date);
+                  getNodeContents(selectedNodeId!, dayjs(date as Date).format("YYYY-MM-DD"))
+                  .then((contents) => {
+                      setCurrentFileContents(contents);
+                      setCalendarOpen(false);
+                  });
+              }}
+          /></div>
+          <Box overflow="auto" position="absolute" top={0} height="100%" width={120} left={-120} p={1} border="1px solid" borderColor="#a0a096" borderRadius={1} display="flex" flexDirection="column" gap={1} sx={{ backgroundColor: "secondary.main" }}>
+              {markedDates.map((date, index) => (
+                  <Stack key={index} direction="row" alignItems="center" justifyContent="space-between">
+                      <Typography key={index} variant="body2" color="primary.contrastText" onClick={() => {
+                          setSelectedDate(new Date(date));
+                          getNodeContents(selectedNodeId!, dayjs(date).format("YYYY-MM-DD"))
+                          .then((contents) => {
+                              setCurrentFileContents(contents);
+                              setCalendarOpen(false);
+                          });
+                      }}>
+                          {dayjs(date).format("YY-MM-DD")}
+                      </Typography>
+                      <IconButton size="small">
+                          <DeleteOutlineIcon fontSize="small" />
+                      </IconButton>
+                  </Stack>
+              ))}
+          </Box>
+      </div>
     );
 }
