@@ -1,7 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { NodeModel } from "@minoru/react-dnd-treeview";
 import { useTranslation } from "react-i18next";
-import dayjs from "dayjs";
 
 import { useModal } from "@src/components/Modal";
 import { useFileTreeStore } from "@store/store";
@@ -155,9 +154,9 @@ function useTauriCmd() {
         });
     }
 
-    const upsertCalendarDate = async (id: NodeModel["id"], date: Date, contents: string | undefined, newNode: NodeModel<Types.NodeData>): Promise<NodeModel<Types.NodeData>[]> => {
+    const upsertCalendarDate = async (id: NodeModel["id"], date: string, contents: string | undefined, newNode: NodeModel<Types.NodeData>): Promise<NodeModel<Types.NodeData>[]> => {
         return new Promise((resolve) => {
-            invoke<void>("upsert_calendar_date", { id: id, date: dayjs(date).format("YYYY-MM-DD"), contents: contents || "" })
+            invoke<void>("upsert_calendar_date", { id: id, date: date, contents: contents || "" })
             .then(() => {
                 resolve(updateRootConfigNode(newNode));
             })

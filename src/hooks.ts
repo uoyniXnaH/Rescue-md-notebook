@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef, useLayoutEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Menu, MenuItem, PredefinedMenuItem } from "@tauri-apps/api/menu";
+import dayjs from "dayjs";
 
 import { useFocusStore, useDisplayStore, useFileTreeStore } from "@store/store";
 import { useModal } from "./components/Modal";
@@ -119,12 +120,12 @@ export function useFileActions() {
         if (selectedDate) {
             let newNode = await Tauri.getNodeById(selectedNodeId);
             if (!newNode || newNode.data?.nodeType !== "calendar") return;
-            if (!newNode.data.dates?.includes(selectedDate)) {
-                newNode.data.dates?.push(selectedDate);
+            if (!newNode.data.dates?.includes(dayjs(selectedDate).format("YYYY-MM-DD"))) {
+                newNode.data.dates?.push(dayjs(selectedDate).format("YYYY-MM-DD"));
             }
             await Tauri.upsertCalendarDate(
                 selectedNodeId,
-                selectedDate,
+                dayjs(selectedDate).format("YYYY-MM-DD"),
                 currentFileContents,
                 newNode
             )
@@ -156,7 +157,7 @@ export function useFileActions() {
         });
     }
 
-    const upsertCalendarDate = async (id: string | number, date: Date, contents: string, newNode: NodeModel<NodeData>) => {
+    const upsertCalendarDate = async (id: string | number, date: string, contents: string, newNode: NodeModel<NodeData>) => {
         await Tauri.upsertCalendarDate(id, date, contents, newNode)
         .then((updatedFileTree) => {
             setFileTreeData(updatedFileTree);
