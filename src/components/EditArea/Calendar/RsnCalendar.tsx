@@ -34,29 +34,21 @@ export default function RsnCalendar({ setCalendarOpen }: Props) {
         ja: "ja-JP"
     };
 
-    const isMarked = (date: Date) =>
-        markedDates.some(
-            d =>
-                new Date(d).getFullYear() === date.getFullYear() &&
-                new Date(d).getMonth() === date.getMonth() &&
-                new Date(d).getDate() === date.getDate()
-        );
-    
-    const isToday = (date: Date) => {
-        let today = new Date();
-        return date.getFullYear() === today.getFullYear() &&
-            date.getMonth() === today.getMonth() &&
-            date.getDate() === today.getDate();
+    const isSameDay = (date1: Date, date2: Date | null) => {
+        if (!date2) return false;
+        return date1.getFullYear() === date2.getFullYear() &&
+            date1.getMonth() === date2.getMonth() &&
+            date1.getDate() === date2.getDate();
     }
-    
+
     const addTileClass = (date: Date) => {
         let className = [styles.reactCalendarTile];
-        if (date.getTime() === selectedDate?.getTime()) {
+        if (isSameDay(date, selectedDate)) {
             className.push(styles.reactCalendarTileActive);
-        } else if (isMarked(date)) {
+        } else if (markedDates.some((d) => isSameDay(date, new Date(d)))) {
             className.push(styles.markedDate);
         }
-        if (isToday(date)) {
+        if (isSameDay(date, new Date())) {
             className.push(styles.today);
         }
         return className;
@@ -70,7 +62,7 @@ export default function RsnCalendar({ setCalendarOpen }: Props) {
         }
         getNodeById(selectedNodeId!)
         .then((node) => {
-            setMarkedDates(node.data?.dates?.filter((v) => !isNaN(Date.parse(v))) || []);
+            setMarkedDates(node.data?.dates?.filter((v) => !isNaN(Date.parse(v))).sort() || []);
         })
     }, []);
 
