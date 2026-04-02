@@ -27,6 +27,7 @@ export default function RsnCalendar({ setCalendarOpen }: Props) {
     const setSelectedDate = useFileTreeStore((state) => state.setSelectedDate);
     const setCurrentFileContents = useDisplayStore((state) => state.setCurrentFileContents);
     const [markedDates, setMarkedDates] = React.useState<string[]>([]);
+    const [listHoveredId, setListHoveredId] = React.useState<number>(-1);
     const calendarClass = [styles.reactCalendar];
     const locale = {
         en: "en-US",
@@ -54,6 +55,15 @@ export default function RsnCalendar({ setCalendarOpen }: Props) {
         return className;
     }
 
+    const handleChangeDate = (date: Date) => {
+        setSelectedDate(date);
+        getNodeContents(selectedNodeId!, dayjs(date).format("YYYY-MM-DD"))
+        .then((contents) => {
+            setCurrentFileContents(contents);
+            setCalendarOpen(false);
+        });
+    }
+
     const calendarRef = React.useRef<HTMLDivElement | null>(null);
     React.useEffect(() => {
         const nav = calendarRef.current?.querySelector('.react-calendar__navigation');
@@ -77,29 +87,48 @@ export default function RsnCalendar({ setCalendarOpen }: Props) {
               next2Label={<KeyboardDoubleArrowRightIcon />}
               tileClassName={({ date }) => addTileClass(date)}
               value={selectedDate}
-              onChange={(date: Value) => {
-                  setSelectedDate(date as Date);
-                  getNodeContents(selectedNodeId!, dayjs(date as Date).format("YYYY-MM-DD"))
-                  .then((contents) => {
-                      setCurrentFileContents(contents);
-                      setCalendarOpen(false);
-                  });
-              }}
+              onChange={(date: Value) => {handleChangeDate(date as Date)}}
           /></div>
-          <Box overflow="auto" position="absolute" top={0} height="100%" width={120} left={-120} p={1} border="1px solid" borderColor="#a0a096" borderRadius={1} display="flex" flexDirection="column" gap={1} sx={{ backgroundColor: "secondary.main" }}>
+          <Box
+            overflow="auto"
+            position="absolute"
+            top={0}
+            height="100%"
+            width={120}
+            left={-120}
+            border="1px solid"
+            borderColor="#a0a096"
+            display="flex"
+            flexDirection="column"
+            bgcolor="secondary.main"
+          >
               {markedDates.map((date, index) => (
-                  <Stack key={index} direction="row" alignItems="center" justifyContent="space-between">
-                      <Typography key={index} variant="body2" color="primary.contrastText" onClick={() => {
-                          setSelectedDate(new Date(date));
-                          getNodeContents(selectedNodeId!, dayjs(date).format("YYYY-MM-DD"))
-                          .then((contents) => {
-                              setCurrentFileContents(contents);
-                              setCalendarOpen(false);
-                          });
-                      }}>
+                  <Stack
+                    key={index}
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="space-between"
+                    onMouseEnter={() => setListHoveredId(index)}
+                    onMouseLeave={() => setListHoveredId(-1)}
+                    sx={{
+                        backgroundColor: isSameDay(new Date(date), selectedDate) ? "primary.contrastText" : listHoveredId == index ? "action.hover" : "transparent"
+                    }}
+                  >
+                      <Typography
+                        key={index}
+                        variant="body2"
+                        color={isSameDay(new Date(date), selectedDate) ? "primary.main" : "primary.contrastText"}
+                        px={1}
+                        py={0.5}
+                        flexGrow={1}
+                        onClick={() => {handleChangeDate(new Date(date))}}
+                        sx={{
+                            userSelect: "none"
+                        }}
+                      >
                           {dayjs(date).format("YY-MM-DD")}
                       </Typography>
-                      <IconButton size="small">
+                      <IconButton size="small" color={isSameDay(new Date(date), selectedDate) ? "primary" : "info"}>
                           <DeleteOutlineIcon fontSize="small" />
                       </IconButton>
                   </Stack>
