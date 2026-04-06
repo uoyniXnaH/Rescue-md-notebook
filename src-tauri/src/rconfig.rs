@@ -89,10 +89,13 @@ pub fn insert_rconfig_node(
 }
 
 #[tauri::command]
-pub fn remove_rconfig_node(id: Uuid) -> Result<TreeData, BaseException> {
+pub fn remove_rconfig_node_child(id: Uuid, child: Option<String>) -> Result<TreeData, BaseException> {
     let path = get_gconfig_item("current_root")?;
     let mut rconfig = get_rconfig()?;
-    rconfig.delete_node(&id)?;
+    match child {
+        Some(child_id) => rconfig.delete_child(&id, &child_id)?,
+        None => rconfig.delete_node(&id)?,
+    }
     write_rconfig(&path, &rconfig)?;
     return Ok(rconfig);
 }

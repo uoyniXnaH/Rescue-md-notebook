@@ -126,6 +126,26 @@ impl TreeData {
         self.0.remove(index);
         return Ok(());
     }
+
+    pub fn delete_child(&mut self, node_id: &Uuid, child: &String) -> Result<(), BaseException> {
+        let node = self.0.iter_mut().find(|n| &n.id == node_id).ok_or_else(|| {
+            return BaseException::new("Node ID not found", INVALID_PARAMETER);
+        })?;
+        if node.data.node_type != NodeType::Calendar {
+            return Err(BaseException::new("Node is not a calendar", INVALID_PARAMETER));
+        }
+        let index_opt = node.data.dates.as_ref().ok_or_else(|| {
+            return BaseException::new("No children attached", INVALID_PARAMETER);
+        })?
+        .iter()
+        .position(|d| d == child);
+        if let Some(index) = index_opt {
+            node.data.dates.as_mut().unwrap().remove(index);
+            return Ok(());
+        } else {
+            return Ok(());
+        }
+    }
 }
 
 fn get_type_and_name(path: &Path) -> (Option<&NodeType>, &str) {
