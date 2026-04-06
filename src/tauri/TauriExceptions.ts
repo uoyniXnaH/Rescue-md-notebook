@@ -60,7 +60,7 @@ function useTauriExceptionMessage(t: TFunction<"translation", undefined>) {
                     case "set_rconfig":
                     case "update_rconfig_node":
                     case "insert_rconfig_node":
-                    case "remove_rconfig_node":
+                    case "remove_rconfig_node_child":
                         message = t("exceptions.set_rconfig.cannot_create_file");
                         break;
                     case "fix_folder":
@@ -81,7 +81,7 @@ function useTauriExceptionMessage(t: TFunction<"translation", undefined>) {
                     case "set_rconfig":
                     case "update_rconfig_node":
                     case "insert_rconfig_node":
-                    case "remove_rconfig_node":
+                    case "remove_rconfig_node_child":
                         message = t("exceptions.set_rconfig.cannot_delete_file");
                         break;
                     case "move_node_to_trash":
@@ -92,7 +92,7 @@ function useTauriExceptionMessage(t: TFunction<"translation", undefined>) {
                 }
                 break;
             case ALREADY_EXISTS:
-                message = t("exceptions.already_exists");;
+                message = t("exceptions.already_exists");
                 break;
             case READ_ERROR:
                 switch(cmd) {
@@ -117,7 +117,7 @@ function useTauriExceptionMessage(t: TFunction<"translation", undefined>) {
                     case "set_rconfig":
                     case "update_rconfig_node":
                     case "insert_rconfig_node":
-                    case "remove_rconfig_node":
+                    case "remove_rconfig_node_child":
                         message = t("exceptions.set_rconfig.write_error");
                         break;
                     case "update_node_contents":

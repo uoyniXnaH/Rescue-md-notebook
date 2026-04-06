@@ -78,7 +78,7 @@ export type TauriCmdEnum =
     "set_rconfig" |
     "update_rconfig_node" |
     "insert_rconfig_node" |
-    "remove_rconfig_node" |
+    "remove_rconfig_node_child" |
     "reset_rconfig" |
     "move_node_to_trash" |
     "move_node" |
