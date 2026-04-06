@@ -29,10 +29,29 @@ impl NodeType {
 }
 
 #[tauri::command]
-pub fn move_node_to_trash(id: Uuid) -> Result<(), BaseException> {
+pub fn move_node_to_trash(id: Uuid, child: Option<String>) -> Result<(), BaseException> {
     let rconfig: TreeData = get_rconfig()?;
-    let node_path = rconfig.create_path_by_id(&id)?;
-    delete(PathBuf::from(&node_path)).map_err(|_| {
+    let node = rconfig.get_node_by_id(&id).ok_or_else(|| {
+        return BaseException::new("Invalid node id", INVALID_PARAMETER);
+    })?;
+    let node_path: String = rconfig.create_path_by_id(&id)?;
+    let target_path: String = match node.data.node_type {
+        NodeType::Calendar => {
+            if let Some(child_name) = child {
+                let mut path = PathBuf::from(&node_path);
+                path.push(child_name);
+                path.set_extension("md");
+                if !path.exists() {
+                    return Err(BaseException::new("File does not exist", FILE_NOT_FOUND));
+                }
+                path.to_str().unwrap_or("").to_string()
+            } else {
+                node_path
+            }
+        }
+        _ => node_path
+    };
+    delete(PathBuf::from(&target_path)).map_err(|_| {
         return BaseException::new("Failed to move file to trash", CANNOT_DELETE_FILE);
     })?;
     return Ok(());
