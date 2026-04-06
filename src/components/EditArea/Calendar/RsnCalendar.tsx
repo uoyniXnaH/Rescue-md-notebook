@@ -20,7 +20,7 @@ type Props = {
 }
 
 export default function RsnCalendar({ setCalendarOpen }: Props) {
-    const { getNodeById, getNodeContents } = useTauriCmd();
+    const { getNodeById, getNodeContents, deleteNodeOrChild } = useTauriCmd();
     const selectedNodeId = useFileTreeStore((state) => state.selectedNodeId);
     const selectedDate = useFileTreeStore((state) => state.selectedDate);
     const settings = useSettingStore((state) => state.settings);
@@ -128,7 +128,20 @@ export default function RsnCalendar({ setCalendarOpen }: Props) {
                       >
                           {dayjs(date).format("YY-MM-DD")}
                       </Typography>
-                      <IconButton size="small" color={isSameDay(new Date(date), selectedDate) ? "primary" : "info"}>
+                      <IconButton
+                        size="small"
+                        color={isSameDay(new Date(date), selectedDate) ? "primary" : "info"}
+                        onClick={() => {
+                            deleteNodeOrChild(selectedNodeId!, date)
+                            .then(() => {
+                                setMarkedDates((prev) => prev.filter((d) => d !== date));
+                                if (isSameDay(new Date(date), selectedDate)) {
+                                    setSelectedDate(null);
+                                    setCurrentFileContents("");
+                                }
+                            });
+                        }}
+                      >
                           <DeleteOutlineIcon fontSize="small" />
                       </IconButton>
                   </Stack>

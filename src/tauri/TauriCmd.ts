@@ -170,17 +170,17 @@ function useTauriCmd() {
         })
     }
 
-    const deleteNode = async (id: NodeModel["id"]): Promise<NodeModel<Types.NodeData>[]> => {
+    const deleteNodeOrChild = async (id: NodeModel["id"], child?: string): Promise<NodeModel<Types.NodeData>[]> => {
         return new Promise((resolve) => {
-            invoke<void>("move_node_to_trash", { id: id })
+            invoke<void>("move_node_to_trash", { id: id, child: child })
             .then(async () => {
-                await invoke<NodeModel<Types.NodeData>[]>("remove_rconfig_node", { id: id })
+                await invoke<NodeModel<Types.NodeData>[]>("remove_rconfig_node_child", { id: id, child: child })
                 .then((filetree) => {
                     resolve(filetree);
                 })
                 .catch((error: Types.BaseException) => {
                     showMessageModal({
-                        contents: getExceptionMsg("remove_rconfig_node", error.code),
+                        contents: getExceptionMsg("remove_rconfig_node_child", error.code),
                     });
                     resolve(fileTreeData);
                 });
@@ -309,7 +309,7 @@ function useTauriCmd() {
         renameNode,
         createNode,
         upsertCalendarDate,
-        deleteNode,
+        deleteNodeOrChild,
         moveNode,
         getNodeById,
         getNodeContents,

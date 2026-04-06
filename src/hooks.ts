@@ -22,7 +22,7 @@ export function useGlobalShortcuts() {
     const setEditNodeId = useFileTreeStore((state) => state.setEditNodeId);
     const { showBasicModal } = useModal();
     const { saveFile } = useFileActions();
-    const { deleteNode, getNodeById } = useTauriCmd();
+    const { deleteNodeOrChild, getNodeById } = useTauriCmd();
     const { t } = useTranslation();
     const desiredCaretRef = useRef<number | null>(null);
 
@@ -72,7 +72,7 @@ export function useGlobalShortcuts() {
                         rightButtonText: t("modal.delete"),
                         onLeftButtonClick: () => {},
                         onRightButtonClick: () => {
-                            deleteNode(selectedNodeId)
+                            deleteNodeOrChild(selectedNodeId)
                             .then((updatedFileTree) => {
                                 setFileTreeData(updatedFileTree);
                                 if (selectedNodeId === selectedNodeId) {
@@ -175,7 +175,7 @@ export function useContextMenu() {
     const setSelectedNodeId = useFileTreeStore((state) => state.setSelectedNodeId);
     const setEditNodeId = useFileTreeStore((state) => state.setEditNodeId);
     const { showBasicModal } = useModal();
-    const { getNodeById, deleteNode, openInExplorer, fixFolder } = useTauriCmd();
+    const { getNodeById, deleteNodeOrChild, openInExplorer, fixFolder } = useTauriCmd();
     const { t } = useTranslation();
 
     const popUpCtxMenu = async (event: React.MouseEvent) => {
@@ -254,7 +254,7 @@ export function useContextMenu() {
                     rightButtonText: t("modal.delete"),
                     onLeftButtonClick: () => {},
                     onRightButtonClick: () => {
-                        deleteNode(target_id as string | number)
+                        deleteNodeOrChild(target_id as string | number)
                         .then((updatedFileTree) => {
                             setCtxMenuId(null);
                             setFileTreeData(updatedFileTree);
