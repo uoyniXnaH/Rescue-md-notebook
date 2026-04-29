@@ -175,7 +175,7 @@ export function useContextMenu() {
     const setSelectedNodeId = useFileTreeStore((state) => state.setSelectedNodeId);
     const setEditNodeId = useFileTreeStore((state) => state.setEditNodeId);
     const { showBasicModal } = useModal();
-    const { getNodeById, deleteNodeOrChild, openInExplorer, fixFolder } = useTauriCmd();
+    const { getNodeById, deleteNodeOrChild, openInExplorer, fixNode } = useTauriCmd();
     const { t } = useTranslation();
 
     const popUpCtxMenu = async (event: React.MouseEvent) => {
@@ -224,12 +224,12 @@ export function useContextMenu() {
             text: t("context_menu.fix_node"),
             action: async () => {
                 showBasicModal({
-                    contents: t("modal.confirm_fix_folder"),
+                    contents: t("modal.confirm_fix_node"),
                     leftButtonText: t("modal.cancel"),
                     rightButtonText: t("modal.ok"),
                     onLeftButtonClick: () => {},
                     onRightButtonClick: () => {
-                        fixFolder(target_id as string | number)
+                        fixNode(target_id as string | number)
                         .then(() => {
                             setCtxMenuId(null);
                         });
@@ -271,7 +271,7 @@ export function useContextMenu() {
         if (target_id) {
             setCtxMenuId(target_id);
             items = [rename, move_to_trash, separator, open_in_explorer];
-            if (target_node?.droppable) {
+            if (target_node?.droppable || target_node?.data?.nodeType === "calendar") {
                 items.push(fix_node);
             }
         } else if (focusArea == "editArea") {

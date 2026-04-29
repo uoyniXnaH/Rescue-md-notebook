@@ -90,4 +90,4 @@ export type TauriCmdEnum =
     "upsert_calendar_date" |
     "open_in_explorer" |
     "get_rsn_entries_by_id" |
-    "fix_folder";
+    "fix_node";

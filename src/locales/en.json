@@ -39,7 +39,7 @@
   "modal": {
     "confirm_delete": "Are you sure you want to delete the following node? You can restore it from the trash.",
     "confirm_reset_rconfig": "Are you sure you want to reset the root configuration? This will attempt to recreate the configuration based on the current files and folders in the root path. Any order changes will be lost.",
-    "confirm_fix_folder": "Are you sure you want to fix this folder? This will attempt to recreate contents attached to the folder.",
+    "confirm_fix_node": "Are you sure you want to fix this node? This will attempt to recreate contents attached to the node.",
     "root_not_set": "Root path is not set. Please set the root path first.",
     "change_not_saved": "You have unsaved changes. Do you want to save the changes?",
     "cancel": "CANCEL",
