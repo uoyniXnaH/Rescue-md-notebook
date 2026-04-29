@@ -24,6 +24,7 @@ export default function RsnCalendar({ setCalendarOpen }: Props) {
     const selectedNodeId = useFileTreeStore((state) => state.selectedNodeId);
     const selectedDate = useFileTreeStore((state) => state.selectedDate);
     const settings = useSettingStore((state) => state.settings);
+    const setFileTreeData = useFileTreeStore((state) => state.setFileTreeData);
     const setSelectedDate = useFileTreeStore((state) => state.setSelectedDate);
     const setCurrentFileContents = useDisplayStore((state) => state.setCurrentFileContents);
     const [markedDates, setMarkedDates] = React.useState<string[]>([]);
@@ -131,9 +132,10 @@ export default function RsnCalendar({ setCalendarOpen }: Props) {
                       <IconButton
                         size="small"
                         color={isSameDay(new Date(date), selectedDate) ? "primary" : "info"}
-                        onClick={() => {
+                        onClick={async () => {
                             deleteNodeOrChild(selectedNodeId!, date)
-                            .then(() => {
+                            .then((updatedFileTree) => {
+                                setFileTreeData(updatedFileTree);
                                 setMarkedDates((prev) => prev.filter((d) => d !== date));
                                 if (isSameDay(new Date(date), selectedDate)) {
                                     setSelectedDate(null);
