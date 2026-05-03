@@ -7,10 +7,12 @@ import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
 import dayjs from "dayjs";
+import { useTranslation } from "react-i18next";
 // import 'react-calendar/dist/Calendar.css';
 
 import styles from "./Calendar.module.css";
 import { useSettingStore, useFileTreeStore, useDisplayStore } from "@store/store";
+import { useModal } from "@src/components/Modal";
 import useTauriCmd from "@tauri/TauriCmd";
 
 type ValuePiece = Date | null;
@@ -20,7 +22,9 @@ type Props = {
 }
 
 export default function RsnCalendar({ setCalendarOpen }: Props) {
+    const { t } = useTranslation();
     const { getNodeById, getNodeContents, deleteNodeOrChild } = useTauriCmd();
+    const { showBasicModal } = useModal();
     const selectedNodeId = useFileTreeStore((state) => state.selectedNodeId);
     const selectedDate = useFileTreeStore((state) => state.selectedDate);
     const settings = useSettingStore((state) => state.settings);
@@ -133,13 +137,23 @@ export default function RsnCalendar({ setCalendarOpen }: Props) {
                         size="small"
                         color={isSameDay(new Date(date), selectedDate) ? "primary" : "info"}
                         onClick={async () => {
-                            deleteNodeOrChild(selectedNodeId!, date)
-                            .then((updatedFileTree) => {
-                                setFileTreeData(updatedFileTree);
-                                setMarkedDates((prev) => prev.filter((d) => d !== date));
-                                if (isSameDay(new Date(date), selectedDate)) {
-                                    setSelectedDate(null);
-                                    setCurrentFileContents("");
+                            const targetNode = await getNodeById(selectedNodeId!);
+                            if (!targetNode) return;
+                            showBasicModal({
+                                contents: [t("modal.confirm_delete"), `${targetNode.text} ${dayjs(date).format("YY-MM-DD")}`],
+                                leftButtonText: t("modal.cancel"),
+                                rightButtonText: t("modal.delete"),
+                                onLeftButtonClick: () => {},
+                                onRightButtonClick: () => {
+                                    deleteNodeOrChild(selectedNodeId!, date)
+                                    .then((updatedFileTree) => {
+                                        setFileTreeData(updatedFileTree);
+                                        setMarkedDates((prev) => prev.filter((d) => d !== date));
+                                        if (isSameDay(new Date(date), selectedDate)) {
+                                            setSelectedDate(null);
+                                            setCurrentFileContents("");
+                                        }
+                                    });
                                 }
                             });
                         }}
