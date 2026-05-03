@@ -38,6 +38,7 @@ interface ModalOptions {
     rightButtonText?: string;
     onLeftButtonClick?: () => void;
     onRightButtonClick?: () => void;
+    children?: React.ReactNode;
 }
 
 interface ModalProps extends ModalOptions {
@@ -110,9 +111,28 @@ const MessageModal: React.FC<ModalProps> = ({ open, onClose, contents }) => {
     );
 }
 
+const CustomModal: React.FC<ModalProps & { children: React.ReactNode }> = ({ open, onClose, children }) => {
+    const settings = useSettingStore((state) => state.settings);
+
+    return (
+        <ThemeProvider theme={selectTheme(settings.color_mode)}>
+            <Modal
+                open={open}
+                onClose={onClose}
+                disableAutoFocus={true}
+            >
+                <Box sx={{ ...basicModalStyle, width: 'auto', height: 'auto' }}>
+                    {children}
+                </Box>
+            </Modal>
+        </ThemeProvider>
+    );
+}
+
 type ModalContextType = {
     showBasicModal: (options: ModalOptions) => void;
     showMessageModal: (options: ModalOptions) => void;
+    showCustomModal: (options: ModalOptions) => void;
     closeModal: () => void;
 };
 
@@ -122,31 +142,39 @@ const ModalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) =>
     const setFocusArea = useFocusStore((state) => state.setFocusArea);
     const [openBasic, setOpenBasic] = React.useState(false);
     const [openMessage, setOpenMessage] = React.useState(false);
+    const [openCustom, setOpenCustom] = React.useState(false);
+    const [isModalsClosed, setIsModalsClosed] = React.useState(false);
     const [opts, setOpts] = React.useState<ModalOptions>({ contents: "" });
 
     const showBasicModal = (options: ModalOptions) => {
         setOpts(options);
         setFocusArea(null);
+        setIsModalsClosed(true);
         setOpenBasic(true);
-        setOpenMessage(false);
     }
 
     const showMessageModal = (options: ModalOptions) => {
         setOpts(options);
+        setIsModalsClosed(true);
         setOpenMessage(true);
-        setOpenBasic(false);
+    }
+
+    const showCustomModal = (options: ModalOptions) => {
+        setOpts(options);
+        setFocusArea(null);
+        setIsModalsClosed(true);
+        setOpenCustom(true);
     }
 
     const closeModal = () => {
-        setOpenBasic(false);
-        setOpenMessage(false);
+        setIsModalsClosed(true);
     }
 
     return (
-        <ModalContext.Provider value={{ showBasicModal, showMessageModal, closeModal }}>
+        <ModalContext.Provider value={{ showBasicModal, showMessageModal, showCustomModal, closeModal }}>
             {children}
             <BasicModal
-                open={openBasic}
+                open={openBasic && !isModalsClosed}
                 onClose={closeModal}
                 contents={opts.contents}
                 leftButtonText={opts.leftButtonText}
@@ -155,10 +183,17 @@ const ModalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) =>
                 onRightButtonClick={opts.onRightButtonClick}
             />
             <MessageModal
-                open={openMessage}
+                open={openMessage && !isModalsClosed}
                 onClose={closeModal}
                 contents={opts.contents}
             />
+            <CustomModal
+                open={openCustom && !isModalsClosed}
+                onClose={closeModal}
+                contents={opts.contents}
+            >
+                {opts.children}
+            </CustomModal>
         </ModalContext.Provider>
     )
 }
