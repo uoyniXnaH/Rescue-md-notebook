@@ -143,38 +143,36 @@ const ModalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) =>
     const [openBasic, setOpenBasic] = React.useState(false);
     const [openMessage, setOpenMessage] = React.useState(false);
     const [openCustom, setOpenCustom] = React.useState(false);
-    const [isModalsClosed, setIsModalsClosed] = React.useState(false);
     const [opts, setOpts] = React.useState<ModalOptions>({ contents: "" });
 
     const showBasicModal = (options: ModalOptions) => {
         setOpts(options);
         setFocusArea(null);
-        setIsModalsClosed(true);
         setOpenBasic(true);
     }
 
     const showMessageModal = (options: ModalOptions) => {
         setOpts(options);
-        setIsModalsClosed(true);
         setOpenMessage(true);
     }
 
     const showCustomModal = (options: ModalOptions) => {
         setOpts(options);
         setFocusArea(null);
-        setIsModalsClosed(true);
         setOpenCustom(true);
     }
 
     const closeModal = () => {
-        setIsModalsClosed(true);
+        setOpenBasic(false);
+        setOpenMessage(false);
+        setOpenCustom(false);
     }
 
     return (
         <ModalContext.Provider value={{ showBasicModal, showMessageModal, showCustomModal, closeModal }}>
             {children}
             <BasicModal
-                open={openBasic && !isModalsClosed}
+                open={openBasic}
                 onClose={closeModal}
                 contents={opts.contents}
                 leftButtonText={opts.leftButtonText}
@@ -183,12 +181,12 @@ const ModalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) =>
                 onRightButtonClick={opts.onRightButtonClick}
             />
             <MessageModal
-                open={openMessage && !isModalsClosed}
+                open={openMessage}
                 onClose={closeModal}
                 contents={opts.contents}
             />
             <CustomModal
-                open={openCustom && !isModalsClosed}
+                open={openCustom}
                 onClose={closeModal}
                 contents={opts.contents}
             >
