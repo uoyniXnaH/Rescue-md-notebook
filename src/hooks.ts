@@ -230,7 +230,10 @@ export function useContextMenu() {
                     onLeftButtonClick: () => {},
                     onRightButtonClick: () => {
                         fixNode(target_id as string | number)
-                        .then(() => {
+                        .then((updatedFileTree) => {
+                            if (updatedFileTree) {
+                                setFileTreeData(updatedFileTree);
+                            }
                             setCtxMenuId(null);
                         });
                     }

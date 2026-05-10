@@ -284,17 +284,17 @@ function useTauriCmd() {
         });
     }
 
-    const fixNode = async (id: NodeModel["id"]): Promise<void> => {
+    const fixNode = async (id: NodeModel["id"]): Promise<NodeModel<Types.NodeData>[] | undefined> => {
         return new Promise((resolve) => {
-            invoke<void>("fix_node", { id: id })
-            .then(() => {
-                resolve();
+            invoke<NodeModel<Types.NodeData>[] | undefined>("fix_node", { id: id })
+            .then((filetree) => {
+                resolve(filetree);
             })
             .catch((error: Types.BaseException) => {
                 showMessageModal({
                     contents: getExceptionMsg("fix_node", error.code),
                 });
-                resolve();
+                resolve(undefined);
             });
         });
     }
