@@ -424,29 +424,30 @@ pub fn get_rsn_entries_by_id(id: Uuid) -> Result<Vec<String>, BaseException> {
 }
 
 #[tauri::command]
-pub fn fix_folder(id: Uuid) -> Result<(), BaseException> {
-    let rconfig: TreeData = get_rconfig()?;
+pub fn fix_node(id: Uuid) -> Result<Option<TreeData>, BaseException> {
+    let mut rconfig: TreeData = get_rconfig()?;
     let node = rconfig.get_node_by_id(&id).ok_or_else(|| {
         return BaseException::new("Invalid node id", INVALID_PARAMETER);
     })?;
+    let node_path = PathBuf::from(rconfig.create_path_by_id(&id)?);
     match node.data.node_type {
-        NodeType::Folder => {}
+        NodeType::Folder => {
+            init_folder(&node_path)?;
+            return Ok(None);
+        }
         NodeType::Calendar => {
-            return Err(BaseException::new(
-                "Calendar feature coming soon :)",
-                COMMING_SOON,
-            ));
+            let dates = init_calendar(&node_path)?;
+            rconfig.update_children(&id, dates)?;
+            set_rconfig(rconfig.clone())?;
+            return Ok(Some(rconfig));
         }
         _ => {
             return Err(BaseException::new(
-                "Node is not a folder",
+                "Fixing is not supported",
                 INVALID_PARAMETER,
             ));
         }
     };
-    let node_path = PathBuf::from(rconfig.create_path_by_id(&id)?);
-    init_folder(&node_path)?;
-    return Ok(());
 }
 
 pub fn init_folder(path: &PathBuf) -> Result<(), BaseException> {

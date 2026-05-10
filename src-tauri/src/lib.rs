@@ -39,7 +39,7 @@ pub fn run() {
             upsert_calendar_date,
             open_in_explorer,
             get_rsn_entries_by_id,
-            fix_folder
+            fix_node
         ])
         .plugin(tauri_plugin_opener::init())
         .run(tauri::generate_context!())
